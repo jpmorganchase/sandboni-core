@@ -156,6 +156,13 @@
         </repository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>spring-repo</id>
+            <url>https://repo.spring.io/plugins-release/</url>
+        </repository>
+    </repositories>
+
     <ciManagement>
         <url>https://travis-ci.com/jpmorganchase/sandboni-core</url>
     </ciManagement>
