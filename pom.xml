@@ -167,6 +167,19 @@
         </license>
     </licenses>
 
+    <repositories>
+        <repository>
+            <id>spring-release</id>
+            <url>http://repo.spring.io/libs-release</url>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>spring-snapshot</id>
+            <url>http://repo.spring.io/libs-snapshot</url>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+    </repositories>
+
     <issueManagement>
         <system>github</system>
         <url>https://github.com/jpmorganchase/sandboni-core/issues</url>
