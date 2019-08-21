@@ -30,7 +30,7 @@ public class BlameResolverTest {
         Set<RevInfo> result = blameResolver.blame(filepath, list);
         assertNotNull(result);
         assertEquals(6, result.size());
-        assertTrue(result.stream().allMatch(r -> r.getJiraId().startsWith("SANDBONI-")));
+        assertTrue(result.stream().allMatch(r -> r.getJiraId() != null));
         assertTrue(result.stream().allMatch(r -> r.getRevisionId() != null));
         assertTrue(result.stream().allMatch(r -> r.getDate() != null));
     }

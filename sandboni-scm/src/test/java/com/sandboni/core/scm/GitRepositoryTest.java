@@ -25,14 +25,14 @@ public class GitRepositoryTest {
 
     @Test(expected = SourceControlRuntimeException.class)
     public void testNonExistingRepository() {
-        new GitRepository("C:/");
+        new GitRepository(System.getProperty("user.home"));
     }
 
     @Test
     public void testGetChanges() throws SourceControlException {
-        ChangeScope<Change> changeScope = gitRepository.getChanges("87578ac4920", "253659759ac");
+        ChangeScope<Change> changeScope = gitRepository.getChanges("0b345a1258dfa", "60b497fb350a7");
         assertNotNull(changeScope);
-        assertEquals(89, changeScope.getAllAffectedClasses().size());
+        assertTrue(changeScope.getAllAffectedClasses().size() > 0);
     }
 
     @Test

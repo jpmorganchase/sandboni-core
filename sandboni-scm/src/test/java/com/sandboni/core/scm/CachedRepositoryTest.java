@@ -24,8 +24,8 @@ public class CachedRepositoryTest {
 
     @Test
     public void testGetChanges() throws SourceControlException {
-        ChangeScope<Change> changeScope = gitRepository.getChanges("87578ac4920", "253659759ac");
-        ChangeScope<Change> changeScope2 = gitRepository.getChanges("87578ac4920", "253659759ac");
+        ChangeScope<Change> changeScope = gitRepository.getChanges("0b345a1258dfa", "60b497fb350a7");
+        ChangeScope<Change> changeScope2 = gitRepository.getChanges("0b345a1258dfa", "60b497fb350a7");
         assertEquals(changeScope, changeScope2);
     }
 

@@ -2,7 +2,6 @@ package com.sandboni.core.scm.resolvers;
 
 import com.sandboni.core.scm.exception.ErrorMessages;
 import com.sandboni.core.scm.exception.SourceControlException;
-import com.sandboni.core.scm.exception.SourceControlRuntimeException;
 import com.sandboni.core.scm.revision.DiffConstants;
 import com.sandboni.core.scm.revision.RevisionScope;
 import com.sandboni.core.scm.revision.SCMRevisionScope;
@@ -134,13 +133,13 @@ public class RevisionResolver {
         return trackedBranch;
     }
 
-    private void validate(ObjectId from, ObjectId to) {
+    private void validate(ObjectId from, ObjectId to) throws SourceControlException {
         LOGGER.info("Resolved revision scope: {} : {}", from, to);
         if (from == null || to == null || from.equals(RevCommit.zeroId())) {
-            throw new SourceControlRuntimeException(ErrorMessages.UNABLE_TO_RESOLVE_REVISIONS);
+            throw new SourceControlException(ErrorMessages.UNABLE_TO_RESOLVE_REVISIONS);
         }
         if (from.equals(to)) {
-            throw new SourceControlRuntimeException(ErrorMessages.REVISIONS_CANNOT_BE_SAME);
+            throw new SourceControlException(ErrorMessages.REVISIONS_CANNOT_BE_SAME);
         }
     }
 }

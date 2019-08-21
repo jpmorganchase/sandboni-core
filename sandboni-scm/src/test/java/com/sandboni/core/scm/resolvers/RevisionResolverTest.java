@@ -22,22 +22,22 @@ public class RevisionResolverTest {
         revisionResolver = new RevisionResolver(GitRepository.buildRepository(GitHelper.openCurrentFolder()));
     }
 
-    @Test(expected = SourceControlRuntimeException.class)
+    @Test(expected = SourceControlException.class)
     public void testFromIsNull() throws SourceControlException {
         revisionResolver.resolve(null, DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
     }
 
-    @Test(expected = SourceControlRuntimeException.class)
+    @Test(expected = SourceControlException.class)
     public void testToIsNull() throws SourceControlException {
         revisionResolver.resolve(DiffConstants.LATEST_COMMIT, null);
     }
 
-    @Test(expected = SourceControlRuntimeException.class)
+    @Test(expected = SourceControlException.class)
     public void testFromAndToAreSame() throws SourceControlException {
         revisionResolver.resolve(DiffConstants.LATEST_COMMIT, DiffConstants.LATEST_COMMIT);
     }
 
-    @Test(expected = SourceControlRuntimeException.class)
+    @Test(expected = SourceControlException.class)
     public void testInvalidCommit() throws SourceControlException {
         revisionResolver.resolve("AAAAAA", DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
     }
@@ -64,11 +64,11 @@ public class RevisionResolverTest {
 
     @Test
     public void testCommitAndUncommitted() throws SourceControlException {
-        RevisionScope<ObjectId> scope = revisionResolver.resolve("5c23e26d652", DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
+        RevisionScope<ObjectId> scope = revisionResolver.resolve("61317a7abe", DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
         assertNotNull(scope);
         assertNotNull(scope.getFrom());
         assertNotEquals(RevCommit.zeroId(), scope.getFrom());
-        assertTrue(scope.getFrom().toString().contains("5c23e26d652"));
+        assertTrue(scope.getFrom().toString().contains("61317a7abe"));
         assertNotNull(scope.getTo());
         assertEquals(RevCommit.zeroId(), scope.getTo());
     }
