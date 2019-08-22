@@ -1,4 +1,4 @@
-install: mvn clean install
+install: true
 
 language: java
 
