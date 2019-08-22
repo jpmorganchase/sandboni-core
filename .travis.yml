@@ -13,3 +13,8 @@ addons:
 
 script:
   - mvn clean package sonar:sonar
+
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
