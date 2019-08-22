@@ -7,10 +7,9 @@ jdk:
 
 addons:
   sonarcloud:
-    organization: "vlisianskii"
+    organization: "sandboni"
     token:
-      secure: "c13d9918a89e1d993f5e7af59e7eaa93cece24eb"
+      secure: "2a31a4ab981e7e4dce32a452d9683677d4ff58fa"
 
 script:
-  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=vlisianskii_sandboni-core
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=com.sandboni.core:sandboni-core
