@@ -15,7 +15,7 @@ import java.util.Optional;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
 
 public class CallerMethodVisitor extends CallerFieldOrMethodVisitor {
-    private final static String OPTIONS_PACKAGE = "Lorg/fusesource/restygwt/client/OPTIONS;";
+    private static final String OPTIONS_PACKAGE = "Lorg/fusesource/restygwt/client/OPTIONS;";
 
     CallerMethodVisitor(Method m, JavaClass jc, Context c) {
         super(m, jc, c);

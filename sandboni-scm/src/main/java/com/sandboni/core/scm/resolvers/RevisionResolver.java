@@ -58,7 +58,7 @@ public class RevisionResolver {
     }
 
     private ObjectId getToBeCommitted() {
-        return RevCommit.zeroId();
+        return ObjectId.zeroId();
     }
 
     private ObjectId getLatestCommit() throws IOException {
@@ -135,7 +135,7 @@ public class RevisionResolver {
 
     private void validate(ObjectId from, ObjectId to) throws SourceControlException {
         LOGGER.info("Resolved revision scope: {} : {}", from, to);
-        if (from == null || to == null || from.equals(RevCommit.zeroId())) {
+        if (from == null || to == null || from.equals(ObjectId.zeroId())) {
             throw new SourceControlException(ErrorMessages.UNABLE_TO_RESOLVE_REVISIONS);
         }
         if (from.equals(to)) {

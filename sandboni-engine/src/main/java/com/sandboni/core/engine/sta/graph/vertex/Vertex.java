@@ -25,7 +25,7 @@ public class Vertex implements Serializable {
         this.location = location;
     }
 
-    protected static abstract class AbstractVertexBuilder<T extends AbstractVertexBuilder<T>> {
+    protected abstract static class AbstractVertexBuilder<T extends AbstractVertexBuilder<T>> {
         protected final String actor;
         protected final String action;
         protected boolean isSpecial;

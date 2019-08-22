@@ -7,13 +7,9 @@ public class TestVertexHandler implements VertexHandler{
 
     @Override
     public void handle(Vertex v, String type, Object arg) {
-        switch (type){
-            case "Location":
-                String loc = (String)arg;
-                ((TestVertex)v).setExternalLocation(loc.contains(ExtensionType.JAR.type()));
-                break;
-            default:
+        if ("Location".equals(type)) {
+            String loc = (String) arg;
+            ((TestVertex) v).setExternalLocation(loc.contains(ExtensionType.JAR.type()));
         }
-
     }
 }

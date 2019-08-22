@@ -19,7 +19,7 @@ public class SpringMockMvcMethodVisitor extends TestMethodVisitor {
     private final ConstantPoolGen cp;
     private String value;
 
-    private final String MOCK_HTTP_REQUEST_BUILDER = "MockHttpServletRequestBuilder";
+    private static final String MOCK_HTTP_REQUEST_BUILDER = "MockHttpServletRequestBuilder";
 
 
     SpringMockMvcMethodVisitor(Method m, JavaClass jc, Context c) {

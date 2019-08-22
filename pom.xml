@@ -62,9 +62,6 @@
         <sonar.language>java</sonar.language>
         <sonar.scm.provider>git</sonar.scm.provider>
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
-
-
-<!--        <sonar.host.url>https://sonarcloud.io</sonar.host.url>-->
     </properties>
 
     <build>

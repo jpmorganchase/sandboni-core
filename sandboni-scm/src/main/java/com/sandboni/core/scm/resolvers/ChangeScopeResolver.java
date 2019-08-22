@@ -90,7 +90,7 @@ public class ChangeScopeResolver {
 
     private RawText getRawText(ObjectId objectId, String path) throws IOException {
         RawText rawText;
-        if (objectId == RevCommit.zeroId()) {
+        if (objectId.equals(ObjectId.zeroId())) {
             rawText = getLocalFile(path);
         } else {
             rawText = getCommittedRawText(objectId, path);
@@ -155,7 +155,7 @@ public class ChangeScopeResolver {
     }
 
     private AbstractTreeIterator getAbstractTreeIterator(ObjectId objectId) throws IOException {
-        if (objectId == RevCommit.zeroId()) {
+        if (objectId.equals(ObjectId.zeroId())) {
             return new FileTreeIterator(repository);
         }
 
@@ -168,7 +168,7 @@ public class ChangeScopeResolver {
     }
 
     private List<DiffEntry> filterEntries(List<DiffEntry> diffEntries, RevisionScope revisionScope) {
-        if (!revisionScope.getTo().equals(RevCommit.zeroId())) {
+        if (!revisionScope.getTo().equals(ObjectId.zeroId())) {
             return diffEntries;
         }
 

@@ -11,15 +11,15 @@ import org.apache.bcel.generic.INVOKEVIRTUAL;
 
 public class ThreadRunMethodVisitor extends CallerFieldOrMethodVisitor {
 
-    private static String THREAD_CLASS_NAME = "java.lang.Thread";
-    private static String THREAD_START_METHOD = "start";
+    private static final String THREAD_CLASS_NAME = "java.lang.Thread";
+    private static final String THREAD_START_METHOD = "start";
 
-    private static String RUNNABLE_INTERFACE_METHOD = "java.lang.Runnable";
-    private static String RUNNABLE_RUN_METHOD = "run()";
+    private static final String RUNNABLE_INTERFACE_METHOD = "java.lang.Runnable";
+    private static final String RUNNABLE_RUN_METHOD = "run()";
 
-    private static String ES_INTERFACE_NAME = "java.util.concurrent.ExecutorService";
-    private static String ES_EXECUTE_METHOD = "execute";
-    private static String ES_SUBMIT_METHOD  = "submit";
+    private static final String ES_INTERFACE_NAME = "java.util.concurrent.ExecutorService";
+    private static final String ES_EXECUTE_METHOD = "execute";
+    private static final String ES_SUBMIT_METHOD  = "submit";
 
 
 

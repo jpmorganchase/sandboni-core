@@ -20,7 +20,7 @@ public class TestVertex extends Vertex {
         this.externalLocation = externalLocation;
     }
 
-    protected static abstract class AbstractTestVertexBuilder<T extends AbstractTestVertexBuilder<T>> extends AbstractVertexBuilder<T> {
+    protected abstract static class AbstractTestVertexBuilder<T extends AbstractTestVertexBuilder<T>> extends AbstractVertexBuilder<T> {
 
         protected boolean ignore;
         boolean externalLocation;

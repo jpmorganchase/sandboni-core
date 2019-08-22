@@ -47,9 +47,9 @@ public class RevisionResolverTest {
         RevisionScope<ObjectId> scope = revisionResolver.resolve(DiffConstants.LATEST_PUSH, DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
         assertNotNull(scope);
         assertNotNull(scope.getFrom());
-        assertNotEquals(RevCommit.zeroId(), scope.getFrom());
+        assertNotEquals(ObjectId.zeroId(), scope.getFrom());
         assertNotNull(scope.getTo());
-        assertEquals(RevCommit.zeroId(), scope.getTo());
+        assertEquals(ObjectId.zeroId(), scope.getTo());
     }
 
     @Test
@@ -57,9 +57,9 @@ public class RevisionResolverTest {
         RevisionScope<ObjectId> scope = revisionResolver.resolve(Constants.R_REMOTES + "origin/" + Constants.MASTER, DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
         assertNotNull(scope);
         assertNotNull(scope.getFrom());
-        assertNotEquals(RevCommit.zeroId(), scope.getFrom());
+        assertNotEquals(ObjectId.zeroId(), scope.getFrom());
         assertNotNull(scope.getTo());
-        assertEquals(RevCommit.zeroId(), scope.getTo());
+        assertEquals(ObjectId.zeroId(), scope.getTo());
     }
 
     @Test
@@ -67,9 +67,9 @@ public class RevisionResolverTest {
         RevisionScope<ObjectId> scope = revisionResolver.resolve("61317a7abe", DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
         assertNotNull(scope);
         assertNotNull(scope.getFrom());
-        assertNotEquals(RevCommit.zeroId(), scope.getFrom());
+        assertNotEquals(ObjectId.zeroId(), scope.getFrom());
         assertTrue(scope.getFrom().toString().contains("61317a7abe"));
         assertNotNull(scope.getTo());
-        assertEquals(RevCommit.zeroId(), scope.getTo());
+        assertEquals(ObjectId.zeroId(), scope.getTo());
     }
 }
