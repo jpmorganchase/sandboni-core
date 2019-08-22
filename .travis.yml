@@ -9,7 +9,7 @@ addons:
   sonarcloud:
     organization: "sandboni"
     token:
-      secure: "2a31a4ab981e7e4dce32a452d9683677d4ff58fa"
+      secure: "$SONAR_TOKEN"
 
 script:
-  - mvn clean install sonar:sonar
+  - mvn clean package sonar:sonar
