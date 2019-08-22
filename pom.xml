@@ -58,11 +58,13 @@
         <!-- SonarQube -->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>sandboni</sonar.organization>
-        <sonar.projectKey>com.sandboni.core:sandboni-core</sonar.projectKey>
         <sonar.login>2a31a4ab981e7e4dce32a452d9683677d4ff58fa</sonar.login>
         <sonar.language>java</sonar.language>
         <sonar.scm.provider>git</sonar.scm.provider>
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
+
+
+<!--        <sonar.host.url>https://sonarcloud.io</sonar.host.url>-->
     </properties>
 
     <build>

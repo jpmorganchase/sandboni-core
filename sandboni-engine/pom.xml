@@ -11,6 +11,10 @@
     <artifactId>sandboni-engine</artifactId>
     <name>Sandboni Core Engine</name>
 
+    <properties>
+        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.sandboni.core</groupId>
