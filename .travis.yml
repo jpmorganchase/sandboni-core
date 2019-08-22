@@ -4,3 +4,13 @@ language: java
 
 jdk:
   - openjdk8
+
+addons:
+  sonarcloud:
+    organization: "vlisianskii"
+    token:
+      secure: "c13d9918a89e1d993f5e7af59e7eaa93cece24eb"
+
+script:
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=vlisianskii_sandboni-core
