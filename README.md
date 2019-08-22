@@ -4,6 +4,8 @@
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://choosealicense.com/licenses/apache-2.0/)
 [![Build Status](https://travis-ci.com/jpmorganchase/sandboni-core.svg?branch=master)](https://travis-ci.com/jpmorganchase/sandboni-core)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.sandboni.core%3Asandboni-core&metric=coverage)](https://sonarcloud.io/dashboard?id=com.sandboni.core%3Asandboni-core)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=com.sandboni.core%3Asandboni-core&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=com.sandboni.core%3Asandboni-core)
 
 Sandboni is a `Java test optimization library` which reduces test execution time without 
 compromising quality, predicts defect probability and presents actionable test results 

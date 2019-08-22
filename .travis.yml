@@ -12,4 +12,4 @@ addons:
       secure: "2a31a4ab981e7e4dce32a452d9683677d4ff58fa"
 
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=com.sandboni.core:sandboni-core
+  - mvn clean install sonar:sonar
