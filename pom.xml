@@ -43,7 +43,7 @@
         <javax.ws.rs.version>1.0</javax.ws.rs.version>
         <javax.ws.rs-api.version>2.1</javax.ws.rs-api.version>
         <spring.version>2.0.5.RELEASE</spring.version>
-        <jackson-databind.version>2.9.8</jackson-databind.version>
+        <jackson-databind.version>2.9.9.3</jackson-databind.version>
         <mockserver-netty.version>3.9.1</mockserver-netty.version>
         <jmh.version>1.19</jmh.version>
         <logback-classic.version>1.2.3</logback-classic.version>
