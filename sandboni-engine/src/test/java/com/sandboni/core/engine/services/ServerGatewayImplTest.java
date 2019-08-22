@@ -43,7 +43,7 @@ public class ServerGatewayImplTest {
 
         ServerGateway serverGateway = new ServerGatewayImpl();
         serverGateway.sendStats(map, "http://localhost:" + SERVER_PORT + "/" + USAGE_URL);
-        assertTrue(true);
+//        assertTrue(true);
     }
 
     @Test(expected = GatewayException.class)
