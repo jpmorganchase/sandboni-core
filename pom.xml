@@ -60,6 +60,8 @@
         <sonar.login>2a31a4ab981e7e4dce32a452d9683677d4ff58fa</sonar.login>
         <sonar.language>java</sonar.language>
         <sonar.scm.provider>git</sonar.scm.provider>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco-it.exec</sonar.jacoco.reportPath>
     </properties>
 
     <build>
