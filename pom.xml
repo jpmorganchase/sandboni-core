@@ -25,7 +25,6 @@
         <project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
         <mvn.compiler.source>1.8</mvn.compiler.source>
         <mvn.compiler.target>1.8</mvn.compiler.target>
-        <aggregate.report.dir>tests/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
         <jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
         <jacoco.ut.execution.data.file>${project.build.directory}/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
 
@@ -61,7 +60,6 @@
         <sonar.login>2a31a4ab981e7e4dce32a452d9683677d4ff58fa</sonar.login>
         <sonar.language>java</sonar.language>
         <sonar.scm.provider>git</sonar.scm.provider>
-        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <build>
