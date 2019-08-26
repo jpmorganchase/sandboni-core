@@ -6,7 +6,7 @@ install: true
 
 stages:
   - name: release
-    if: branch = master
+    if: branch = master and type = pull_request and repo = jpmorganchase/sandboni-core
   - name: pull request
     if: type = pull_request OR type = push AND branch != master
 
@@ -20,7 +20,7 @@ jobs:
     - stage: pull request
       name: "Pull Request: mvn clean package sonar:sonar"
       script:
-        - mvn --settings .maven.xml install sonar:sonar -DskipTests=true -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
+        - mvn clean install sonar:sonar -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
 
 before_install:
   - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
