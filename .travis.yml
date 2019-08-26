@@ -2,12 +2,31 @@ language: java
 jdk:
   - openjdk8
 
-install:
-  true
+install: true
 
-## Build and release to maven central
-script:
-  - mvn clean package sonar:sonar
+stages:
+  - name: release
+    if: branch = master
+  - name: pull request
+    if: type = pull_request OR type = push AND branch != master
+
+jobs:
+  include:
+    - stage: release
+      name: "Release: mvn clean deploy"
+      script:
+        - mvn clean deploy --settings .maven.xml -DskipTests=true -B -U -Prelease
+
+    - stage: pull request
+      name: "Pull Request: mvn clean package sonar:sonar"
+      script:
+        - mvn --settings .maven.xml install sonar:sonar -DskipTests=true -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
+
+
+## export GPG details
+before_install:
+  - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
+  - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
 
 ## Get the project version
 before_deploy:
