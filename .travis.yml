@@ -14,6 +14,12 @@ jobs:
   include:
     - stage: release
       name: "Release: mvn clean deploy"
+      before_install:
+        - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
+        - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
+      before_deploy:
+        - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
+        - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
       script:
         - mvn clean deploy --settings .maven.xml -DskipTests=true -B -U -Prelease
 
@@ -21,14 +27,6 @@ jobs:
       name: "Pull Request: mvn clean package sonar:sonar"
       script:
         - mvn clean install sonar:sonar -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
-
-before_install:
-  - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
-  - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
-
-before_deploy:
-  - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
-  - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
 
 deploy:
   provider: releases
