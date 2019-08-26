@@ -44,7 +44,7 @@ addons:
   sonarcloud:
     organization: "sandboni"
     token:
-      secure: "$SONAR_TOKEN"
+      secure: "$GITHUB_TOKEN"
 
 cache:
   directories:
