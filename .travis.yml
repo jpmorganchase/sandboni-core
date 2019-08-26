@@ -22,22 +22,18 @@ jobs:
       script:
         - mvn --settings .maven.xml install sonar:sonar -DskipTests=true -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
 
-
-## export GPG details
 before_install:
   - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
   - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
 
-## Get the project version
 before_deploy:
   - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
   - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
 
-## Create release in GitHub
 deploy:
   provider: releases
   api_key:
-    secure: "$SONAR_TOKEN"
+    secure: "$GITHUB_TOKEN"
   file:
     - sandboni-engine/target/sandboni-engine-$project_version.jar
     - sandboni-scm/target/sandboni-scm-$project_version.jar
