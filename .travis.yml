@@ -6,9 +6,9 @@ install: true
 
 stages:
   - name: release
-    if: branch = master and type = pull_request and repo = jpmorganchase/sandboni-core
+    if: branch = master AND type = pull_request AND repo = jpmorganchase/sandboni-core
   - name: pull request
-    if: type = pull_request OR type = push AND branch != master
+    if: type IN (push, pull_request)
 
 jobs:
   include:
