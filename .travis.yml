@@ -6,9 +6,9 @@ install: true
 
 stages:
   - name: release
-    if: branch = master AND type = pull_request AND repo = jpmorganchase/sandboni-core
+    if: branch = master AND type = pull_request AND repo = jpmorganchase/sandboni-core AND head_branch = develop
   - name: pull request
-    if: type IN (push, pull_request)
+    if: type IN (push, pull_request, cron)
 
 jobs:
   include:
@@ -26,7 +26,7 @@ jobs:
     - stage: pull request
       name: "Pull Request: mvn clean package sonar:sonar"
       script:
-        - mvn clean install sonar:sonar -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
+        - mvn clean install sonar:sonar
 
 deploy:
   provider: releases
@@ -44,7 +44,7 @@ addons:
   sonarcloud:
     organization: "sandboni"
     token:
-      secure: "$GITHUB_TOKEN"
+      secure: "$SONAR_TOKEN"
 
 cache:
   directories:
