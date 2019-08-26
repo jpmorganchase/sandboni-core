@@ -211,4 +211,11 @@
         <system>github</system>
         <url>https://github.com/jpmorganchase/sandboni-core/issues</url>
     </issueManagement>
+
+    <developers>
+        <developer>
+            <name>Viacheslav Lisianskii</name>
+            <email>vlisianskii@gmail.com</email>
+        </developer>
+    </developers>
 </project>

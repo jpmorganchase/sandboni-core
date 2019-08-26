@@ -1,19 +1,37 @@
-install: true
-sudo: false
-
 language: java
-
 jdk:
   - openjdk8
+
+install:
+  true
+
+## Build and release to maven central
+script:
+  - mvn clean package sonar:sonar
+
+## Get the project version
+before_deploy:
+  - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
+  - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
+
+## Create release in GitHub
+deploy:
+  provider: releases
+  api_key:
+    secure: "$SONAR_TOKEN"
+  file:
+    - sandboni-engine/target/sandboni-engine-$project_version.jar
+    - sandboni-scm/target/sandboni-scm-$project_version.jar
+  skip_cleanup: true
+  on:
+    repo: jpmorganchase/sandboni-core
+  name: $project_version
 
 addons:
   sonarcloud:
     organization: "sandboni"
     token:
       secure: "$SONAR_TOKEN"
-
-script:
-  - mvn clean package sonar:sonar
 
 cache:
   directories:
