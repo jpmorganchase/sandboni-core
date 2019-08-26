@@ -57,7 +57,7 @@
         <!-- SonarQube -->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>sandboni</sonar.organization>
-        <sonar.login>2a31a4ab981e7e4dce32a452d9683677d4ff58fa</sonar.login>
+        <sonar.login>f4084d177e7f861ad3e8a6addad8b612b3c62a8d</sonar.login>
         <sonar.language>java</sonar.language>
         <sonar.scm.provider>git</sonar.scm.provider>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>

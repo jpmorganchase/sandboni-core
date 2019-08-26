@@ -13,7 +13,7 @@ stages:
 jobs:
   include:
     - stage: release
-      name: "Release: mvn clean deploy"
+      name: "Develop -> Master release: mvn clean deploy"
       before_install:
         - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
         - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
@@ -22,23 +22,22 @@ jobs:
         - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
       script:
         - mvn clean deploy --settings .maven.xml -DskipTests=true -B -U -Prelease
+      deploy:
+        provider: releases
+        api_key:
+          secure: "$GITHUB_TOKEN"
+        file:
+          - sandboni-engine/target/sandboni-engine-$project_version.jar
+          - sandboni-scm/target/sandboni-scm-$project_version.jar
+        skip_cleanup: true
+        on:
+          repo: jpmorganchase/sandboni-core
+        name: $project_version
 
     - stage: pull request
-      name: "Pull Request: mvn clean package sonar:sonar"
+      name: "Any Pull Request: mvn clean package sonar:sonar"
       script:
         - mvn clean install sonar:sonar
-
-deploy:
-  provider: releases
-  api_key:
-    secure: "$GITHUB_TOKEN"
-  file:
-    - sandboni-engine/target/sandboni-engine-$project_version.jar
-    - sandboni-scm/target/sandboni-scm-$project_version.jar
-  skip_cleanup: true
-  on:
-    repo: jpmorganchase/sandboni-core
-  name: $project_version
 
 addons:
   sonarcloud:
