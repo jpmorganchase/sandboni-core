@@ -3,10 +3,11 @@
     <groupId>com.github.jpmorganchase.sandboni</groupId>
     <artifactId>sandboni-core</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <modules>
-        <module>sandboni-engine</module>
-        <module>sandboni-scm</module>
+        <module>engine</module>
+        <module>scm</module>
     </modules>
 
     <url>https://github.com/jpmorganchase/sandboni-core</url>
@@ -16,7 +17,6 @@
         compromising quality, predicts defect probability and presents actionable test results
         which allows developers to take preemptive measure
     </description>
-    <packaging>pom</packaging>
 
     <properties>
         <java.version>1.8</java.version>

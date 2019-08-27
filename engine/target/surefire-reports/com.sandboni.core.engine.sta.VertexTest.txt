@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.sandboni.core.engine.sta.VertexTest
+-------------------------------------------------------------------------------
+Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s - in com.sandboni.core.engine.sta.VertexTest

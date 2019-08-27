@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.sandboni.core.scm.scope.ChangeScopeTest
+-------------------------------------------------------------------------------
+Tests run: 22, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s - in com.sandboni.core.scm.scope.ChangeScopeTest
