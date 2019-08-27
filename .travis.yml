@@ -30,7 +30,7 @@ jobs:
         skip_cleanup: true
         on:
           repo: jpmorganchase/sandboni-core
-        name: $project_version
+          tags: true
 
     - stage: pull request
       name: "Any Pull Request: mvn clean package sonar:sonar"
