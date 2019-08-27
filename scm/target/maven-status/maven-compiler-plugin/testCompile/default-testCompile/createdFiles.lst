@@ -1,9 +1,0 @@
-com\sandboni\core\scm\proxy\filter\PathFilterTest.class
-com\sandboni\core\scm\resolvers\ChangeScopeResolverTest.class
-com\sandboni\core\scm\CachedRepositoryTest.class
-com\sandboni\core\scm\GitRepositoryTest.class
-com\sandboni\core\scm\scope\ChangeScopeAnalyzerTest.class
-com\sandboni\core\scm\resolvers\RevisionResolverTest.class
-com\sandboni\core\scm\scope\ChangeScopeTest.class
-com\sandboni\core\scm\resolvers\BlameResolverTest.class
-com\sandboni\core\scm\resolvers\TreeWalkResolverTest.class

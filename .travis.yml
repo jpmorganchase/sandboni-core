@@ -5,7 +5,7 @@ install: true
 jobs:
   include:
     - stage: release
-      if: repo = jpmorganchase/sandboni-core #AND branch = master AND head_branch = develop AND type = pull_request
+      if: repo = jpmorganchase/sandboni-core AND branch = master AND head_branch = develop AND type = pull_request
       name: "Develop -> Master release: mvn clean deploy"
       before_install:
         - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import

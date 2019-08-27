@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.sandboni.core.engine.ApplicationTest
--------------------------------------------------------------------------------
-Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.58 s - in com.sandboni.core.engine.ApplicationTest

@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.sandboni.core.engine.finder.bcel.BcelFinderTest
--------------------------------------------------------------------------------
-Tests run: 62, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 4.168 s - in com.sandboni.core.engine.finder.bcel.BcelFinderTest
