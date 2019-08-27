@@ -6,7 +6,7 @@ install: true
 
 stages:
   - name: release
-    if: branch = master #AND type = pull_request AND repo = jpmorganchase/sandboni-core AND head_branch = develop
+    if: branch = master AND type = pull_request AND repo = jpmorganchase/sandboni-core AND head_branch = develop
   - name: pull request
     if: type IN (push, pull_request, cron)
 
