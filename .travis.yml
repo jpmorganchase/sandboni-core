@@ -28,8 +28,14 @@ jobs:
         name: $project_version
 
     - stage: pull request
+      if: repo = jpmorganchase/sandboni-core AND (NOT head_branch = develop)
+      name: "Any Pull Request Build: mvn clean package sonar:sonar"
+      script:
+        - mvn clean install sonar:sonar
+
+    - stage: personal forked
       if: NOT repo = jpmorganchase/sandboni-core AND type IN (push, pull_request, cron)
-      name: "Any Pull Request: mvn clean package sonar:sonar"
+      name: "Personal Forked Branch: mvn clean package sonar:sonar"
       script:
         - mvn clean install sonar:sonar
 
