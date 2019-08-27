@@ -14,7 +14,7 @@ jobs:
         - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
         - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
       script:
-        - mvn clean deploy -DskipTests=true --settings .maven.xml -B -U -Prelease -DuniqueVersion=false
+        - mvn clean deploy -DskipTests=true --settings .maven.xml -B -U -Prelease
       deploy:
         provider: releases
         api_key:
