@@ -18,7 +18,6 @@ public class Application {
     private Arguments arguments;
 
     public static void main(String[] args) {
-
         Application app = new Application();
         app.buildArguments();
         Arguments arguments = app.getArguments();
