@@ -1,18 +1,11 @@
 language: java
-jdk:
-  - openjdk8
-
+jdk: openjdk8
 install: true
-
-stages:
-  - name: release
-    if: branch = master AND type = pull_request AND repo = jpmorganchase/sandboni-core AND head_branch = develop
-  - name: pull request
-    if: type IN (push, pull_request, cron)
 
 jobs:
   include:
     - stage: release
+      if: repo = jpmorganchase/sandboni-core AND branch = master AND head_branch = develop AND type = pull_request
       name: "Develop -> Master release: mvn clean deploy"
       before_install:
         - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
@@ -21,21 +14,28 @@ jobs:
         - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
         - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
       script:
-        - mvn clean deploy --settings .maven.xml -DskipTests=true -B -U -Prelease
+        - mvn clean deploy -DskipTests=true --settings .maven.xml -B -U -Prelease
       deploy:
         provider: releases
         api_key:
           secure: "$GITHUB_TOKEN"
         file:
-          - sandboni-engine/target/sandboni-engine-$project_version.jar
-          - sandboni-scm/target/sandboni-scm-$project_version.jar
+          - engine/target/sandboni-engine-$project_version.jar
+          - scm/target/sandboni-scm-$project_version.jar
         skip_cleanup: true
         on:
           repo: jpmorganchase/sandboni-core
         name: $project_version
 
     - stage: pull request
-      name: "Any Pull Request: mvn clean package sonar:sonar"
+      if: repo = jpmorganchase/sandboni-core AND (NOT head_branch = develop)
+      name: "Any Pull Request Build: mvn clean package sonar:sonar"
+      script:
+        - mvn clean install sonar:sonar
+
+    - stage: personal forked
+      if: NOT repo = jpmorganchase/sandboni-core AND type IN (push, pull_request, cron)
+      name: "Personal Forked Branch: mvn clean package sonar:sonar"
       script:
         - mvn clean install sonar:sonar
 
