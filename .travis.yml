@@ -12,14 +12,14 @@ jobs:
   include:
     - stage: release
       name: "Develop -> Master release: mvn clean deploy"
-#      before_install:
-#        - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
-#        - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
+      before_install:
+        - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
+        - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
       before_deploy:
         - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
         - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
       script:
-        - mvn clean deploy -DskipTests=true #--settings .maven.xml -B -U -Prelease
+        - mvn clean deploy -DskipTests=true --settings .maven.xml -B -U -Prelease
       deploy:
         provider: releases
         api_key:
