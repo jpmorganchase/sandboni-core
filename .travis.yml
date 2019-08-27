@@ -4,9 +4,15 @@ jdk:
 
 install: true
 
+#stages:
+#  - name: release
+#    if: branch = master AND type = pull_request AND repo = jpmorganchase/sandboni-core AND head_branch = develop
+#  - name: pull request
+#    if: type IN (push, pull_request, cron)
+
 stages:
   - name: release
-    if: branch = master AND type = pull_request AND repo = jpmorganchase/sandboni-core AND head_branch = develop
+    if: repo = jpmorganchase/sandboni-core AND branch = master AND AND head_branch = develop AND type = pull_request
   - name: pull request
     if: type IN (push, pull_request, cron)
 
