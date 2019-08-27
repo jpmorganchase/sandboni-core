@@ -3,23 +3,23 @@ jdk: openjdk8
 install: true
 
 stages:
-  - name: release
-    if: repo = jpmorganchase/sandboni-core AND branch = master AND head_branch = develop AND type = pull_request
   - name: pull request
-    if: type IN (push, pull_request, cron)
+    if: NOT repo = jpmorganchase/sandboni-core AND type IN (push, pull_request, cron)
+  - name: release
+    if: repo = jpmorganchase/sandboni-core #AND branch = master AND head_branch = develop AND type = pull_request
 
 jobs:
   include:
     - stage: release
       name: "Develop -> Master release: mvn clean deploy"
-      before_install:
-        - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
-        - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
+#      before_install:
+#        - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
+#        - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
       before_deploy:
         - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
         - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
       script:
-        - mvn clean deploy --settings .maven.xml -DskipTests=true -B -U -Prelease
+        - mvn clean deploy #--settings .maven.xml -DskipTests=true -B -U -Prelease
       deploy:
         provider: releases
         api_key:
