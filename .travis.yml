@@ -2,15 +2,10 @@ language: java
 jdk: openjdk8
 install: true
 
-stages:
-  - name: pull request
-    if: NOT repo = jpmorganchase/sandboni-core AND type IN (push, pull_request, cron)
-  - name: release
-    if: repo = jpmorganchase/sandboni-core #AND branch = master AND head_branch = develop AND type = pull_request
-
 jobs:
   include:
     - stage: release
+      if: repo = jpmorganchase/sandboni-core #AND branch = master AND head_branch = develop AND type = pull_request
       name: "Develop -> Master release: mvn clean deploy"
       before_install:
         - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
@@ -19,7 +14,7 @@ jobs:
         - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
         - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
       script:
-        - mvn clean deploy -DskipTests=true --settings .maven.xml -B -U -Prelease
+        - mvn clean deploy -DskipTests=true --settings .maven.xml -B -U -Prelease -DuniqueVersion=false
       deploy:
         provider: releases
         api_key:
@@ -33,6 +28,7 @@ jobs:
           tags: true
 
     - stage: pull request
+      if: NOT repo = jpmorganchase/sandboni-core AND type IN (push, pull_request, cron)
       name: "Any Pull Request: mvn clean package sonar:sonar"
       script:
         - mvn clean install sonar:sonar
