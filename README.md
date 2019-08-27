@@ -47,8 +47,8 @@ The above diagram is a high-level overview of the Sandboni architecture. For mor
 
 The code is in a [multi-module](https://maven.apache.org/guides/mini/guide-multiple-modules.html) project structure
 
-* sandboni-scm - The module builds a change scope between two revisions 
-* sandboni-engine - The module analyzes bytecode by locations, builds CDG and it contains the main algorithms for the graph traversing 
+* scm - The module builds a change scope between two revisions 
+* engine - The module analyzes bytecode by locations, builds CDG and it contains the main algorithms for the graph traversing 
 
 ### Building the project
 
@@ -74,8 +74,8 @@ Expected output:
 -Dsandboni.scm.from=LATEST_PUSH
 -Dsandboni.scm.to=LOCAL_CHANGES_NOT_COMMITTED
 -Dsandboni.scm.repository=.
--Dsandboni.source.locations=./sandboni-engine/target/classes,./sandboni-scm/target/classes
--Dsandboni.test.locations=./sandboni-engine/target/test-classes,./sandboni-scm/target/test-classes
+-Dsandboni.source.locations=./engine/target/classes,./scm/target/classes
+-Dsandboni.test.locations=./engine/target/test-classes,./scm/target/test-classes
 ```
 
 ## Contributing

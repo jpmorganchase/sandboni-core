@@ -6,7 +6,7 @@ install: true
 
 stages:
   - name: release
-    if: branch = master AND type = pull_request AND repo = jpmorganchase/sandboni-core AND head_branch = develop
+    if: branch = master #AND type = pull_request AND repo = jpmorganchase/sandboni-core AND head_branch = develop
   - name: pull request
     if: type IN (push, pull_request, cron)
 
@@ -27,8 +27,8 @@ jobs:
         api_key:
           secure: "$GITHUB_TOKEN"
         file:
-          - sandboni-engine/target/sandboni-engine-$project_version.jar
-          - sandboni-scm/target/sandboni-scm-$project_version.jar
+          - engine/target/sandboni-engine-$project_version.jar
+          - scm/target/sandboni-scm-$project_version.jar
         skip_cleanup: true
         on:
           repo: jpmorganchase/sandboni-core
