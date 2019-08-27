@@ -38,7 +38,7 @@ public class GitRepositoryTest {
     @Test
     public void testGetJiraSet() throws SourceControlException {
         List<Integer> list = Arrays.asList(1, 2, 8, 9, 10, 100, 9999999);
-        String filepath = "sandboni-engine/src/main/java/com/sandboni/core/engine/Application.java";
+        String filepath = "engine/src/main/java/com/sandboni/core/engine/Application.java";
         Set<RevInfo> jiraSet = gitRepository.getJiraSet(filepath, list);
         assertNotNull(jiraSet);
         assertFalse(jiraSet.isEmpty());

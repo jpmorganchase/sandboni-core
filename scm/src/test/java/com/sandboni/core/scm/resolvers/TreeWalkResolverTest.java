@@ -23,7 +23,7 @@ public class TreeWalkResolverTest {
         String filepath = "com/sandboni/core/engine/Application.java";
         String fullPath = treeWalkResolver.getFullPath(filepath);
         assertNotNull(fullPath);
-        assertEquals("sandboni-engine/src/main/java/com/sandboni/core/engine/Application.java", fullPath);
+        assertEquals("engine/src/main/java/com/sandboni/core/engine/Application.java", fullPath);
     }
 
     @Test
