@@ -25,7 +25,7 @@ jobs:
         skip_cleanup: true
         on:
           repo: jpmorganchase/sandboni-core
-          tags: true
+        name: $project_version
 
     - stage: pull request
       if: NOT repo = jpmorganchase/sandboni-core AND type IN (push, pull_request, cron)
