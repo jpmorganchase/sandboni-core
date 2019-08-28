@@ -33,7 +33,7 @@ jobs:
         - mvn clean install sonar:sonar
       after_success:
         - echo "Running after_success stage"
-        - ./ci/breakbuild.sh
+        - chmod +x ./ci/breakbuild.sh
 
 
 
