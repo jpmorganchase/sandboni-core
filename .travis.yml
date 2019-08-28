@@ -34,7 +34,7 @@ jobs:
       script:
         - mvn clean install sonar:sonar
       after_success:
-        - ./scripts/breakbuild.sh
+        - bash ./scripts/breakbuild.sh
 
 
 
