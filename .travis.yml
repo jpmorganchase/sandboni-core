@@ -1,3 +1,5 @@
+dist: trusty
+
 language: java
 jdk: openjdk8
 install: true
@@ -30,10 +32,9 @@ jobs:
     - stage: sonar
       name: "Any push or pull request"
       script:
-        - mvn clean install cobertura:check sonar:sonar
-#      after_success:
-#        - echo "Running after_success stage"
-#        - ./scripts/breakbuild.sh
+        - mvn clean install sonar:sonar
+      after_success:
+        - ./scripts/breakbuild.sh
 
 
 
