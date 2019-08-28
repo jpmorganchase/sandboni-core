@@ -1,18 +1,16 @@
-set -o errexit
-set -o pipefail
-set -o nounset
-
-REPORT_PATH="report-task.txt"
-CE_TASK_ID_KEY="ceTaskId="
-
 SLEEP_TIME=5
 
-echo "QG Script --> Using SonarQube instance ${SONAR_INSTANCE}"
-echo "QG Script --> Using SonarQube access token ${SONAR_TOKEN}"
+if [ -z "SONAR_INSTANCE" ]; then
+   echo "QG Script --> No SonarCloud project key"
+   exit 1
+fi
 
-# get the compute engine task id
-ce_task_id=$(cat $REPORT_PATH | grep $CE_TASK_ID_KEY | cut -d'=' -f2)
-echo "QG Script --> Using task id of ${ce_task_id}"
+echo "QG Script --> Using SonarCloud project key ${SONAR_INSTANCE}"
+API_CE_ACTIVITY = "https://sonarcloud.io/api/ce/activity?component=${SONAR_INSTANCE}&type=REPORT"
+echo "QG Script --> Call SonarCloud api activity ${API_CE_ACTIVITY}"
+
+ce_activity_result = $(curl -s -u ${API_CE_ACTIVITY})
+ce_task_id = (${ce_activity_result} | jq -r .task.status)
 
 if [ -z "$ce_task_id" ]; then
    echo "QG Script --> No task id found"
