@@ -30,6 +30,7 @@ jobs:
         name: $project_version
 
     - stage: sonar
+      if: repo = jpmorganchase/sandboni-core
       name: "Any push or pull request"
       script:
         - mvn clean install sonar:sonar
