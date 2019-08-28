@@ -1,7 +1,7 @@
 set -o errexit
 set -o pipefail
 set -o nounset
-"
+
 REPORT_PATH=${sonar.scanner.metadataFilePath}
 echo "aaa: + ${REPORT_PATH}"
 CE_TASK_ID_KEY="ceTaskId="
@@ -58,9 +58,7 @@ echo "QG Script --> Using analysis id of ${ce_analysis_id}"
 qg_status=$(curl -s -u $SONAR_ACCESS_TOKEN: $SONAR_INSTANCE/api/qualitygates/project_status?analysisId="${ce_analysis_id}" | jq -r .projectStatus.status)
 echo "QG Script --> Quality Gate status is ${qg_status}"
 
-echo "above"
 if [ "${qg_status}" != "OK" ]; then
-  echo "something"
   echo "QG Script --> Quality gate is not OK - exiting with error"
   exit 1
 fi
