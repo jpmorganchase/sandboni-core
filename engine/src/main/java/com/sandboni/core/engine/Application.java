@@ -55,7 +55,7 @@ public class Application {
         return arguments;
     }
 
-    public Map<String, String> getProperties() {
+    private Map<String, String> getProperties() {
         if (propertiesMap == null) {
             propertiesMap = preparePropertiesMap();
         }
