@@ -1,3 +1,5 @@
+echo "script has been started"
+
 set -o errexit
 set -o pipefail
 set -o nounset
