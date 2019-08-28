@@ -2,7 +2,7 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-REPORT_PATH=".sonar/report-task.txt"
+REPORT_PATH="report-task.txt"
 CE_TASK_ID_KEY="ceTaskId="
 
 SLEEP_TIME=5
