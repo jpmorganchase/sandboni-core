@@ -27,17 +27,15 @@ jobs:
           repo: jpmorganchase/sandboni-core
         name: $project_version
 
-    - stage: pull request
-      if: repo = jpmorganchase/sandboni-core AND (NOT head_branch = develop)
-      name: "Any Pull Request Build: mvn clean package sonar:sonar"
+    - stage: sonar
+      name: "Any push or pull request"
       script:
         - mvn clean install sonar:sonar
+      after_success:
+        - echo "Running after_success stage"
+        - ./ci/breakbuild.sh
 
-    - stage: personal forked
-      if: NOT repo = jpmorganchase/sandboni-core AND type IN (push, pull_request, cron)
-      name: "Personal Forked Branch: mvn clean package sonar:sonar"
-      script:
-        - mvn clean install sonar:sonar
+
 
 addons:
   sonarcloud:
