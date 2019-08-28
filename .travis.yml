@@ -8,8 +8,8 @@ jobs:
       if: repo = jpmorganchase/sandboni-core AND branch = master AND head_branch = develop AND type = pull_request
       name: "Develop -> Master release: mvn clean deploy"
       before_install:
-        - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
-        - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
+        - if [ ! -z "$GPG_SECRET_KEYS" ]; echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
+        - if [ ! -z "$GPG_OWNERTRUST" ]; echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
       before_deploy:
         - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
         - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
@@ -20,20 +20,20 @@ jobs:
         api_key:
           secure: "$GITHUB_TOKEN"
         file:
-          - engine/target/sandboni-engine-$project_version.jar
-          - scm/target/sandboni-scm-$project_version.jar
+          - target/sandboni-*.jar
         skip_cleanup: true
         on:
           repo: jpmorganchase/sandboni-core
+          tags: true
         name: $project_version
 
     - stage: sonar
       name: "Any push or pull request"
       script:
-        - mvn clean install sonar:sonar
-      after_success:
-        - echo "Running after_success stage"
-        - chmod +x ./ci/breakbuild.sh
+        - mvn clean install cobertura:check sonar:sonar
+#      after_success:
+#        - echo "Running after_success stage"
+#        - ./scripts/breakbuild.sh
 
 
 
