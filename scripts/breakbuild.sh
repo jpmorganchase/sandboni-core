@@ -2,8 +2,10 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-REPORT_PATH=${sonar.scanner.metadataFilePath}
-echo "aaa: + ${REPORT_PATH}"
+echo "metadataFilePath: ${sonar.scanner.metadataFilePath}"
+echo "sonar.login: ${sonar.login}"
+
+REPORT_PATH="${sonar.scanner.metadataFilePath}"
 CE_TASK_ID_KEY="ceTaskId="
 
 SONAR_INSTANCE="${1}"
