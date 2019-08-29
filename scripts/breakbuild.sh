@@ -9,7 +9,7 @@ echo "Using SonarCloud project key ${SONAR_PROJECT_KEY}"
 api_ce_activity="https://sonarcloud.io/api/ce/activity?component=${SONAR_PROJECT_KEY}&type=REPORT"
 echo "Call SonarCloud api activity ${api_ce_activity}"
 
-ce_activity_result = $(curl -s -u ${api_ce_activity})
+ce_activity_result = $(curl -s -u $api_ce_activity)
 latest_task=(${ce_activity_result} | jq -r .tasks[0])
 ce_task_id=(${latest_task} | jq -r .id)
 
