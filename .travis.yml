@@ -35,7 +35,9 @@ jobs:
       script:
         - mvn clean install sonar:sonar
       after_success:
-        - source ./scripts/breakbuild.sh
+        #- source ./scripts/breakbuild.sh
+        - PowerShell -Command 'Set-ExecutionPolicy -ExecutionPolicy RemoteSigned'
+        - PowerShell -File ./scripts/breakbuild.ps1
 
 
 

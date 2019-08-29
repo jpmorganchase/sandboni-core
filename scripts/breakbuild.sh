@@ -7,13 +7,9 @@ fi
 echo "Using SonarCloud project key ${SONAR_INSTANCE}"
 
 API_CE_ACTIVITY = "https://sonarcloud.io/api/ce/activity?component=$SONAR_INSTANCE&type=REPORT"
-if [ -z "API_CE_ACTIVITY" ]; then
-   echo "QG Script --> No SonarCloud project activity url"
-   exit 1
-fi
 echo "Call SonarCloud api activity ${API_CE_ACTIVITY}"
 
-ce_activity_result = $(curl -s -u ${API_CE_ACTIVITY})
+ce_activity_result = curl -s -u ${API_CE_ACTIVITY}
 ce_task_id = (${ce_activity_result} | jq -r .task.status)
 
 if [ -z "$ce_task_id" ]; then
