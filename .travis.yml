@@ -33,11 +33,9 @@ jobs:
       if: repo = jpmorganchase/sandboni-core
       name: "Any push or pull request"
       script:
-        - mvn clean install sonar:sonar
+        - mvn clean install sonar:sonar -DskipTests=true
       after_success:
         - source ./scripts/breakbuild.sh
-        #- PowerShell -Command 'Set-ExecutionPolicy -ExecutionPolicy RemoteSigned'
-        #- PowerShell -File ./scripts/breakbuild.ps1
 
 
 
