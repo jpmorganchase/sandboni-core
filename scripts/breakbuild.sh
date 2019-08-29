@@ -1,4 +1,5 @@
 SLEEP_TIME=5
+SONAR_INSTANCE="https://sonarcloud.io"
 
 if [ -z "SONAR_PROJECT_KEY" ]; then
    echo "QG Script --> No SonarCloud project key"
@@ -6,10 +7,7 @@ if [ -z "SONAR_PROJECT_KEY" ]; then
 fi
 echo "Using SonarCloud project key ${SONAR_PROJECT_KEY}"
 
-api_ce_activity="https://sonarcloud.io/api/ce/activity?component=${SONAR_PROJECT_KEY}&type=REPORT"
-echo "Call SonarCloud api activity ${api_ce_activity}"
-
-ce_activity_result = $(curl -s -u $api_ce_activity)
+ce_activity_result = $(curl -u "${SONAR_TOKEN}": "${SONAR_INSTANCE}"/api/ce/activity?component=${SONAR_PROJECT_KEY}&type=REPORT)
 latest_task=(${ce_activity_result} | jq -r .tasks[0])
 ce_task_id=(${latest_task} | jq -r .id)
 
@@ -25,7 +23,7 @@ wait_for_success=true
 
 while [ "${wait_for_success}" = "true" ]
 do
-  ce_status=$(curl -s -u "${SONAR_TOKEN}": "${SONAR_PROJECT_KEY}"/api/ce/task?id=${ce_task_id} | jq -r .task.status)
+  ce_status=$(curl -s -u "${SONAR_TOKEN}": "${SONAR_INSTANCE}"/api/ce/task?id=${ce_task_id} | jq -r .task.status)
 
   echo "QG Script --> Status of SonarQube task is ${ce_status}"
 
