@@ -7,13 +7,8 @@ if [ -z "SONAR_PROJECT_KEY" ]; then
 fi
 echo "Using SonarCloud project key ${SONAR_PROJECT_KEY}"
 
-latest_task=$(curl -s -u "${SONAR_TOKEN}": "${SONAR_INSTANCE}"/api/ce/activity?component=${SONAR_PROJECT_KEY}&type=REPORT | jq -r .tasks[0])
-echo "latest_task ${latest_task}"
-
-latest_id=$(curl -s -u "${SONAR_TOKEN}": "${SONAR_INSTANCE}"/api/ce/activity?component=${SONAR_PROJECT_KEY}&type=REPORT | jq -r .tasks[0].id)
-echo "latest_id ${latest_id}"
-
-ce_task_id=(${latest_task} | jq -r .id)
+ce_task_id=$(curl -s -u "${SONAR_TOKEN}": "${SONAR_INSTANCE}"/api/ce/activity?component=${SONAR_PROJECT_KEY}&type=REPORT | jq .tasks[0].id)
+echo "ce_task_id ${ce_task_id}"
 
 if [ -z "$ce_task_id" ]; then
    echo "QG Script --> No task id found"
