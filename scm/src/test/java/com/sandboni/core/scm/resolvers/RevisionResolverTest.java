@@ -45,11 +45,11 @@ public class RevisionResolverTest {
     @Test
     public void testLatestPushAndUncommitted() throws SourceControlException {
         RevisionScope<ObjectId> scope = revisionResolver.resolve(DiffConstants.LATEST_PUSH, DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
-//        assertNotNull(scope);
-//        assertNotNull(scope.getFrom());
-//        assertNotEquals(ObjectId.zeroId(), scope.getFrom());
-//        assertNotNull(scope.getTo());
-//        assertEquals(ObjectId.zeroId(), scope.getTo());
+        assertNotNull(scope);
+        assertNotNull(scope.getFrom());
+        assertNotEquals(ObjectId.zeroId(), scope.getFrom());
+        assertNotNull(scope.getTo());
+        assertEquals(ObjectId.zeroId(), scope.getTo());
     }
 
 //    @Test
