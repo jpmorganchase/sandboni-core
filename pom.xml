@@ -107,6 +107,7 @@
                         <artifactId>maven-release-plugin</artifactId>
                         <version>2.4.2</version>
                         <configuration>
+                            <tag>parent-${releaseVersion}</tag>
                             <tagNameFormat>@{project.version}</tagNameFormat>
                             <autoVersionSubmodules>true</autoVersionSubmodules>
                         </configuration>
