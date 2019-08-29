@@ -1,17 +1,24 @@
 dist: trusty
-
 language: java
 jdk: openjdk8
 install: true
 
 jobs:
   include:
+    - stage: sonar
+      if: repo = jpmorganchase/sandboni-core
+      name: "Any push or pull request"
+      script:
+        - mvn clean install sonar:sonar
+      after_success:
+        - source ./scripts/breakbuild.sh
+
     - stage: release
       if: repo = jpmorganchase/sandboni-core #AND branch = master AND head_branch = develop AND type = pull_request
       name: "Develop -> Master release: mvn clean deploy"
       before_install:
-        - if [ ! -z "$GPG_SECRET_KEYS" ]; echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
-        - if [ ! -z "$GPG_OWNERTRUST" ]; echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
+        - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
+        - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
       before_deploy:
         - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
         - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
@@ -28,16 +35,6 @@ jobs:
           repo: jpmorganchase/sandboni-core
           tags: true
         name: $project_version
-
-    - stage: sonar
-      if: repo = jpmorganchase/sandboni-core
-      name: "Any push or pull request"
-      script:
-        - mvn clean install sonar:sonar
-      after_success:
-        - source ./scripts/breakbuild.sh
-
-
 
 addons:
   sonarcloud:
