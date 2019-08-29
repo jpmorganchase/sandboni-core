@@ -7,7 +7,7 @@ if [ -z "SONAR_PROJECT_KEY" ]; then
 fi
 echo "Using SonarCloud project key ${SONAR_PROJECT_KEY}"
 
-ce_task_id=$(curl -s -u "${SONAR_TOKEN}": "${SONAR_INSTANCE}"/api/ce/activity?component=${SONAR_PROJECT_KEY}&type=REPORT | jq .tasks[0].id)
+ce_task_id=$(curl -s -u "${SONAR_TOKEN}": "${SONAR_INSTANCE}"/api/ce/activity?component=${SONAR_PROJECT_KEY}&type=REPORT | jq '.tasks[0].id')
 echo "ce_task_id ${ce_task_id}"
 
 if [ -z "$ce_task_id" ]; then
@@ -15,9 +15,6 @@ if [ -z "$ce_task_id" ]; then
    exit 1
 fi
 
-# grab the status of the task
-# if CANCELLED or FAILED, fail the Build
-# if SUCCESS, stop waiting and grab the analysisId
 wait_for_success=true
 
 while [ "${wait_for_success}" = "true" ]
