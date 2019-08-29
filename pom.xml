@@ -107,6 +107,7 @@
                         <artifactId>maven-release-plugin</artifactId>
                         <version>2.4.2</version>
                         <configuration>
+                            <tag>${releaseVersion}</tag>
                             <tagNameFormat>@{project.version}</tagNameFormat>
                             <releaseLabel>${releaseVersion}</releaseLabel>
                             <releaseVersion>1.0.2</releaseVersion>
