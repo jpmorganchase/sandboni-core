@@ -44,11 +44,11 @@ do
 
 done
 
-ce_analysis_id=$(curl -s -u $SONAR_TOKEN: $SONAR_PROJECT_KEY/api/ce/task?id=$ce_task_id | jq -r .task.analysisId)
+ce_analysis_id=$(curl -s -u $SONAR_TOKEN: $SONAR_INSTANCE/api/ce/task?id=$ce_task_id | jq -r .task.analysisId)
 echo "QG Script --> Using analysis id of ${ce_analysis_id}"
 
 # get the status of the quality gate for this analysisId
-qg_status=$(curl -s -u $SONAR_TOKEN: $SONAR_PROJECT_KEY/api/qualitygates/project_status?analysisId="${ce_analysis_id}" | jq -r .projectStatus.status)
+qg_status=$(curl -s -u $SONAR_TOKEN: $SONAR_INSTANCE/api/qualitygates/project_status?analysisId="${ce_analysis_id}" | jq -r .projectStatus.status)
 echo "QG Script --> Quality Gate status is ${qg_status}"
 
 if [ "${qg_status}" != "OK" ]; then
