@@ -7,7 +7,9 @@ if [ -z "SONAR_PROJECT_KEY" ]; then
 fi
 echo "Using SonarCloud project key ${SONAR_PROJECT_KEY}"
 
-ce_activity_result = $(curl -u "${SONAR_TOKEN}": "${SONAR_INSTANCE}"/api/ce/activity?component=${SONAR_PROJECT_KEY}&type=REPORT)
+ce_activity_result=$(curl -u "${SONAR_TOKEN}": "${SONAR_INSTANCE}"/api/ce/activity?component=${SONAR_PROJECT_KEY}&type=REPORT)
+echo "ce_activity_result ${ce_activity_result}"
+
 latest_task=(${ce_activity_result} | jq -r .tasks[0])
 ce_task_id=(${latest_task} | jq -r .id)
 
