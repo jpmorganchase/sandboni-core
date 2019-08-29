@@ -8,7 +8,7 @@ fi
 
 tasks=$(curl -s -u $SONAR_TOKEN: $SONAR_INSTANCE/api/ce/activity?component=${SONAR_PROJECT_KEY}&type=REPORT)
 ce_task_id=$(echo $tasks | jq -r '.tasks[0].id')
-echo ""QG Script --> Task id ${ce_task_id}"
+echo "QG Script --> Task id ${ce_task_id}"
 
 if [ -z "$ce_task_id" ]; then
    echo "QG Script --> No task id found"
