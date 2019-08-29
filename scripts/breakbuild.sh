@@ -1,4 +1,4 @@
-SLEEP_TIME=5
+SLEEP_TIME=2
 SONAR_INSTANCE="https://sonarcloud.io"
 
 if [ -z "SONAR_PROJECT_KEY" ]; then
@@ -15,10 +15,8 @@ if [ -z "$ce_task_id" ]; then
    exit 1
 fi
 
-wait_for_success=true
-
-while [ "${wait_for_success}" = "true" ]
-do
+end=$((SECONDS+20))
+while [ $SECONDS -lt $end ] do
   ce_status=$(curl -s -u "${SONAR_TOKEN}": "${SONAR_INSTANCE}"/api/ce/task?id=${ce_task_id} | jq -r .task.status)
 
   echo "QG Script --> Status of SonarCloud task is ${ce_status}"
@@ -35,11 +33,10 @@ do
 
   if [ "${ce_status}" = "SUCCESS" ]; then
     echo "QG Script --> SonarCloud job has succeeded"
-    wait_for_success=false
+    break
   fi
 
   sleep "${SLEEP_TIME}"
-
 done
 
 ce_analysis_id=$(curl -s -u $SONAR_TOKEN: $SONAR_INSTANCE/api/ce/task?id=$ce_task_id | jq -r .task.analysisId)

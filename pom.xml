@@ -88,10 +88,20 @@
                         <artifactId>nexus-staging-maven-plugin</artifactId>
                         <version>${nexus-staging-maven-plugin.version}</version>
                         <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>default-deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <configuration>
                             <serverid>ossrh</serverid>
                             <nexusurl>https://oss.sonatype.org/</nexusurl>
                             <autoreleaseafterclose>true</autoreleaseafterclose>
+                            <skipStaging>true</skipStaging>
                         </configuration>
                     </plugin>
                     <!-- To generate javadoc -->
@@ -244,19 +254,22 @@
     </dependencies>
 
     <scm>
-        <url>https://github.com/jpmorganchase/sandboni-core</url>
-        <connection>scm:git:https://github.com/jpmorganchase/sandboni-core.git</connection>
-        <developerConnection>scm:git:https://github.com/jpmorganchase/sandboni-core.git</developerConnection>
-        <tag>HEAD</tag>
+        <connection>scm:git:git@github.com:jpmorganchase/sandboni-core.git</connection>
+        <url>scm:git:git@github.com:jpmorganchase/sandboni-core.git</url>
+        <developerConnection>scm:git:git@github.com:jpmorganchase/sandboni-core.git</developerConnection>
     </scm>
     <distributionManagement>
+        <site>
+            <id>api.wiki</id>
+            <url>https://github.com/jpmorganchase/sandboni-core/wiki</url>
+        </site>
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
             <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
     </distributionManagement>
 
