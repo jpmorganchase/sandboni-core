@@ -11,24 +11,6 @@
     <artifactId>sandboni-engine</artifactId>
     <name>Sandboni Core Engine</name>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.4.2</version>
-                <configuration>
-                    <tag>${releaseVersion}</tag>
-                    <tagNameFormat>@{project.version}</tagNameFormat>
-                    <releaseLabel>${releaseVersion}</releaseLabel>
-                    <releaseVersion>1.0.2</releaseVersion>
-                    <developmentVersion>${project.version}</developmentVersion>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>com.github.jpmorganchase.sandboni</groupId>

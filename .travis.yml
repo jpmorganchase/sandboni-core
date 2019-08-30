@@ -9,7 +9,7 @@ jobs:
 #      if: repo = jpmorganchase/sandboni-core
 #      name: "Any push or pull request"
 #      script:
-#        - mvn clean install sonar:sonar
+#        - mvn clean verify sonar:sonar
 #      after_success:
 #        - source ./scripts/breakbuild.sh
 
@@ -22,7 +22,7 @@ jobs:
       before_deploy:
         - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
       script:
-        - mvn release:clean release:prepare release:perform -DskipTests=true #clean deploy -DskipTests=true --settings .maven.xml -B -U -Prelease
+        - mvn clean deploy -DskipTests=true --settings .maven.xml -B -U -Prelease
       deploy:
         provider: releases
         api_key:
