@@ -8,4 +8,4 @@ else
     echo "No Git tag detected - keep Maven POM version untouched"
 fi
 
-mvn clean deploy -Prelease -DskipTests=true --settings .maven.xml -B -U
+mvn clean deploy -Prelease -DskipTests=true -Ddependency-check.skip=true --settings .maven.xml -B -U

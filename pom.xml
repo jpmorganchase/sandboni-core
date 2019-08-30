@@ -86,6 +86,24 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>cy.github</groupId>
+                        <artifactId>github-release-plugin</artifactId>
+                        <version>0.5.1</version>
+                        <configuration>
+                            <tagName>${project.version}</tagName>
+                            <releaseTitle>${project.artifactId}-${project.version}</releaseTitle>
+                            <serverId>github</serverId>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>gh-upload</goal>
+                                </goals>
+                                <phase>deploy</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
                         <version>${nexus-staging-maven-plugin.version}</version>

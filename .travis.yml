@@ -19,21 +19,20 @@ jobs:
       before_install:
         - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
         - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
-      before_deploy:
-        - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
-      script:
-        - source ./scripts/deploy.sh
+#      before_deploy:
+#        - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
       deploy:
         provider: releases
         api_key:
           secure: "$GITHUB_TOKEN"
+        script: source ./scripts/release.sh
         file:
           - target/sandboni-*.jar
         skip_cleanup: true
         on:
           repo: jpmorganchase/sandboni-core
           tags: true
-        name: $project_version
+          jdk: openjdk8
 
 addons:
   sonarcloud:
