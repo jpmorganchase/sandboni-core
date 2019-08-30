@@ -102,6 +102,7 @@
                         <configuration>
                             <serverid>ossrh</serverid>
                             <nexusurl>https://oss.sonatype.org/</nexusurl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
                             <skipStaging>true</skipStaging>
                         </configuration>
                     </plugin>
@@ -288,7 +289,7 @@
         </snapshotRepository>
         <repository>
             <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 
