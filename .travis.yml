@@ -30,8 +30,8 @@ jobs:
         - branch_name="release-${release_version}"
 
         # prepare current branch for release, create release branch, increment development version on current branch
-        #- mvn --settings .maven.xml -B -DbranchName=${branch_name} release:branch || travis_terminate 1
-        #- git checkout $branch_name || travis_terminate 1
+        - mvn --settings .maven.xml -B -DbranchName=${branch_name} release:branch || travis_terminate 1
+        - git checkout $branch_name || travis_terminate 1
 
         # remove SNAPSHOT version suffix, create a tag in GitHub, increment development version on release branch
         - mvn --settings .maven.xml -B -DpushChanges=true release:prepare || travis_terminate 1
