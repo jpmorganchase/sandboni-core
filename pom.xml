@@ -78,7 +78,7 @@
             <id>release</id>
             <activation>
                 <property>
-                    <name>performRelease</name>
+                    <name>release</name>
                     <value>true</value>
                 </property>
             </activation>
@@ -120,7 +120,7 @@
                             <failOnError>false</failOnError>
                             <linksource>true</linksource>
                             <show>protected</show>
-                            <source>1.8</source>
+                            <source>${java.version}</source>
                         </configuration>
                         <executions>
                             <execution>
@@ -273,7 +273,7 @@
         <url>https://github.com/jpmorganchase/sandboni-core</url>
         <connection>scm:git:https://github.com/jpmorganchase/sandboni-core.git</connection>
         <developerConnection>scm:git:https://github.com/jpmorganchase/sandboni-core.git</developerConnection>
-        <tag>release-1.0.1</tag>
+        <tag>HEAD</tag>
     </scm>
     <distributionManagement>
         <site>

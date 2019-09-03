@@ -7,7 +7,6 @@
             <username>${env.SONATYPE_USERNAME}</username>
             <password>${env.SONATYPE_PASSWORD}</password>
         </server>
-
     </servers>
 
     <profiles>
