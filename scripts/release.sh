@@ -7,7 +7,7 @@ mvn --settings .maven.xml -B -DbranchName=${branch_name} release:branch || travi
 git checkout $branch_name || travis_terminate 1
 
 # remove SNAPSHOT version suffix, create a tag in GitHub, increment development version on release branch
-mvn --settings .maven.xml -B -DpushChanges=true release:prepare || travis_terminate 1
+mvn --settings .maven.xml -B -DpushChanges=true release:prepare -Dusername=${GITHUB_USERNAME} -Dpassword=${GITHUB_TOKEN} || travis_terminate 1
 
 # check out tag from GitHub, build then deploy to OSSRH
 echo $GPG_SECRET_KEYS | base64 --decode | gpg --import
