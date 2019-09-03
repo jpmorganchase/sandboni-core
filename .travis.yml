@@ -1,18 +1,21 @@
+dist: trusty
 language: java
 jdk: openjdk8
 install: true
 
 jobs:
   include:
-    - stage: release
-      if: repo = jpmorganchase/sandboni-core AND branch = master AND head_branch = develop AND type = pull_request
-      name: "Develop -> Master release: mvn clean deploy"
-      before_install:
-        - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
-        - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
-      before_deploy:
-        - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
-        - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
+    - stage: sonar
+      if: repo = jpmorganchase/sandboni-core
+      name: "Any push or pull request"
+      script:
+        - mvn clean verify sonar:sonar
+      after_success:
+        - source ./scripts/breakbuild.sh
+
+    - stage: snapshot release
+      if: repo = jpmorganchase/sandboni-core AND branch = master AND head_branch = develop
+      name: "SNAPSHOT release: mvn clean deploy"
       script:
         - mvn clean deploy -DskipTests=true --settings .maven.xml -B -U -Prelease
       deploy:
@@ -20,24 +23,11 @@ jobs:
         api_key:
           secure: "$GITHUB_TOKEN"
         file:
-          - engine/target/sandboni-engine-$project_version.jar
-          - scm/target/sandboni-scm-$project_version.jar
+          - target/sandboni-*.jar
         skip_cleanup: true
         on:
           repo: jpmorganchase/sandboni-core
-        name: $project_version
-
-    - stage: pull request
-      if: repo = jpmorganchase/sandboni-core AND (NOT head_branch = develop)
-      name: "Any Pull Request Build: mvn clean package sonar:sonar"
-      script:
-        - mvn clean install sonar:sonar
-
-    - stage: personal forked
-      if: NOT repo = jpmorganchase/sandboni-core AND type IN (push, pull_request, cron)
-      name: "Personal Forked Branch: mvn clean package sonar:sonar"
-      script:
-        - mvn clean install sonar:sonar
+          tags: true
 
 addons:
   sonarcloud:
