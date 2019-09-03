@@ -3,7 +3,7 @@ release_version=`mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' 
 branch_name="release-${release_version}"
 
 # prepare current branch for release, create release branch, increment development version on current branch
-mvn --settings .maven.xml -B -DbranchName=${branch_name} release:branch || travis_terminate 1
+mvn --settings .maven.xml -B -DbranchName=${branch_name} release:branch -Dusername=${GITHUB_USERNAME} -Dpassword=${GITHUB_TOKEN} || travis_terminate 1
 git checkout $branch_name || travis_terminate 1
 
 # remove SNAPSHOT version suffix, create a tag in GitHub, increment development version on release branch
