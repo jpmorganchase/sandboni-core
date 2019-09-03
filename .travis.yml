@@ -13,6 +13,13 @@ jobs:
       after_success:
         - source ./scripts/breakbuild.sh
 
+    - stage: release
+      if: repo = jpmorganchase/sandboni-core AND branch = release
+      name: "Tag on GitHub and deploy to OSSRH"
+      jdk:  oraclejdk8
+      script:
+        - source ./scripts/release.sh
+
     - stage: snapshot release
       if: repo = jpmorganchase/sandboni-core AND branch = master AND head_branch = develop
       name: "SNAPSHOT release: mvn clean deploy"
