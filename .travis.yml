@@ -15,9 +15,6 @@ jobs:
 
     - stage: snapshot release
       if: repo = jpmorganchase/sandboni-core AND branch = master AND head_branch = develop
-      branches:
-        only:
-          - master
       name: "SNAPSHOT release: mvn clean deploy"
       script:
         - mvn clean deploy -DskipTests=true --settings .maven.xml -B -U -Prelease
