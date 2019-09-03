@@ -58,6 +58,7 @@
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <dependency-check-maven.version>5.2.0</dependency-check-maven.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 
         <!-- SonarQube -->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -225,20 +226,13 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.7.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.7</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
+                <version>${maven-release-plugin.version}</version>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
                 </configuration>
             </plugin>
         </plugins>
@@ -295,12 +289,6 @@
         <tag>release-1.0.1</tag>
     </scm>
     <distributionManagement>
-        <site>
-            <id>sandboni-github-pages</id>
-            <name>Sandboni GitHub Pages</name>
-            <url>git:gh-pages://git@github.com:jpmorganchase/sandboni-core.git</url>
-        </site>
-
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
