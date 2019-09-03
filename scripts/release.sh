@@ -1,10 +1,3 @@
-head_ref=$(git rev-parse HEAD) || travis_terminate 1
-branch_ref=$(git rev-parse "$TRAVIS_BRANCH") || travis_terminate 1
-|
-  if [[ $head_ref != $branch_ref ]]; then
-    echo "HEAD ref ($head_ref) does not match $TRAVIS_BRANCH ref ($branch_ref).  New commits may have been pushed before the build cloned the repo"
-  return 0
-  fi
 git checkout $TRAVIS_BRANCH || travis_terminate 1
 release_version=`mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec`
 branch_name="release-${release_version}"

@@ -5,13 +5,13 @@ install: true
 
 jobs:
   include:
-    - stage: sonar
-      if: repo = jpmorganchase/sandboni-core
-      name: "Any push or pull request"
-      script:
-        - mvn clean verify sonar:sonar
-      after_success:
-        - source ./scripts/breakbuild.sh
+#    - stage: sonar
+#      if: repo = jpmorganchase/sandboni-core
+#      name: "Any push or pull request"
+#      script:
+#        - mvn clean verify sonar:sonar
+#      after_success:
+#        - source ./scripts/breakbuild.sh
 
     - stage: release
       if: repo = jpmorganchase/sandboni-core AND branch = release
