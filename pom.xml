@@ -292,7 +292,7 @@
     </dependencies>
 
     <scm>
-        <connection>scm:git:git@github.com:jpmorganchase/sandboni-core.git</connection>
+        <connection>scm:git:http://${env.GITHUB_USERNAME}:${env.GITHUB_TOKEN}@github.com:jpmorganchase/sandboni-core.git</connection>
         <url>scm:git:git@github.com:jpmorganchase/sandboni-core.git</url>
         <developerConnection>scm:git:git@github.com:jpmorganchase/sandboni-core.git</developerConnection>
       <tag>1.0.1</tag>
