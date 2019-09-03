@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.jpmorganchase.sandboni</groupId>
         <artifactId>sandboni-core</artifactId>
-        <version>1.0.5-SNAPSHOT</version>
+        <version>1.0.6-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
