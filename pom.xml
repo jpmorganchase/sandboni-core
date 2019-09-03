@@ -286,7 +286,7 @@
         <url>https://github.com/jpmorganchase/sandboni-core</url>
         <connection>scm:git:https://github.com/jpmorganchase/sandboni-core.git</connection>
         <developerConnection>scm:git:https://github.com/jpmorganchase/sandboni-core.git</developerConnection>
-        <tag>release-1.0.1</tag>
+        <tag>release-1.0.5-SNAPSHOT</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>
