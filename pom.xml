@@ -173,6 +173,8 @@
                     <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
                     <goals>deploy</goals>
+                    <username>vlisianskii</username>
+                    <password>b68fe6e28ea35b8f769f040262de832f98d5f7a9</password>
                 </configuration>
             </plugin>
             <plugin>
