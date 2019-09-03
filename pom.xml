@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.jpmorganchase.sandboni</groupId>
     <artifactId>sandboni-core</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -53,11 +53,11 @@
         <validation-api.version>2.0.1.Final</validation-api.version>
         <junit.version>4.12</junit.version>
         <sonar-maven-plugin.version>3.6.0.1398</sonar-maven-plugin.version>
-
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
-        <maven-source-plugin>3.0.1</maven-source-plugin>
+        <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <dependency-check-maven.version>5.2.0</dependency-check-maven.version>
 
         <!-- SonarQube -->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -68,61 +68,34 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
+
+        <!-- OWASP Dependency Check -->
+        <owasp.suppressionFile>suppressed.xml</owasp.suppressionFile>
     </properties>
 
     <profiles>
-        <!-- Activate using the release property: mvn clean install -Prelease -->
         <profile>
             <id>release</id>
             <activation>
                 <property>
                     <name>release</name>
+                    <value>true</value>
                 </property>
             </activation>
-
             <build>
                 <plugins>
-                    <!-- To release to Maven central -->
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
                         <version>${nexus-staging-maven-plugin.version}</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverid>ossrh</serverid>
-                            <nexusurl>https://oss.sonatype.org/</nexusurl>
-                            <autoreleaseafterclose>true</autoreleaseafterclose>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
-                    <!-- To generate javadoc -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>${maven-source-plugin}</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven-javadoc-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
 
-                    <!-- To sign the artifacts -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
@@ -137,8 +110,44 @@
                             </execution>
                         </executions>
                     </plugin>
+
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                            <linksource>true</linksource>
+                            <show>protected</show>
+                            <source>${java.version}</source>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven-source-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
+
         </profile>
     </profiles>
 
@@ -197,6 +206,23 @@
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>${sonar-maven-plugin.version}</version>
             </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check-maven.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <format>JSON</format>
+                    <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+                    <suppressionFile>${owasp.suppressionFile}</suppressionFile>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -250,6 +276,12 @@
         <tag>HEAD</tag>
     </scm>
     <distributionManagement>
+        <site>
+            <id>sandboni-github-pages</id>
+            <name>Sandboni GitHub Pages</name>
+            <url>git:gh-pages://git@github.com:jpmorganchase/sandboni-core.git</url>
+        </site>
+
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>

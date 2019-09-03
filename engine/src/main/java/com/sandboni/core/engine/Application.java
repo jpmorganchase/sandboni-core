@@ -18,7 +18,6 @@ public class Application {
     private Arguments arguments;
 
     public static void main(String[] args) {
-
         Application app = new Application();
         app.buildArguments();
         Arguments arguments = app.getArguments();
@@ -56,7 +55,7 @@ public class Application {
         return arguments;
     }
 
-    public Map<String, String> getProperties() {
+    private Map<String, String> getProperties() {
         if (propertiesMap == null) {
             propertiesMap = preparePropertiesMap();
         }

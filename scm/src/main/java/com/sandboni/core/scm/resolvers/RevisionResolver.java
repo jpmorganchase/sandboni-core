@@ -6,7 +6,6 @@ import com.sandboni.core.scm.revision.DiffConstants;
 import com.sandboni.core.scm.revision.RevisionScope;
 import com.sandboni.core.scm.revision.SCMRevisionScope;
 import org.eclipse.jgit.lib.*;
-import org.eclipse.jgit.revwalk.RevCommit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
