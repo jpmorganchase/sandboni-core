@@ -34,6 +34,15 @@ jobs:
         on:
           repo: jpmorganchase/sandboni-core
           tags: true
+  - stage: release
+    if: repo = jpmorganchase/sandboni-core
+    branches:
+      only:
+        - release
+    name: "Tag on GitHub and deploy to OSSRH"
+      jdk:  oraclejdk8
+      script:
+        - source ./scripts/release.sh
 
 addons:
   sonarcloud:
