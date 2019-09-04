@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.jpmorganchase.sandboni</groupId>
     <artifactId>sandboni-core</artifactId>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -234,6 +234,8 @@
                     <releaseProfiles>release</releaseProfiles>
                     <goals>deploy</goals>
                     <scmCommentPrefix>[skip ci]</scmCommentPrefix>
+                    <username>${GITHUB_USERNAME}</username>
+                    <password>${GITHUB_TOKEN}</password>
                 </configuration>
             </plugin>
         </plugins>
