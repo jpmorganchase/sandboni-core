@@ -234,6 +234,8 @@
                     <releaseProfiles>release</releaseProfiles>
                     <goals>deploy</goals>
                     <scmCommentPrefix>[skip ci]</scmCommentPrefix>
+                    <username>${GITHUB_USERNAME}</username>
+                    <password>${GITHUB_TOKEN}</password>
                 </configuration>
             </plugin>
         </plugins>
