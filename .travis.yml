@@ -14,13 +14,13 @@ jobs:
         - source ./scripts/breakbuild.sh
 
     - stage: release
-      if: repo = jpmorganchase/sandboni-core AND head_repo = jpmorganchase/sandboni-core AND branch = release AND head_branch = master
+      if: repo = jpmorganchase/sandboni-core AND branch = master AND type = push
       name: "Release: Tag on GitHub and deploy to OSSRH"
       script:
         - source ./scripts/release.sh
 
     - stage: snapshot release
-      if: repo = jpmorganchase/sandboni-core AND head_repo = jpmorganchase/sandboni-core AND branch = master AND head_branch = develop
+      if: repo = jpmorganchase/sandboni-core AND branch = develop AND type = push
       name: "SNAPSHOT release"
       script:
         - source ./scripts/snapshotRelease.sh
