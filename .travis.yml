@@ -7,22 +7,21 @@ jobs:
   include:
     - stage: sonar
       if: repo = jpmorganchase/sandboni-core
-      name: "Any push or pull request"
+      name: "PR: mvn clean verify sonar:sonar"
       script:
         - mvn clean verify sonar:sonar
       after_success:
         - source ./scripts/breakbuild.sh
 
     - stage: release
-      if: repo = jpmorganchase/sandboni-core AND branch = release
-      name: "Tag on GitHub and deploy to OSSRH"
-      jdk:  oraclejdk8
+      if: repo = jpmorganchase/sandboni-core AND branch = master AND type = push
+      name: "Release: Tag on GitHub and deploy to OSSRH"
       script:
         - source ./scripts/release.sh
 
     - stage: snapshot release
-      if: repo = jpmorganchase/sandboni-core AND branch = master AND head_branch = develop
-      name: "SNAPSHOT release: mvn clean deploy"
+      if: repo = jpmorganchase/sandboni-core AND branch = develop AND type = push
+      name: "SNAPSHOT release"
       before_install:
         - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
         - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
