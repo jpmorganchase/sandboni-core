@@ -5,31 +5,25 @@ install: true
 
 jobs:
   include:
-#    - stage: sonar
-#      if: repo = jpmorganchase/sandboni-core
-#      name: "Any push or pull request"
-#      script:
-#        - mvn clean verify sonar:sonar
-#      after_success:
-#        - source ./scripts/breakbuild.sh
+    - stage: sonar
+      if: repo = jpmorganchase/sandboni-core
+      name: "PR: mvn clean verify sonar:sonar"
+      script:
+        - mvn clean verify sonar:sonar
+      after_success:
+        - source ./scripts/breakbuild.sh
 
     - stage: release
-      if: repo = jpmorganchase/sandboni-core AND branch = release
-      name: "Tag on GitHub and deploy to OSSRH"
+      if: repo = jpmorganchase/sandboni-core AND head_repo = jpmorganchase/sandboni-core AND branch = release AND head_branch = master
+      name: "Release: Tag on GitHub and deploy to OSSRH"
       script:
         - source ./scripts/release.sh
 
     - stage: snapshot release
-      if: repo = jpmorganchase/sandboni-core AND branch = master AND head_branch = develop
-      name: "SNAPSHOT release: mvn clean deploy"
-      before_install:
-        - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
-        - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
-      before_deploy:
-        - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
-        - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
+      if: repo = jpmorganchase/sandboni-core AND head_repo = jpmorganchase/sandboni-core AND branch = master AND head_branch = develop
+      name: "SNAPSHOT release"
       script:
-        - mvn clean deploy -DskipTests=true --settings .maven.xml -B -U -Prelease
+        - source ./scripts/snapshotRelease.sh
       deploy:
         provider: releases
         api_key:

@@ -233,6 +233,7 @@
                     <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
                     <goals>deploy</goals>
+                    <scmCommentPrefix>[skip ci]</scmCommentPrefix>
                 </configuration>
             </plugin>
         </plugins>
