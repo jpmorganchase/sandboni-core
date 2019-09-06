@@ -82,4 +82,4 @@ Expected output:
 Sandboni is built on open source and we invite you to contribute enhancements. Upon review you will be required to complete a Contributor License Agreement (CLA) before we are able to merge
 
 ## License
-The Apache 2.0 License). Please see [License](https://choosealicense.com/licenses/apache-2.0/) for more information
+GNU General Public License, version 3. Please see [License](https://choosealicense.com/licenses/gpl-3.0/) for more information
