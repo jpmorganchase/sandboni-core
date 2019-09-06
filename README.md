@@ -2,8 +2,10 @@
 
 <h1 align="center">Sandboni Core</h1>
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.jpmorganchase.sandboni/sandboni-engine.svg)](https://mvnrepository.com/artifact/com.github.jpmorganchase.sandboni/sandboni-engine)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://choosealicense.com/licenses/apache-2.0/)
 [![Build Status](https://travis-ci.com/jpmorganchase/sandboni-core.svg?branch=master)](https://travis-ci.com/jpmorganchase/sandboni-core)
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=com.github.jpmorganchase.sandboni%3Asandboni-core&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.github.jpmorganchase.sandboni%3Asandboni-core)
 
 Sandboni is a `Java test optimization library` which reduces test execution time without 
 compromising quality, predicts defect probability and presents actionable test results 
@@ -80,4 +82,4 @@ Expected output:
 Sandboni is built on open source and we invite you to contribute enhancements. Upon review you will be required to complete a Contributor License Agreement (CLA) before we are able to merge
 
 ## License
-The Apache 2.0 License). Please see [License](https://choosealicense.com/licenses/apache-2.0/) for more information
+GNU General Public License, version 3. Please see [License](https://choosealicense.com/licenses/gpl-3.0/) for more information
