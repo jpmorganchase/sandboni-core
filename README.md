@@ -17,11 +17,10 @@ executes only those tests related to the change. This test filtering is based on
 code analysis that lets us determine required tests without paying the price for executing them
 
 ## Features
-* Computes Change Scope (CS) between two revisions
-* Finds related tests that need to be executed by CS
-* Finds disconnected tests
-* Supports JVM and Cucumber tests
-* Calculates a code coverage of CS
+* Compute a change scope (CS) between two revisions
+* Build a change dependency graph (CDG) for a specific change scope
+* Find and execute related/disconnected tests based on the CDG
+* Support JVM and Cucumber tests
 
 ## Structure of code
 
