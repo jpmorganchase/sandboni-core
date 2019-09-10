@@ -2,7 +2,7 @@ package com.sandboni.core.scm.proxy.filter;
 
 public enum FileNames {
 
-    JENKINS("Jenkinsfile"), GITIGNORE(".gitignore"), POM("pom.xml");
+    JENKINS("Jenkinsfile"), GITIGNORE(".gitignore"), POM("pom.xml"), GRADLE("build.gradle");
 
     public String fileName() {
         return fileName;

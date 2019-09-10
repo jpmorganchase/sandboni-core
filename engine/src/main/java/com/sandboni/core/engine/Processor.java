@@ -11,6 +11,7 @@ import com.sandboni.core.engine.sta.connector.Connector;
 import com.sandboni.core.scm.GitInterface;
 import com.sandboni.core.scm.exception.SourceControlException;
 import com.sandboni.core.scm.proxy.filter.FileExtensions;
+import com.sandboni.core.scm.proxy.filter.FileNames;
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeScope;
 import com.sandboni.core.scm.scope.ChangeScopeAnalyzer;
@@ -155,6 +156,6 @@ public class Processor  {
     }
 
     private static String[] getBuildFiles() {
-        return new String[]{"pom.xml", "build.gradle"};
+        return new String[]{FileNames.POM.fileName(), FileNames.GRADLE.fileName()};
     }
 }
