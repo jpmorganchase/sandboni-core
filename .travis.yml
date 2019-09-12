@@ -42,7 +42,7 @@ jobs:
         - mvn --settings .maven.xml -B release:perform || travis_terminate 1
 
     - stage: snapshot release
-      if: repo = jpmorganchase/sandboni-core AND branch = develop AND type = push
+      if: repo = jpmorganchase/sandboni-core AND branch = dev AND type = push
       name: "SNAPSHOT release"
       before_install:
         - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
