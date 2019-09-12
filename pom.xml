@@ -18,6 +18,13 @@
         which allows developers to take preemptive measure
     </description>
 
+    <licenses>
+        <license>
+            <name>General Public License, Version 3.0</name>
+            <url>LICENSE</url>
+        </license>
+    </licenses>
+
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -305,13 +312,6 @@
     <ciManagement>
         <url>https://travis-ci.com/jpmorganchase/sandboni-core</url>
     </ciManagement>
-
-    <licenses>
-        <license>
-            <name>General Public License, Version 3.0</name>
-            <url>LICENSE</url>
-        </license>
-    </licenses>
 
     <issueManagement>
         <system>github</system>
