@@ -30,7 +30,7 @@ public class GitRepositoryTest {
 
     @Test
     public void testGetChanges() throws SourceControlException {
-        ChangeScope<Change> changeScope = gitRepository.getChanges("0b345a1258dfa", "60b497fb350a7");
+        ChangeScope<Change> changeScope = gitRepository.getChanges("d446122593b", "34f5ecc6a5ca");
         assertNotNull(changeScope);
         assertTrue(changeScope.getAllAffectedClasses().size() > 0);
     }
