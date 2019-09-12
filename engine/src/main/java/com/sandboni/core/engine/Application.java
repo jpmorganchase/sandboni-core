@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Application {
@@ -25,15 +26,19 @@ public class Application {
         final Processor processor = new ProcessorBuilder()
                 .with(pb -> pb.arguments = arguments)
                 .build();
-        processor
-                .getResultGenerator().generate(ResultContent.ENTRY_POINTS);
+
+        Map<String, Set<String>> relatedTests = processor.getResultGenerator().generate(ResultContent.ENTRY_POINTS).get();
+        Map<String, Set<String>> disconnectedTests = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_ENTRY_POINTS).get();
+
+        log.info("Related tests to execute: {}", relatedTests);
+        log.info("Disconnected tests to execute: {}", disconnectedTests);
     }
 
     //synchronized was added because of SonarQube demand
     Arguments buildArguments() {
         getProperties();
 
-        arguments = new ArgumentsBuilder().with(ab->{
+        arguments = new ArgumentsBuilder().with(ab -> {
             ab.fromChangeId = getValue(SystemProperties.FROM);
             ab.toChangeId = getValue(SystemProperties.TO);
             ab.repository = getValue(SystemProperties.REPOSITORY);
@@ -64,12 +69,12 @@ public class Application {
 
     private Map<String, String> preparePropertiesMap() {
         Map<String, String> pMap = System.getProperties().entrySet().stream()
-                .filter(k-> ((String)k.getKey()).startsWith("sandboni."))
+                .filter(k -> ((String) k.getKey()).startsWith("sandboni."))
                 .collect(Collectors.toMap(
                         e -> (String) e.getKey(),
                         e -> (String) e.getValue()));
 
-        if (pMap.isEmpty()){
+        if (pMap.isEmpty()) {
             printAvailableProperties();
             throw new IllegalArgumentException("No Sandboni properties were entered. please enter sufficient properties");
         }
@@ -90,7 +95,7 @@ public class Application {
 
     private String getValue(SystemProperties ppty) {
         String value = getProperties().get(ppty.getName());
-        log.debug("[property: {} required:{} ] retrieved value is {}", ppty.getName(), ppty.isRequired(), value  );
+        log.debug("[property: {} required:{} ] retrieved value is {}", ppty.getName(), ppty.isRequired(), value);
         if ((value == null || value.isEmpty())) {
             if (ppty.isRequired())
                 throw new IllegalArgumentException(String.format("[%s] Property is missing or empty", ppty.getName()));

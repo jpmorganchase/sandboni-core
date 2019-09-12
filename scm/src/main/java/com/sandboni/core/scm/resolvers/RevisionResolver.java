@@ -113,17 +113,6 @@ public class RevisionResolver {
             throw new IOException(ErrorMessages.UNABLE_TO_FIND_REMOTE_BRANCH);
         }
 
-        /*
-          Options for fetch values:
-          before splitting:
-          (1) +refs/heads/*:refs/remotes/origin/*
-          (2) +refs/heads/feature/MACSMARKETS-9223:refs/remotes/origin/feature/MACSMARKETS-9223
-
-          after splitting:
-          (1) refs/remotes/origin/*  -> in that case substring (start, '*') + add branch name
-          (2) refs/remotes/origin/feature/MACSMARKETS-9223 ->no '*', take as is
-         */
-
         String trackedBranch = res.get();
         int starIndex = trackedBranch.indexOf('*');
         if (starIndex > 0) {
