@@ -79,14 +79,12 @@ public class BuilderTest {
         assertTrue(result.contains(modifiedUncovered));
     }
 
-    //todo remove comment!!
-//todo ***********************
-//    @TEST
-//    public void testGetDisconnectedEntryPoints() {
-//        Set<Vertex> result = builder.getDisconnectedEntryPoints().collect(Collectors.toSet());
-//        assertEquals(1, result.size());
-//        assertTrue(result.contains(disconnectedCallerTest));
-//    }
+    @Test
+    public void testGetDisconnectedEntryPoints() {
+        Set<Vertex> result = builder.getDisconnectedEntryPoints().collect(Collectors.toSet());
+        assertEquals(1, result.size());
+        assertTrue(result.contains(disconnectedCallerTest));
+    }
 
     @Test
     public void testGetAllAffected() {

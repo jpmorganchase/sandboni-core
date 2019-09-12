@@ -80,7 +80,7 @@ public class ChangeScopeResolver {
             changeScope.addChange(change);
         } else {
             content = f.apply(getRawText(revisionScope.getTo(), entry.getNewPath()));
-            filename = RawUtil.getFullClassPath(content,entry.getNewPath());
+            filename = RawUtil.getFullClassPath(content, entry.getNewPath());
             editList.forEach(edit -> {
                 final Change linesFromChangedFile = getLinesFromChangedFile(edit, filename);
                 changeScope.addChange(linesFromChangedFile);
