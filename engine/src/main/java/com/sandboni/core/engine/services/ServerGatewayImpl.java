@@ -27,15 +27,15 @@ public class ServerGatewayImpl implements ServerGateway {
             HttpPost httpPost = new HttpPost(url);
             httpPost.setEntity(httpEntity);
 
-            httpPost(httpPost);
+            HttpClient httpClient = createHttpClient();
+            httpClient.execute(httpPost);
             log.debug("Sending to {} data: {}", url, payload);
         } catch (Exception e) {
             throw new GatewayException("Exception sending to server", e);
         }
     }
 
-    public void httpPost(HttpPost httpPost) throws IOException {
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        httpClient.execute(httpPost);
+    public HttpClient createHttpClient() {
+        return HttpClientBuilder.create().build();
     }
 }
