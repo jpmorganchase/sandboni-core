@@ -52,15 +52,15 @@ public class RevisionResolverTest {
         assertEquals(ObjectId.zeroId(), scope.getTo());
     }
 
-//    @Test
-//    public void testTagAndUncommitted() throws SourceControlException {
-//        RevisionScope<ObjectId> scope = revisionResolver.resolve("refs/remotes/origin/" + Constants.MASTER, DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
-//        assertNotNull(scope);
-//        assertNotNull(scope.getFrom());
-//        assertNotEquals(ObjectId.zeroId(), scope.getFrom());
-//        assertNotNull(scope.getTo());
-//        assertEquals(ObjectId.zeroId(), scope.getTo());
-//    }
+    @Test
+    public void testTagAndUncommitted() throws SourceControlException {
+        RevisionScope<ObjectId> scope = revisionResolver.resolve("refs/remotes/origin/master", DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
+        assertNotNull(scope);
+        assertNotNull(scope.getFrom());
+        assertNotEquals(ObjectId.zeroId(), scope.getFrom());
+        assertNotNull(scope.getTo());
+        assertEquals(ObjectId.zeroId(), scope.getTo());
+    }
 
     @Test
     public void testCommitAndUncommitted() throws SourceControlException {
