@@ -50,7 +50,7 @@
         <hamcrest-library.version>1.3</hamcrest-library.version>
         <javax.ws.rs.version>1.0</javax.ws.rs.version>
         <javax.ws.rs-api.version>2.1</javax.ws.rs-api.version>
-        <jackson-databind.version>2.9.9.3</jackson-databind.version>
+        <jackson-databind.version>2.10.0.pr2</jackson-databind.version>
         <mockserver-netty.version>3.9.1</mockserver-netty.version>
         <jmh.version>1.19</jmh.version>
         <logback-classic.version>1.2.3</logback-classic.version>
@@ -76,7 +76,7 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
-        <sonar.coverage.exclusions>**/RevisionResolver.java</sonar.coverage.exclusions>
+        <sonar.coverage.exclusions>**/RevisionResolver*</sonar.coverage.exclusions>
 
         <!-- Dependency Check -->
         <owasp.suppressionFile>suppressed.xml</owasp.suppressionFile>
