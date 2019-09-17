@@ -5,10 +5,6 @@ public class SourceControlRuntimeException extends RuntimeException {
         super(ex);
     }
 
-    public SourceControlRuntimeException(String msg) {
-        super(msg);
-    }
-
     public SourceControlRuntimeException(String msg, Exception e) {
         super(msg, e);
     }

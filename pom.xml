@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.jpmorganchase.sandboni</groupId>
     <artifactId>sandboni-core</artifactId>
-    <version>1.0.8-SNAPSHOT</version>
+    <version>1.0.14-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -17,6 +17,13 @@
         compromising quality, predicts defect probability and presents actionable test results
         which allows developers to take preemptive measure
     </description>
+
+    <licenses>
+        <license>
+            <name>General Public License, Version 3.0</name>
+            <url>LICENSE</url>
+        </license>
+    </licenses>
 
     <properties>
         <java.version>1.8</java.version>
@@ -43,8 +50,7 @@
         <hamcrest-library.version>1.3</hamcrest-library.version>
         <javax.ws.rs.version>1.0</javax.ws.rs.version>
         <javax.ws.rs-api.version>2.1</javax.ws.rs-api.version>
-        <spring.version>2.0.5.RELEASE</spring.version>
-        <jackson-databind.version>2.9.9.3</jackson-databind.version>
+        <jackson-databind.version>2.10.0.pr2</jackson-databind.version>
         <mockserver-netty.version>3.9.1</mockserver-netty.version>
         <jmh.version>1.19</jmh.version>
         <logback-classic.version>1.2.3</logback-classic.version>
@@ -59,8 +65,9 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <dependency-check-maven.version>5.2.0</dependency-check-maven.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <spring.version>2.0.5.RELEASE</spring.version>
 
-        <!-- SonarQube -->
+        <!-- SonarCloud -->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>sandboni</sonar.organization>
         <sonar.login>f4084d177e7f861ad3e8a6addad8b612b3c62a8d</sonar.login>
@@ -69,8 +76,9 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
+        <sonar.coverage.exclusions>**/RevisionResolver*</sonar.coverage.exclusions>
 
-        <!-- OWASP Dependency Check -->
+        <!-- Dependency Check -->
         <owasp.suppressionFile>suppressed.xml</owasp.suppressionFile>
     </properties>
 
@@ -234,6 +242,8 @@
                     <releaseProfiles>release</releaseProfiles>
                     <goals>deploy</goals>
                     <scmCommentPrefix>[skip ci]</scmCommentPrefix>
+                    <username>${GITHUB_USERNAME}</username>
+                    <password>${GITHUB_TOKEN}</password>
                 </configuration>
             </plugin>
         </plugins>
@@ -287,7 +297,7 @@
         <url>https://github.com/jpmorganchase/sandboni-core</url>
         <connection>scm:git:https://github.com/jpmorganchase/sandboni-core.git</connection>
         <developerConnection>scm:git:https://github.com/jpmorganchase/sandboni-core.git</developerConnection>
-        <tag>release-1.0.1</tag>
+        <tag>HEAD</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>
@@ -304,12 +314,10 @@
         <url>https://travis-ci.com/jpmorganchase/sandboni-core</url>
     </ciManagement>
 
-    <licenses>
-        <license>
-            <name>The Apache License, Version 2.0</name>
-            <url>LICENSE</url>
-        </license>
-    </licenses>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/jpmorganchase/sandboni-core/issues</url>
+    </issueManagement>
 
     <repositories>
         <repository>
@@ -323,11 +331,6 @@
             <snapshots><enabled>true</enabled></snapshots>
         </repository>
     </repositories>
-
-    <issueManagement>
-        <system>github</system>
-        <url>https://github.com/jpmorganchase/sandboni-core/issues</url>
-    </issueManagement>
 
     <developers>
         <developer>

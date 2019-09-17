@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 public class BlameResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(BlameResolver.class);
     private static final String JIRA_ID_REGEX = "((?<!([A-Z]{1,10})-?)[A-Z]+-\\d+)";
+
     private final Repository repository;
     private final TreeWalkResolver treeWalkResolver;
     private final String revStr;

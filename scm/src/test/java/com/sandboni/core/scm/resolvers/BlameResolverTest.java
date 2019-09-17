@@ -38,7 +38,7 @@ public class BlameResolverTest {
     @Test
     public void testBlameNonExistingFile() throws SourceControlException {
         List<Integer> list = Arrays.asList(1, 2, 8, 9);
-        String filepath = "sandboni-engine/src/main/java/com/sandboni/core/engine/ApplicationAAAAAAAAAa.java";
+        String filepath = "engine/src/main/java/com/sandboni/core/engine/ApplicationAAAAAAAAAa.java";
 
         Set<RevInfo> result = blameResolver.blame(filepath, list);
         assertNotNull(result);

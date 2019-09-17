@@ -15,11 +15,13 @@ import java.io.IOException;
 public class PathFilterTest {
     @Test
     public void diffWithPathFilter() throws SourceControlException {
-        GitInterface diff = new GitRepository(GitHelper.openCurrentFolder(), new PathFilter("sandboni-engine/src/test/resources/"));
+        GitInterface diff = new GitRepository(GitHelper.openCurrentFolder()
+                , new PathFilter("engine/src/test/resources/")
+        );
 
-        ChangeScope<Change> changes = diff.getChanges("0b345a12", "60b497fb");
+        ChangeScope<Change> changes = diff.getChanges("34f5ecc6a5c", "3bbbf35036e3");
 
         changes.getAllAffectedClasses().forEach(System.out::println);
-        Assert.assertTrue(changes.getAllAffectedClasses().contains("sandboni-engine/src/test/resources/test.properties"));
+        Assert.assertTrue(changes.getAllAffectedClasses().contains("engine/src/test/resources/test.properties"));
     }
 }
