@@ -11,6 +11,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 public class ServerGatewayImpl implements ServerGateway {
     private static final Logger log = LoggerFactory.getLogger(ServerGatewayImpl.class);
 
@@ -25,11 +27,15 @@ public class ServerGatewayImpl implements ServerGateway {
             HttpPost httpPost = new HttpPost(url);
             httpPost.setEntity(httpEntity);
 
-            HttpClient httpClient = HttpClientBuilder.create().build();
-            httpClient.execute(httpPost);
+            httpPost(httpPost);
             log.debug("Sending to {} data: {}", url, payload);
         } catch (Exception e) {
             throw new GatewayException("Exception sending to server", e);
         }
+    }
+
+    public void httpPost(HttpPost httpPost) throws IOException {
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        httpClient.execute(httpPost);
     }
 }

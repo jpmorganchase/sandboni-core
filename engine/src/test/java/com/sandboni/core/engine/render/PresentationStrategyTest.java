@@ -1,7 +1,5 @@
 package com.sandboni.core.engine.render;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.sandboni.core.engine.exception.RendererException;
 import com.sandboni.core.engine.render.file.FileOptions;
 import com.sandboni.core.engine.render.file.FileType;
@@ -12,9 +10,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.sandboni.core.engine.render.file.csv.RelatedTestsFileRenderer.IS_DISCONNECTED_TESTS;
 
@@ -23,35 +19,45 @@ public class PresentationStrategyTest {
     protected static Set<TestVertex> tests = new HashSet<>();
 
     @BeforeClass
-    public static void init() throws IOException {
-        final String marshalledRelatedTests = "[" +
-                "{\"actor\":\"com.sandboni.core.engine.result.ResultGeneratorTest\",\"action\":\"testResultWhenEmptyContextAndRunSelectiveModeIsTrue()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.result.ResultGeneratorTest\",\"action\":\"testResultWhenOnlyJavaContext()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.ProcessorTest\",\"action\":\"testGetUnreachableExitPoints()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.result.ResultGeneratorTest\",\"action\":\"testResultWhenOnlyJavaContextAndRunSelectiveModeIsTrue()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.result.ResultGeneratorTest\",\"action\":\"testResultWhenEmptyContext()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.ProcessorTest\",\"action\":\"testGetExitPoints()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.finder.bcel.BcelFinderTest\",\"action\":\"testPoCDiffChangeDetector()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.ProcessorTest\",\"action\":\"testFileRelatedTests()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.result.ResultGeneratorTest\",\"action\":\"testResultWhenBothBuildCnfgAndJavaContext()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.ProcessorTest\",\"action\":\"testGetDisconnectedVertices()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.ProcessorTest\",\"action\":\"testGetAllEntryPointsCount()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.ProcessorTest\",\"action\":\"testGetDisconnectedEntryPoints()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.result.ResultGeneratorTest\",\"action\":\"testResultWhenBothBuildCnfgAndJavaContextAndRunSelectiveModeIsTrue()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.result.ResultGeneratorTest\",\"action\":\"testResultWhenOnlyCnfgContextAndRunSelectiveModeIsTrue()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.result.ResultGeneratorTest\",\"action\":\"testResultWhenOnlyCnfgContext()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"com.sandboni.core.engine.ProcessorTest\",\"action\":\"testGetRelatedTests()\",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}," +
-                "{\"actor\":\"Receive and process Cash Forecast messages of type cash management\",\"action\":\" \",\"isSpecial\":false,\"filePath\":null,\"filter\":null,\"ignore\":false,\"externalLocation\":false,\"lineNumbersEmpty\":true,\"special\":false}" +
-                "]";
+    public static void init() {
+        Set<Map<String, String>> set = new HashSet<>();
+        set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenEmptyContextAndRunSelectiveModeIsTrue()"));
+        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetUnreachableExitPoints()"));
+        set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenOnlyJavaContext()"));
+        set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenOnlyJavaContextAndRunSelectiveModeIsTrue()"));
+        set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenEmptyContext()"));
+        set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenBothBuildCnfgAndJavaContext()"));
+        set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenBothBuildCnfgAndJavaContextAndRunSelectiveModeIsTrue()"));
+        set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenOnlyCnfgContextAndRunSelectiveModeIsTrue()"));
+        set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenOnlyCnfgContext()"));
+        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetExitPoints()"));
+        set.add(genereteMap("com.sandboni.core.engine.finder.bcel.BcelFinderTest", "testPoCDiffChangeDetector()"));
+        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testFileRelatedTests()"));
+        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetDisconnectedVertices()"));
+        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetAllEntryPointsCount()"));
+        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetDisconnectedEntryPoints()"));
+        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetRelatedTests()"));
+        set.add(genereteMap("Receive and process Cash Forecast messages of type cash managemen", " "));
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        Set<HashMap<String, String>> tmp = mapper.readValue(marshalledRelatedTests, HashSet.class);
-
-        for (HashMap<String, String> test : tmp) {
+        for (Map<String, String> test : set) {
             TestVertex v = new TestVertex.Builder(test.get("actor"), test.get("action"), null).build();
             tests.add(v);
         }
+    }
+
+    private static Map<String, String> genereteMap(
+            String actor, String action) {
+        Map<String, String> m = new HashMap<>();
+        m.put("actor", actor);
+        m.put("action", action);
+        m.put("isSpecial", "false");
+        m.put("filePath", null);
+        m.put("filter", null);
+        m.put("ignore", "false");
+        m.put("externalLocation", "false");
+        m.put("lineNumbersEmpty", "true");
+        m.put("special", "false");
+        return m;
     }
 
     @Test
