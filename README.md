@@ -3,7 +3,7 @@
 <h1 align="center">Sandboni Core</h1>
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.jpmorganchase.sandboni/sandboni-engine.svg)](https://mvnrepository.com/artifact/com.github.jpmorganchase.sandboni/sandboni-engine)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Build Status](https://travis-ci.com/jpmorganchase/sandboni-core.svg?branch=master)](https://travis-ci.com/jpmorganchase/sandboni-core)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=com.github.jpmorganchase.sandboni%3Asandboni-core&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.github.jpmorganchase.sandboni%3Asandboni-core)
 
@@ -29,7 +29,7 @@ The code is in a [multi-module](https://maven.apache.org/guides/mini/guide-multi
 * scm - builds a change scope between two revisions 
     * [jGit](https://github.com/eclipse/jgit)
 * engine - analyzes bytecode by locations, builds CDG and it contains the main algorithms for the graph traversing
-    * [BCEL](https://github.com/apache/commons-bcel)
+    * [Bcel](https://github.com/apache/commons-bcel)
     * [JGraphT](https://github.com/jgrapht/jgrapht)
 
 ## Documentation
@@ -46,6 +46,6 @@ Sandboni is built on open source and we invite you to contribute enhancements. T
 - Review the [documentation](https://github.com/jpmorganchase/sandboni-core/wiki) and make pull requests for new content
 
 ## License
-GNU General Public License, version 3. 
+The Apache License, Version 2.0
 
-Please see [License](https://choosealicense.com/licenses/gpl-3.0/) for more information
+Please see [License](https://choosealicense.com/licenses/apache-2.0/) for more information
