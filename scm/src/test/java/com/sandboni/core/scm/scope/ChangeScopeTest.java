@@ -1,6 +1,7 @@
 package com.sandboni.core.scm.scope;
 
 import com.sandboni.core.scm.proxy.filter.FileExtensions;
+import com.sandboni.core.scm.scope.analysis.ChangeScopeAnalyzer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -192,7 +193,7 @@ public class ChangeScopeTest {
         Assert.assertFalse(changeScope.isEmpty());
         Assert.assertTrue(changeScope.contains(pomFilePath));
         String pomFile = "pom.xml";
-        Assert.assertTrue(ChangeScopeAnalyzer.detectConfigurationFile(changeScope, pomFile));
+        Assert.assertFalse(ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, pomFile));
     }
 
     @Test
@@ -203,7 +204,7 @@ public class ChangeScopeTest {
         Assert.assertFalse(changeScope.isEmpty());
         Assert.assertTrue(changeScope.contains(pomFilePath));
         String pomFile = "pom.xml";
-        Assert.assertTrue(ChangeScopeAnalyzer.detectConfigurationFile(changeScope, pomFile));
+        Assert.assertFalse(ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, pomFile));
     }
 
     @Test
@@ -214,7 +215,7 @@ public class ChangeScopeTest {
         Assert.assertFalse(changeScope.isEmpty());
         Assert.assertTrue(changeScope.contains(pomFilePath));
         String pomFile = "POM.XML";
-        Assert.assertTrue(ChangeScopeAnalyzer.detectConfigurationFile(changeScope, pomFile));
+        Assert.assertTrue(ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, pomFile));
     }
 
 

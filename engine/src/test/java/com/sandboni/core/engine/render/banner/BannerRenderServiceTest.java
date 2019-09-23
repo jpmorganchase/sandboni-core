@@ -1,15 +1,17 @@
 package com.sandboni.core.engine.render.banner;
 
+import org.junit.Assert;
 import org.junit.Test;
-
-import static org.junit.Assert.assertTrue;
 
 public class BannerRenderServiceTest {
 
     @Test
     public void testBasic(){
-        BannerRenderService bannerRenderService = new BannerRenderService();
-        bannerRenderService.render();
-        assertTrue(true);
+        try {
+            BannerRenderService bannerRenderService = new BannerRenderService();
+            bannerRenderService.render();
+        } catch (Exception e) {
+            Assert.fail();
+        }
     }
 }

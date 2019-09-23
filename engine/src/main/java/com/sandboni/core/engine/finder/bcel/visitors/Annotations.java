@@ -5,7 +5,8 @@ public enum Annotations {
     ;public enum TEST{
         IGNORE("Ignore"),
         BEFORE("Before"),
-        AFTER("After");
+        AFTER("After"),
+        TEST("Test");
 
         private String desc;
 

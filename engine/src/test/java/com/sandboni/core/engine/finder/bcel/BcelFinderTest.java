@@ -13,7 +13,6 @@ import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
-import com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes;
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeScope;
 import com.sandboni.core.scm.scope.ChangeScopeImpl;
@@ -23,6 +22,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.sandboni.core.engine.MockChangeDetector.PACKAGE_NAME;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.END_VERTEX;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
 
 public class BcelFinderTest extends FinderTestBase {
     private static final String CALLER_ACTOR_VERTEX = PACKAGE_NAME + ".Caller";
@@ -188,28 +189,28 @@ public class BcelFinderTest extends FinderTestBase {
     @Test
     public void testTestMethodDetection() {
         TestVertex tv = new TestVertex.Builder(PACKAGE_NAME + ".PlainTest", "testExplicitCall()",null).withIgnore(true).build();
-        Link expectedLink = newLink(VertexInitTypes.START_VERTEX, tv, LinkType.ENTRY_POINT);
+        Link expectedLink = newLink(START_VERTEX, tv, LinkType.ENTRY_POINT);
         testTestClassVisitor(expectedLink);
     }
 
     @Test
     public void testIgnoredMethodDetection() {
         TestVertex tv = new TestVertex.Builder(PACKAGE_NAME + ".EmptyTest", "testIgnoredMethod()", null).withIgnore(true).build();
-        Link expectedLink = newLink(VertexInitTypes.START_VERTEX, tv, LinkType.ENTRY_POINT);
+        Link expectedLink = newLink(START_VERTEX, tv, LinkType.ENTRY_POINT);
         testTestClassVisitor(expectedLink);
     }
 
     @Test
     public void testNotIgnoredMethodDetection() {
         TestVertex tv = new TestVertex.Builder(PACKAGE_NAME + ".EmptyTest", "testNotIgnoredMethod()", null).build();
-        Link expectedLink = newLink(VertexInitTypes.START_VERTEX, tv, LinkType.ENTRY_POINT);
+        Link expectedLink = newLink(START_VERTEX, tv, LinkType.ENTRY_POINT);
         testTestClassVisitor(expectedLink);
     }
 
     @Test
     public void testTestIgnoredMethodAndClassDetection() {
         TestVertex tv = new TestVertex.Builder(PACKAGE_NAME + ".PlainTest", "testIgnoredCall()", null).withIgnore(true).build();
-        Link expectedLink = newLink(VertexInitTypes.START_VERTEX, tv, LinkType.ENTRY_POINT);
+        Link expectedLink = newLink(START_VERTEX, tv, LinkType.ENTRY_POINT);
         testTestClassVisitor(expectedLink);
     }
 
@@ -505,7 +506,7 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testAffectedMethodDetection() {
-        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".CallerBase", "doSuperStuff()").build(), VertexInitTypes.END_VERTEX, LinkType.EXIT_POINT);
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".CallerBase", "doSuperStuff()").build(), END_VERTEX, LinkType.EXIT_POINT);
         testAffectedVisitor(expectedLink);
     }
 
@@ -536,7 +537,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Ignore("This will fail because we do not have enough info for metadata (i.e. variable) changes")
     @Test
     public void testAffectedFieldDetection() {
-        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Callee", "value").build(), VertexInitTypes.END_VERTEX, LinkType.EXIT_POINT);
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Callee", "value").build(), END_VERTEX, LinkType.EXIT_POINT);
         testAffectedVisitor(expectedLink);
     }
 

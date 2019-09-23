@@ -82,8 +82,9 @@ public class ChangeScopeResolver {
             content = f.apply(getRawText(revisionScope.getTo(), entry.getNewPath()));
             filename = RawUtil.getFullClassPath(content, entry.getNewPath());
             editList.forEach(edit -> {
-                final Change linesFromChangedFile = getLinesFromChangedFile(edit, filename);
-                changeScope.addChange(linesFromChangedFile);
+                final Change change = getLinesFromChangedFile(edit, filename, content);
+                changeScope.addChange(change);
+
             });
         }
     }
@@ -126,11 +127,16 @@ public class ChangeScopeResolver {
     private Change getChangedLinesFromRemovedFile(EditList edits, String path, String content) {
         final Set<Integer> changedLines = new HashSet<>();
         edits.forEach(edit -> changedLines.addAll(RawUtil.getIntRange(edit.getBeginA() + 1, edit.getEndA() + 1)));
+        return createChange(path, content, changedLines, ChangeType.DELETE);
+    }
+
+    private Change createChange(String path, String content, Set<Integer> changedLines, ChangeType changeType) {
         return new SCMChangeBuilder().with(scm -> {
             scm.path = path;
             scm.changedLines = changedLines;
-            scm.changeType = ChangeType.DELETE;
+            scm.changeType = changeType;
             scm.fileContent = content;
+            scm.repository = repository.getWorkTree().getAbsolutePath();
         }).build();
     }
 
@@ -144,14 +150,15 @@ public class ChangeScopeResolver {
         return ChangeType.EMPTY;
     }
 
-    private Change getLinesFromChangedFile(final Edit edit, final String path) {
+    private Change getLinesFromChangedFile(final Edit edit, final String path, String content) {
         Set<Integer> changedLines = new HashSet<>();
         if (edit.getType() == Edit.Type.DELETE) {
             changedLines.addAll(RawUtil.getIntRange(edit.getBeginB(), edit.getEndB() + 2));
         } else {
             changedLines.addAll(RawUtil.getIntRange(edit.getBeginB() + 1, edit.getEndB() + 1));
         }
-        return new SCMChange(path, changedLines, getType(edit));
+
+        return createChange(path, content, changedLines, getType(edit));
     }
 
     private AbstractTreeIterator getAbstractTreeIterator(ObjectId objectId) throws IOException {

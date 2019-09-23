@@ -27,8 +27,8 @@ public class Application {
                 .with(pb -> pb.arguments = arguments)
                 .build();
 
-        Map<String, Set<String>> relatedTests = processor.getResultGenerator().generate(ResultContent.ENTRY_POINTS).get();
-        Map<String, Set<String>> disconnectedTests = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_ENTRY_POINTS).get();
+        Map<String, Set<String>> relatedTests = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS).get();
+        Map<String, Set<String>> disconnectedTests = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_TESTS).get();
 
         log.info("Related tests to execute: {}", relatedTests);
         log.info("Disconnected tests to execute: {}", disconnectedTests);
@@ -38,15 +38,20 @@ public class Application {
     Arguments buildArguments() {
         getProperties();
 
-        arguments = new ArgumentsBuilder().with(ab -> {
+        arguments = new ArgumentsBuilder().with(ab->{
             ab.fromChangeId = getValue(SystemProperties.FROM);
             ab.toChangeId = getValue(SystemProperties.TO);
             ab.repository = getValue(SystemProperties.REPOSITORY);
+            ab.filter = getValue(SystemProperties.FILTER);
+            ab.selectiveMode = Boolean.parseBoolean(getValue(SystemProperties.SELECTIVE_MODE));
+            ab.reportDir = getValue(SystemProperties.REPORT_DIR);
+            ab.runAllExternalTests = Boolean.valueOf(getValue(SystemProperties.RUN_ALL_EXTERNAL_TESTS));
+            ab.gitCache = Boolean.parseBoolean(getValue(SystemProperties.GIT_CACHE));
+            ab.coreCache = Boolean.parseBoolean(getValue(SystemProperties.CORE_CACHE));
             ab.srcLocations = new HashSet<>(Arrays.asList(getValue(SystemProperties.SRC_LOCATION).split(",")));
             ab.testLocations = new HashSet<>(Arrays.asList(getValue(SystemProperties.TEST_LOCATION).split(",")));
-            ab.selectiveMode = Boolean.valueOf(getValue(SystemProperties.SELECTIVE_MODE));
-            ab.gitCache = Boolean.valueOf(getValue(SystemProperties.GIT_CACHE));
-            ab.coreCache = Boolean.valueOf(getValue(SystemProperties.CORE_CACHE));
+            ab.dependencies = new HashSet<>(Arrays.asList(getValue(SystemProperties.DEPENDENCIES).split(",")));
+            ab.outputFormat = getValue(SystemProperties.OUTPUT_FORMAT);
         }).build();
 
         log.debug("[arguments collected] {}", arguments);
@@ -60,7 +65,7 @@ public class Application {
         return arguments;
     }
 
-    private Map<String, String> getProperties() {
+    public Map<String, String> getProperties() {
         if (propertiesMap == null) {
             propertiesMap = preparePropertiesMap();
         }
@@ -68,19 +73,19 @@ public class Application {
     }
 
     private Map<String, String> preparePropertiesMap() {
-        Map<String, String> pMap = System.getProperties().entrySet().stream()
-                .filter(k -> ((String) k.getKey()).startsWith("sandboni."))
+        Map<String, String> properties = System.getProperties().entrySet().stream()
+                .filter(k-> ((String)k.getKey()).startsWith("sandboni."))
                 .collect(Collectors.toMap(
                         e -> (String) e.getKey(),
                         e -> (String) e.getValue()));
 
-        if (pMap.isEmpty()) {
+        if (properties.isEmpty()){
             printAvailableProperties();
             throw new IllegalArgumentException("No Sandboni properties were entered. please enter sufficient properties");
         }
 
-        log.debug("Sandboni properties:{}", pMap);
-        return pMap;
+        log.debug("Sandboni properties:{}", properties);
+        return properties;
     }
 
     private void printAvailableProperties() {

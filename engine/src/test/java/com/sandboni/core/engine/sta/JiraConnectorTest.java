@@ -17,6 +17,7 @@ public class JiraConnectorTest {
     private Context setupContext() {
         Context context = new Context(new String[]{}, new String[]{}, "", new ChangeScopeImpl());
         context.addLink(LinkFactory.createInstance(
+                context.getApplicationId(),
                 new Vertex.Builder("cucumber", "callerActon")
                         .withFilePath("com/sandboni/core/scenario/Callee.java")
                         .withLineNumbers(Arrays.asList(1, 2))
@@ -28,6 +29,7 @@ public class JiraConnectorTest {
                 LinkType.CUCUMBER_SOURCE));
 
         context.addLink(LinkFactory.createInstance(
+                context.getApplicationId(),
                 new Vertex.Builder("cucumber", "caller")
                         .withFilePath( "com/sandboni/core/scenario/JavaxController.java")
                         .withLineNumbers(Arrays.asList(5, 6))

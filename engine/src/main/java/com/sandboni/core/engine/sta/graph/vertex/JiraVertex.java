@@ -11,7 +11,7 @@ public class JiraVertex extends Vertex {
     private final Date date;
     private final String revisionId;
 
-    @SuppressWarnings("squid:S00107")
+    @SuppressWarnings("squid:S00107") // private constructor used only in Builder
     private JiraVertex(String actor, String action, boolean isSpecial, String filePath, List<Integer> lineNumbers,
                        String filter, String location, Date date, String revisionId) {
         super(actor, action, isSpecial, filePath, lineNumbers, filter, location);

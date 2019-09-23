@@ -16,8 +16,8 @@ import java.util.Map;
 
 public class ExplicitFinder extends FileTreeFinder {
 
-    static com.sandboni.core.engine.sta.graph.Link toLink(Link l) {
-        return LinkFactory.createInstance(
+    static com.sandboni.core.engine.sta.graph.Link toLink(String applicationId, Link l) {
+        return LinkFactory.createInstance(applicationId,
                 new Vertex.Builder(l.caller, l.callerAction).build(),
                 new Vertex.Builder(l.callee, l.calleeAction).build(),
                 LinkType.MANUAL);
@@ -32,7 +32,7 @@ public class ExplicitFinder extends FileTreeFinder {
             Unmarshaller unmarshaller = jContext.createUnmarshaller();
 
             Links links = (Links) unmarshaller.unmarshal(file);
-            links.link.forEach(l -> context.addLink(toLink(l)));
+            links.link.forEach(l -> context.addLink(toLink(context.getApplicationId(), l)));
         });
 
         return map;

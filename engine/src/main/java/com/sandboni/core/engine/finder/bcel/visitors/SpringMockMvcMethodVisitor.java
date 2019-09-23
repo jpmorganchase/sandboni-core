@@ -49,6 +49,7 @@ public class SpringMockMvcMethodVisitor extends TestMethodVisitor {
     public void visitINVOKESTATIC(INVOKESTATIC obj) {
         if (obj.getType(cp).getSignature().contains(MOCK_HTTP_REQUEST_BUILDER)){
             context.addLink(LinkFactory.createInstance(
+                    context.getApplicationId(),
                     new Vertex.Builder(javaClass.getClassName(), formatMethod(method)).build(),
                     new Vertex.Builder(obj.getMethodName(cp).toUpperCase() + " " + HttpConsts.HTTP_LOCALHOST, value, context.getCurrentLocation())
                             .markSpecial()

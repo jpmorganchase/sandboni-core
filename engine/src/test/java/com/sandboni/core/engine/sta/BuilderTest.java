@@ -1,18 +1,23 @@
 package com.sandboni.core.engine.sta;
 
+import com.sandboni.core.engine.result.FilterIndicator;
+import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.LinkFactory;
-import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
-import com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes;
 import com.sandboni.core.scm.scope.ChangeScopeImpl;
+import org.jgrapht.DirectedGraph;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.TreeSet;
 
+import static com.sandboni.core.engine.sta.graph.LinkType.*;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.END_VERTEX;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
 import static org.junit.Assert.*;
 
 public class BuilderTest {
@@ -41,77 +46,81 @@ public class BuilderTest {
     @Before
     public void setUp() {
 
-        context.addLink(LinkFactory.createInstance(caller, modified, LinkType.METHOD_CALL));
-        context.addLink(LinkFactory.createInstance(callerTest, caller, LinkType.METHOD_CALL));
-        context.addLink(LinkFactory.createInstance(VertexInitTypes.START_VERTEX, callerTest, LinkType.ENTRY_POINT));
-        context.addLink(LinkFactory.createInstance(VertexInitTypes.START_VERTEX, disconnectedCallerTest, LinkType.ENTRY_POINT));
-        context.addLink(LinkFactory.createInstance(modified, VertexInitTypes.END_VERTEX, LinkType.EXIT_POINT));
-        context.addLink(LinkFactory.createInstance(modifiedUncovered, VertexInitTypes.END_VERTEX, LinkType.EXIT_POINT));
+        context.addLink(LinkFactory.createInstance(context.getApplicationId(), caller, modified, METHOD_CALL));
+        context.addLink(LinkFactory.createInstance(context.getApplicationId(), callerTest, caller, METHOD_CALL));
+        context.addLink(LinkFactory.createInstance(context.getApplicationId(), START_VERTEX, callerTest, ENTRY_POINT));
+        context.addLink(LinkFactory.createInstance(context.getApplicationId(), START_VERTEX, disconnectedCallerTest, ENTRY_POINT));
+        context.addLink(LinkFactory.createInstance(context.getApplicationId(), modified, END_VERTEX, EXIT_POINT));
+        context.addLink(LinkFactory.createInstance(context.getApplicationId(), modifiedUncovered, END_VERTEX, EXIT_POINT));
 
         builder = new Builder(context);
     }
 
     @Test
-    public void testGetEntryPoints() {
-        Set<Vertex> result = builder.getEntryPoints().collect(Collectors.toSet());
-        assertEquals(1, result.size());
-        assertTrue(result.contains(callerTest));
+    public void getGraph() {
+        DirectedGraph<Vertex, Edge> graph = builder.getGraph();
+        assertNotNull(graph);
+        assertEquals(graph, builder.getGraph());
     }
 
     @Test
-    public void testGetDisconnectedTests() {
-        Set<Vertex> result = builder.getDisconnectedEntryPoints().collect(Collectors.toSet());
-        assertNotEquals(0, result.size());
+    public void getFilterIndicator() {
+        assertEquals(FilterIndicator.SELECTIVE, builder.getFilterIndicator());
     }
 
     @Test
-    public void testGetExitPoints() {
-        Set<Vertex> result = builder.getExitPoints().collect(Collectors.toSet());
-        assertEquals(2, result.size());
-        assertTrue(result.contains(modified));
-        assertTrue(result.contains(modifiedUncovered));
+    public void verticesAreIncluded() {
+        DirectedGraph<Vertex, Edge> graph = builder.getGraph();
+        assertEquals(7, graph.vertexSet().size());
+        assertTrue(graph.containsVertex(modified));
+        assertTrue(graph.containsVertex(modifiedUncovered));
+        assertTrue(graph.containsVertex(caller));
+        assertTrue(graph.containsVertex(callerTest));
+        assertTrue(graph.containsVertex(disconnectedCallerTest));
+        assertTrue(graph.containsVertex(START_VERTEX));
+        assertTrue(graph.containsVertex(END_VERTEX));
     }
 
     @Test
-    public void testGetUnreachableExitPoints() {
-        Set<Vertex> result = builder.getUnreachableExitPoints().collect(Collectors.toSet());
-        assertEquals(1, result.size());
-        assertTrue(result.contains(modifiedUncovered));
-    }
+    public void edgesAreIncluded() {
+        DirectedGraph<Vertex, Edge> graph = builder.getGraph();
+        Set<Edge> edges = graph.edgeSet();
+        assertEquals(6, edges.size());
 
-    @Test
-    public void testGetDisconnectedEntryPoints() {
-        Set<Vertex> result = builder.getDisconnectedEntryPoints().collect(Collectors.toSet());
-        assertEquals(1, result.size());
-        assertTrue(result.contains(disconnectedCallerTest));
-    }
+        // sort first to ensure order of elements is the same across implementations
+        TreeSet<Edge> sorted = new TreeSet<>(Comparator.comparing(edge -> ("" + edge.getSource() + edge.getTarget() + edge.getLinkType())));
+        sorted.addAll(edges);
+        Iterator<Edge> iterator = sorted.iterator();
 
-    @Test
-    public void testGetAllAffected() {
-        Set<Vertex> result = builder.getAllAffected().collect(Collectors.toSet());
-        assertEquals(3, result.size());
-        assertTrue(result.contains(modified));
-        assertTrue(result.contains(caller));
-        assertTrue(result.contains(callerTest));
-    }
+        Edge edge1 = iterator.next();
+        assertEquals(METHOD_CALL, edge1.getLinkType());
+        assertEquals(modified, edge1.getSource());
+        assertEquals(caller, edge1.getTarget());
 
+        Edge edge2 = iterator.next();
+        assertEquals(METHOD_CALL, edge2.getLinkType());
+        assertEquals(caller, edge2.getSource());
+        assertEquals(callerTest, edge2.getTarget());
 
+        Edge edge3 = iterator.next();
+        assertEquals(ENTRY_POINT, edge3.getLinkType());
+        assertEquals(disconnectedCallerTest, edge3.getSource());
+        assertEquals(START_VERTEX, edge3.getTarget());
 
-    @Test
-    public void testGetReachableLineNumberCount() {
-        int lineCount = builder.getReachableLineNumberCount();
-        assertEquals(0, lineCount);
-    }
+        Edge edge4 = iterator.next();
+        assertEquals(ENTRY_POINT, edge4.getLinkType());
+        assertEquals(callerTest, edge4.getSource());
+        assertEquals(START_VERTEX, edge4.getTarget());
 
-    @Test
-    public void testGetJiraList() {
-        Stream<String> jiraSet = builder.getJiraList();
-        assertNotNull(jiraSet);
-    }
+        Edge edge5 = iterator.next();
+        assertEquals(EXIT_POINT, edge5.getLinkType());
+        assertEquals(END_VERTEX, edge5.getSource());
+        assertEquals(modified, edge5.getTarget());
 
-    @Test
-    public void testGetAllEntryPoints() {
-        Stream<TestVertex> all = builder.getAllEntryPoints();
-        assertNotNull(all);
+        Edge edge6 = iterator.next();
+        assertEquals(EXIT_POINT, edge6.getLinkType());
+        assertEquals(END_VERTEX, edge6.getSource());
+        assertEquals(modifiedUncovered, edge6.getTarget());
+
     }
 }

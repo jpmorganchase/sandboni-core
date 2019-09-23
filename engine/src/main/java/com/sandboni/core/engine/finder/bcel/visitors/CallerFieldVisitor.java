@@ -20,6 +20,7 @@ public class CallerFieldVisitor extends CallerFieldOrMethodVisitor {
     @Override
     public void visitPUTFIELD(PUTFIELD i) {
         addLink(LinkFactory.createInstance(
+                context.getApplicationId(),
                 new Vertex.Builder(i.getReferenceType(cp).toString(), i.getName(cp)).build(),
                 currentMethodVertex,
                 LinkType.FIELD_PUT));
@@ -27,7 +28,9 @@ public class CallerFieldVisitor extends CallerFieldOrMethodVisitor {
 
     @Override
     public void visitGETFIELD(GETFIELD i) {
-        addLink(LinkFactory.createInstance(currentMethodVertex,
+        addLink(LinkFactory.createInstance(
+                context.getApplicationId(),
+                currentMethodVertex,
                 new Vertex.Builder(i.getReferenceType(cp).toString(), i.getName(cp)).build(),
                 LinkType.FIELD_GET));
     }
@@ -35,6 +38,7 @@ public class CallerFieldVisitor extends CallerFieldOrMethodVisitor {
     @Override
     public void visitPUTSTATIC(PUTSTATIC i) {
         addLink(LinkFactory.createInstance(
+                context.getApplicationId(),
                 new Vertex.Builder(i.getReferenceType(cp).toString(), i.getName(cp)).build(),
                 currentMethodVertex,
                 LinkType.STATIC_PUT));
@@ -42,7 +46,9 @@ public class CallerFieldVisitor extends CallerFieldOrMethodVisitor {
 
     @Override
     public void visitGETSTATIC(GETSTATIC i) {
-        addLink(LinkFactory.createInstance(currentMethodVertex,
+        addLink(LinkFactory.createInstance(
+                context.getApplicationId(),
+                currentMethodVertex,
                 new Vertex.Builder(i.getReferenceType(cp).toString(), i.getName(cp)).build(),
                 LinkType.STATIC_GET));
     }

@@ -30,7 +30,9 @@ public class ThreadRunMethodVisitor extends CallerFieldOrMethodVisitor {
     @Override
     public void visitINVOKEVIRTUAL(INVOKEVIRTUAL i) {
         if (THREAD_CLASS_NAME.equals(i.getReferenceType(cp).toString()) && THREAD_START_METHOD.equals(i.getMethodName(cp))) {
-            addLink(LinkFactory.createInstance(currentMethodVertex, new Vertex.Builder(RUNNABLE_INTERFACE_METHOD, RUNNABLE_RUN_METHOD, context.getCurrentLocation()).build(), LinkType.INTERFACE_CALL));
+            addLink(LinkFactory.createInstance(
+                    context.getApplicationId(),
+                    currentMethodVertex, new Vertex.Builder(RUNNABLE_INTERFACE_METHOD, RUNNABLE_RUN_METHOD, context.getCurrentLocation()).build(), LinkType.INTERFACE_CALL));
         }
     }
 
@@ -38,7 +40,9 @@ public class ThreadRunMethodVisitor extends CallerFieldOrMethodVisitor {
     public void visitINVOKEINTERFACE(INVOKEINTERFACE obj) {
         if(ES_INTERFACE_NAME.equals(obj.getReferenceType(cp).toString()) &&
                 (ES_EXECUTE_METHOD.equals(obj.getMethodName(cp)) || ES_SUBMIT_METHOD.equals(obj.getMethodName(cp))))
-            addLink(LinkFactory.createInstance(currentMethodVertex, new Vertex.Builder(RUNNABLE_INTERFACE_METHOD, RUNNABLE_RUN_METHOD, context.getCurrentLocation()).build(), LinkType.INTERFACE_CALL));
+            addLink(LinkFactory.createInstance(
+                    context.getApplicationId(),
+                    currentMethodVertex, new Vertex.Builder(RUNNABLE_INTERFACE_METHOD, RUNNABLE_RUN_METHOD, context.getCurrentLocation()).build(), LinkType.INTERFACE_CALL));
     }
 
 }

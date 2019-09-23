@@ -6,9 +6,9 @@ import com.sandboni.core.engine.render.file.FileOptions;
 
 import java.util.Collection;
 
-public class JSONFileStrategy<R extends Collection> extends AbstractFileStrategy<R, String> {
+public class JSONFileStrategy<R extends Collection<?>> extends AbstractFileStrategy<R, String> {
 
-    public JSONFileStrategy(R resultObj, JSONFileRenderer <R> fileRenderer, FileOptions fileOptions) {
+    public JSONFileStrategy(R resultObj, JSONFileRenderer<R> fileRenderer, FileOptions fileOptions) {
        super(resultObj, fileRenderer, fileOptions);
     }
 

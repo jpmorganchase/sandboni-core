@@ -6,7 +6,6 @@ import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.CucumberVertex;
-import com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes;
 import com.sandboni.core.scm.scope.ChangeScopeImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,11 +13,13 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.CUCUMBER_VERTEX;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
 import static org.junit.Assert.assertNotNull;
 
 public class JsonConnectorTest {
     private void addStartLink(Context context, CucumberVertex testVertex) {
-        context.addLink(LinkFactory.createInstance(VertexInitTypes.START_VERTEX, testVertex, LinkType.ENTRY_POINT));
+        context.addLink(LinkFactory.createInstance(context.getApplicationId(), START_VERTEX, testVertex, LinkType.ENTRY_POINT));
     }
 
     @Test
@@ -40,16 +41,16 @@ public class JsonConnectorTest {
         jsonConnector.connect(context);
 
         assertNotNull(context);
-        Link expectedLink1 = LinkFactory.createInstance(testVertex,
-                new CucumberVertex.Builder(VertexInitTypes.CUCUMBER_VERTEX.getActor(), "/rest/unprocess/count/NEW")
+        Link expectedLink1 = LinkFactory.createInstance(context.getApplicationId(), testVertex,
+                new CucumberVertex.Builder(CUCUMBER_VERTEX.getActor(), "/rest/unprocess/count/NEW")
                         .build(),
                 LinkType.HTTP_REQUEST);
-        Link expectedLink2 = LinkFactory.createInstance(testVertex, new CucumberVertex.Builder(VertexInitTypes.CUCUMBER_VERTEX.getActor(), "/rest/unprocess/count/I").build(),
+        Link expectedLink2 = LinkFactory.createInstance(context.getApplicationId(), testVertex, new CucumberVertex.Builder(CUCUMBER_VERTEX.getActor(), "/rest/unprocess/count/I").build(),
                 LinkType.HTTP_REQUEST);
-        Link expectedLink3 = LinkFactory.createInstance(testVertex, new CucumberVertex.Builder(VertexInitTypes.CUCUMBER_VERTEX.getActor(), "/rest/unprocess/count/DND")
+        Link expectedLink3 = LinkFactory.createInstance(context.getApplicationId(), testVertex, new CucumberVertex.Builder(CUCUMBER_VERTEX.getActor(), "/rest/unprocess/count/DND")
                 .build(),
                 LinkType.HTTP_REQUEST);
-        Link expectedLink4 = LinkFactory.createInstance(testVertex2, new CucumberVertex.Builder(VertexInitTypes.CUCUMBER_VERTEX.getActor(), "/rest/unprocess/count/ABC")
+        Link expectedLink4 = LinkFactory.createInstance(context.getApplicationId(), testVertex2, new CucumberVertex.Builder(CUCUMBER_VERTEX.getActor(), "/rest/unprocess/count/ABC")
                 .build(),
                 LinkType.HTTP_REQUEST);
 

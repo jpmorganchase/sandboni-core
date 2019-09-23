@@ -2,25 +2,43 @@ package com.sandboni.core.engine.finder.bcel.visitors;
 
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
+import org.apache.bcel.util.ClassPath;
 import org.apache.bcel.util.SyntheticRepository;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
-class ClassUtils {
+public class ClassUtils {
+
+    // Is safe to have this object living in parallel execution because classpath objects are different
+    // for each project and can be accessed/reused during build lifecycle
+    private static final ConcurrentMap<String, ClassPath> classPathMap = new ConcurrentHashMap<>();
 
     private ClassUtils() {
     }
 
-    private static final SyntheticRepository repository = SyntheticRepository.getInstance();
+    public static ClassPath getClassPathObject(String classPath) {
+        return classPathMap.computeIfAbsent(classPath, ClassPath::new);
+    }
 
-    static List<JavaClass> getInScopeInterfacesSafe(JavaClass jc) {
+    public static SyntheticRepository getRepository(String classPath) {
+        SyntheticRepository repository;
+        synchronized (SyntheticRepository.class) {
+            repository = SyntheticRepository.getInstance(getClassPathObject(classPath));
+        }
+        return repository;
+    }
+
+    static List<JavaClass> getInScopeInterfacesSafe(JavaClass jc, String classPath) {
         List<JavaClass> result = new ArrayList<>();
 
         for (String in : jc.getInterfaceNames()) {
             try {
+                SyntheticRepository repository = getRepository(classPath);
                 JavaClass inClass = repository.loadClass(in);
-                result.addAll(getInScopeInterfacesSafe(inClass));
+                result.addAll(getInScopeInterfacesSafe(inClass, classPath));
                 result.add(inClass);
             } catch (Exception ignored) {
                 //need to look for  approach - we cannot continue spitting out logs
@@ -85,11 +103,11 @@ class ClassUtils {
         return result;
     }
 
-    static Map<Method, JavaClass> getInheritedInterfaceMethods(JavaClass iface) {
+    static Map<Method, JavaClass> getInheritedInterfaceMethods(JavaClass iface, String classPath) {
         Map<Method, JavaClass> result = new HashMap<>();
         Set<Method> existingMethods = new HashSet<>(ClassUtils.getInstanceMethods(iface));
 
-        for (JavaClass superClass : getInScopeInterfacesSafe(iface)) {
+        for (JavaClass superClass : getInScopeInterfacesSafe(iface, classPath)) {
             for (Method method : superClass.getMethods()) {
                 if (!existingMethods.contains(method)) {
                     result.put(method, superClass);

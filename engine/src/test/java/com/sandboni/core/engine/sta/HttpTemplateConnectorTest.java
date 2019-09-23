@@ -23,6 +23,7 @@ public class HttpTemplateConnectorTest {
 
         if (Objects.nonNull(callerActon)) {
             context.addLink(LinkFactory.createInstance(
+                    context.getApplicationId(),
                     new Vertex.Builder( "caller", "callSite").build(),
                     new Vertex.Builder(sampleVerb + " " + HttpConsts.HTTP_LOCALHOST, callerActon)
                             .markSpecial()
@@ -32,6 +33,7 @@ public class HttpTemplateConnectorTest {
 
         if (Objects.nonNull(calleeAction)) {
             context.addLink(LinkFactory.createInstance(
+                    context.getApplicationId(),
                     new Vertex.Builder(sampleVerb + " " + HttpConsts.HTTP_LOCALHOST, calleeAction)
                             .markSpecial()
                             .build(),

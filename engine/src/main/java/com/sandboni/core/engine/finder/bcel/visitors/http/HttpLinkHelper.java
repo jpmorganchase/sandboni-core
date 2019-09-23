@@ -33,17 +33,18 @@ public class HttpLinkHelper {
                 Vertex currentVertex = new Vertex.Builder(className, methodName, context.getCurrentLocation()).build();
 
                 if (controllerSide) {
-                    context.addLink(LinkFactory.createInstance(httpVertex, currentVertex, LinkType.HTTP_HANLDER));
+                    context.addLink(LinkFactory.createInstance(context.getApplicationId(), httpVertex, currentVertex, LinkType.HTTP_HANLDER));
 
                     // implicit initialization will happen
-                    context.addLink(LinkFactory.createInstance(httpVertex,
+                    context.addLink(LinkFactory.createInstance(context.getApplicationId(), httpVertex,
                             new Vertex.Builder(className, MethodUtils.INIT).build(),
                             LinkType.METHOD_CALL));
-                    context.addLink(LinkFactory.createInstance(httpVertex,
+                    context.addLink(LinkFactory.createInstance(context.getApplicationId(), httpVertex,
                             new Vertex.Builder(className, MethodUtils.CLINIT).build(),
                             LinkType.STATIC_CALL));
                 } else
-                    context.addLinks(LinkFactory.createInstance(currentVertex, httpVertex, LinkType.HTTP_REQUEST));
+                    context.addLinks(LinkFactory.createInstance(context.getApplicationId(), currentVertex,
+                            httpVertex, LinkType.HTTP_REQUEST));
             });
         }
     }

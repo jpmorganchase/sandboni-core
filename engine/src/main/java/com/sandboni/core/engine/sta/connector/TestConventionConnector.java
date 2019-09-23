@@ -16,7 +16,7 @@ public class TestConventionConnector implements Connector {
         Set<Vertex> code = context.getLinks().filter(l -> l.getLinkType().isCodeBased()).map(Link::getCaller).collect(Collectors.toSet());
 
         tests.forEach(t -> code.parallelStream().filter(c -> isMatch(t, c)).findAny()
-                .ifPresent(c -> context.addLink(LinkFactory.createInstance(t, c, LinkType.CONVENTION))));
+                .ifPresent(c -> context.addLink(LinkFactory.createInstance(context.getApplicationId(), t, c, LinkType.CONVENTION))));
     }
 
     @Override
