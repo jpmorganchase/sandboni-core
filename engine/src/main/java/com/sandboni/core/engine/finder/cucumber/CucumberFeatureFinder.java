@@ -8,7 +8,6 @@ import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.CucumberVertex;
-import com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes;
 import cucumber.runtime.FeatureBuilder;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberTagStatement;
@@ -23,6 +22,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
+
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.CUCUMBER_VERTEX;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
 
 public class CucumberFeatureFinder extends FileTreeFinder {
 
@@ -57,22 +59,22 @@ public class CucumberFeatureFinder extends FileTreeFinder {
                         .markAffected(isAffected(scenario, statement, affectedLines))
                         .withScenarioLine(scenario.getLine())
                         .build();
-                links.add(LinkFactory.createInstance(VertexInitTypes.START_VERTEX, scenarioVertex, LinkType.ENTRY_POINT));
+                links.add(LinkFactory.createInstance(context.getApplicationId(), START_VERTEX, scenarioVertex, LinkType.ENTRY_POINT));
 
                 for (Step step : statement.getSteps()) {
-                    CucumberVertex stepVertex = new CucumberVertex.Builder(VertexInitTypes.CUCUMBER_VERTEX.getActor(), step.getName())
+                    CucumberVertex stepVertex = new CucumberVertex.Builder(CUCUMBER_VERTEX.getActor(), step.getName())
                             .build();
-                    links.add(LinkFactory.createInstance(scenarioVertex, stepVertex, LinkType.CUCUMBER_TEST));
+                    links.add(LinkFactory.createInstance(context.getApplicationId(), scenarioVertex, stepVertex, LinkType.CUCUMBER_TEST));
                 }
 
                 for (Tag tag : scenario.getTags()) {
                     String tagName = tag.getName().substring(1);
-                    CucumberVertex tagVertex = new CucumberVertex.Builder(VertexInitTypes.CUCUMBER_VERTEX.getActor(), tagName)
+                    CucumberVertex tagVertex = new CucumberVertex.Builder(CUCUMBER_VERTEX.getActor(), tagName)
                             .build();
                     if (tagName.startsWith("/")) {
-                        links.add(LinkFactory.createInstance(scenarioVertex, tagVertex, LinkType.HTTP_REQUEST));
+                        links.add(LinkFactory.createInstance(context.getApplicationId(), scenarioVertex, tagVertex, LinkType.HTTP_REQUEST));
                     } else {
-                        links.add(LinkFactory.createInstance(scenarioVertex, tagVertex, LinkType.CUCUMBER_TEST_TAG));
+                        links.add(LinkFactory.createInstance(context.getApplicationId(), scenarioVertex, tagVertex, LinkType.CUCUMBER_TEST_TAG));
                     }
                 }
             }

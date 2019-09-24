@@ -15,7 +15,7 @@ import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getA
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotationParameter;
 
 /**
- * Visit Java classes that uses Javax.PATH annotation.
+ * Visit Java classes that uses Javax.Path annotation.
  * Note: This class is not thread safe.
  */
 public class JavaxControllerClassVisitor extends ClassVisitorBase implements ClassVisitor {

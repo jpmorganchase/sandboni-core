@@ -2,13 +2,10 @@ package com.sandboni.core.scm.resolvers;
 
 import com.sandboni.core.scm.GitRepository;
 import com.sandboni.core.scm.exception.SourceControlException;
-import com.sandboni.core.scm.exception.SourceControlRuntimeException;
 import com.sandboni.core.scm.revision.DiffConstants;
 import com.sandboni.core.scm.revision.RevisionScope;
 import com.sandboni.core.scm.utils.GitHelper;
-import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.Before;
 import org.junit.Test;
 

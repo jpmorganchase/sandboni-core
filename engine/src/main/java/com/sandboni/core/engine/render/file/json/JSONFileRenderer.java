@@ -8,7 +8,7 @@ import com.sandboni.core.engine.render.file.FormatHelper;
 
 import java.util.Collection;
 
-public class JSONFileRenderer<R extends Collection> implements FileRenderer<R, String> {
+public class JSONFileRenderer<R extends Collection<?>> implements FileRenderer<R, String> {
 
     protected FormatHelper jsonHelper;
 

@@ -4,7 +4,6 @@ import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
-import com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 
@@ -13,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.END_VERTEX;
 
 class AffectedMethodVisitor extends MethodVisitorBase {
 
@@ -25,8 +25,9 @@ class AffectedMethodVisitor extends MethodVisitorBase {
 
     private void addEntryLink() {
         addLink(LinkFactory.createInstance(
-                new Vertex.Builder(javaClass.getClassName(), MethodUtils.formatMethod(method)).build(),
-                VertexInitTypes.END_VERTEX,
+                context.getApplicationId(),
+                new Vertex.Builder(javaClass.getClassName(), formatMethod(method)).build(),
+                END_VERTEX,
                 LinkType.EXIT_POINT));
     }
 

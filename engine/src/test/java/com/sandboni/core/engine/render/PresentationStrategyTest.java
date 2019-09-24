@@ -22,7 +22,7 @@ public class PresentationStrategyTest {
     public static void init() {
         Set<Map<String, String>> set = new HashSet<>();
         set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenEmptyContextAndRunSelectiveModeIsTrue()"));
-        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetUnreachableExitPoints()"));
+        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetUnreachableChanges()"));
         set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenOnlyJavaContext()"));
         set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenOnlyJavaContextAndRunSelectiveModeIsTrue()"));
         set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenEmptyContext()"));
@@ -30,11 +30,11 @@ public class PresentationStrategyTest {
         set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenBothBuildCnfgAndJavaContextAndRunSelectiveModeIsTrue()"));
         set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenOnlyCnfgContextAndRunSelectiveModeIsTrue()"));
         set.add(genereteMap("com.sandboni.core.engine.result.ResultGeneratorTest", "testResultWhenOnlyCnfgContext()"));
-        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetExitPoints()"));
+        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetChanges()"));
         set.add(genereteMap("com.sandboni.core.engine.finder.bcel.BcelFinderTest", "testPoCDiffChangeDetector()"));
         set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testFileRelatedTests()"));
         set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetDisconnectedVertices()"));
-        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetAllEntryPointsCount()"));
+        set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetAllTestsCount()"));
         set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetDisconnectedEntryPoints()"));
         set.add(genereteMap("com.sandboni.core.engine.ProcessorTest", "testGetRelatedTests()"));
         set.add(genereteMap("Receive and process Cash Forecast messages of type cash managemen", " "));

@@ -11,6 +11,8 @@ public interface ChangeScope<T> {
 
     List<Change> getChanges(String className);
 
+    List<Change> getChangesForFilesEndWith(String fileName);
+
     boolean contains(String className);
 
     Set<Integer> getAllLinesChanged(String className);

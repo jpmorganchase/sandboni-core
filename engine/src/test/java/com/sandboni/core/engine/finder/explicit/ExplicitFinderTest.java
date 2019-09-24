@@ -62,7 +62,7 @@ public class ExplicitFinderTest extends FinderTestBase {
         consumer.accept(testFile, context);
         Assert.assertTrue(context.getLinks().count() > 0);
 
-        assertLinksExist(ExplicitFinder.toLink(link));
+        assertLinksExist(ExplicitFinder.toLink(context.getApplicationId(), link));
     }
 
     @Test

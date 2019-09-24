@@ -5,14 +5,15 @@ public enum ResultContent {
     ALL_TESTS,
     RELATED_TESTS,
     DISCONNECTED_TESTS,
-    EXIT_POINTS,
-    ENTRY_POINTS,
-    DISCONNECTED_ENTRY_POINTS,
-    UNREACHABLE_EXIT_POINTS,
+    CHANGES,
+    UNREACHABLE_CHANGES,
     ALL_EXTERNAL_TESTS,
     JIRA_TRACKING(true),
     RELATED_TEST_TO_FILE(true),
-    OUTPUT_TO_FILE(true);
+    OUTPUT_TO_FILE(true),
+    CHANGE_STATS,
+    FORMATTED_CHANGE_STATS(true)
+    ;
 
     private boolean outputToFile;
 

@@ -2,7 +2,6 @@ package com.sandboni.core.engine.finder.bcel.visitors;
 
 import com.sandboni.core.engine.contract.HttpConsts;
 import com.sandboni.core.engine.sta.Context;
-import com.sandboni.core.engine.finder.bcel.visitors.http.HttpLinkHelper;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
@@ -33,7 +32,7 @@ public class RedirectVisitor extends MethodVisitorBase {
         if (obj.getValue(cp) instanceof String){
             String url = (String)obj.getValue(cp);
             if (url.contains("/")){
-                HttpLinkHelper.addHttpLinks(HttpConsts.GET_METHOD, context, url, javaClass.getClassName(), MethodUtils.formatMethod(method), controllerSide);
+                addHttpLinks(HttpConsts.GET_METHOD, context, url, javaClass.getClassName(), formatMethod(method), controllerSide);
             }
         }
     }

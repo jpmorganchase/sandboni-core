@@ -24,13 +24,14 @@ public class InheritanceClassVisitor extends ClassVisitorBase implements ClassVi
             getOverriddenMethods(jc).forEach(e ->  addLink(e.getValue(), e.getKey(), jc, LinkType.OVERRIDDEN));
         }
         if (jc.isInterface()) {
-            getInheritedInterfaceMethods(jc).forEach((key, value) -> addLink(jc, key, value, LinkType.FORWARD_TO));
+            getInheritedInterfaceMethods(jc, context.getClassPath()).forEach((key, value) -> addLink(jc, key, value, LinkType.FORWARD_TO));
         }
     }
 
     private void addLink(JavaClass jc, Method key, JavaClass value, LinkType forwardTo) {
         String methodName = MethodUtils.formatMethod(key.getName(), key.getArgumentTypes());
         context.addLink(LinkFactory.createInstance(
+                context.getApplicationId(),
                 new Vertex.Builder(jc.getClassName(), methodName, context.getCurrentLocation()).build(),
                 new Vertex.Builder(value.getClassName(), methodName)
                         .withFilePath(getRelativeFileName(value))

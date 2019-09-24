@@ -54,7 +54,7 @@ public class XMLFileWriterTest {
     public void basicTestXml() throws RendererException {
         Result res = new Result();
         res.put(ResultContent.OUTPUT_TO_FILE, List.class, employeeList);
-        FileWriterEngine.write(res, new FileOptions.FileOptionsBuilder().with(fo -> {fo.name = MY_XML_TEST_FILE; fo.type = FileType.XML ;}).build());
+        FileWriterEngine.write(employeeList, new FileOptions.FileOptionsBuilder().with(fo -> {fo.name = MY_XML_TEST_FILE; fo.type = FileType.XML ;}).build());
         assertTrue(new File(System.getProperty("user.dir"), MY_XML_TEST_FILE).exists());
     }
 

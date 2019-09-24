@@ -4,17 +4,19 @@ public enum SystemProperties {
 
     SRC_LOCATION("sandboni.source.locations","List of source locations where Sandboni will be executed", true ),
     TEST_LOCATION("sandboni.test.locations","List of tests locations where Sandboni will be executed", true ),
+    DEPENDENCIES("sandboni.dependencies","List of external dependencies that will be analyzed by Sandboni", false ),
     FROM("sandboni.scm.from", "The From commit id for determine the commits range", true),
     TO("sandboni.scm.to", "The To commit id for determine the commits range", true),
     REPOSITORY("sandboni.scm.repository", "Git repository location", true),
     OUTPUTS("sandboni.outputs", "List of preferab;e outputs", false, "tests"),
-    OUTPUT_FORMAT("sandboni.output.format", "Format to output to", false),
+    OUTPUT_FORMAT("sandboni.output.format", "Format to output to", false, "csv"),
     STAGE("sandboni.stage", "Build Stage", false, Arguments.BUILD_STAGE),
     REPORT_DIR("sandboni.reportDir", "Report folder", false),
     SELECTIVE_MODE("sandboni.selectiveMode",  "Run in selective mode",false, Boolean.FALSE.toString()),
     RUN_ALL_EXTERNAL_TESTS("sandboni.runAllExternalTests", "Run all external tests", false, Boolean.FALSE.toString()),
     GIT_CACHE("sandboni.gitCache", "Caches changes found in Git repository", false, Boolean.FALSE.toString()),
-    CORE_CACHE("sandboni.coreCache", "Caches core internal data", false, Boolean.FALSE.toString());
+    CORE_CACHE("sandboni.coreCache", "Caches core internal data", false, Boolean.FALSE.toString()),
+    FILTER("sandboni.filter", "Filter elements pattern", false);
 
     SystemProperties(String name, String description , boolean required) {
         this.name = name;

@@ -4,11 +4,6 @@ import com.sandboni.core.scm.utils.GitHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.File;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 public class ApplicationTest {
 
     private void fillSystemProperties(){
@@ -68,17 +63,16 @@ public class ApplicationTest {
     @Test
     public void testAllPropertiesAreMatched() {
         fillSystemProperties();
-        Application.main(new String[]{});
-        assertEquals(new File(".").getAbsolutePath(), System.getProperty(SystemProperties.REPOSITORY.getName()));
-        assertEquals("./target/classes", System.getProperty(SystemProperties.SRC_LOCATION.getName()));
-        assertEquals("./target/test-classes", System.getProperty(SystemProperties.TEST_LOCATION.getName()));
-    }
-
-    @Test
-    public void testDisconnectedTest(){
-        // doing nothing
-        // checking disconnected tests
-        assertTrue(true);
+        Application app = new Application();
+        app.buildArguments();
+        Arguments args = app.getArguments();
+        Assert.assertEquals("./target/classes", args.getSrcLocation()[0]);
+        Assert.assertEquals("./target/test-classes", args.getTestLocation()[0]);
+        Assert.assertEquals("LATEST_PUSH", args.getFromChangeId());
+        Assert.assertEquals("LOCAL_CHANGES_NOT_COMMITTED", args.getToChangeId());
+        Assert.assertEquals(GitHelper.openCurrentFolder(), args.getRepository());
+        Assert.assertTrue(args.isRunSelectiveModeIfBuildFileHasChanged());
+        Assert.assertFalse(args.isRunAllExternalTests());
     }
 
     @Test
@@ -94,9 +88,9 @@ public class ApplicationTest {
         Assert.assertNotNull(args.getTestLocation());
         Assert.assertSame(1, args.getTestLocation().length);
 
-        assertEquals("LATEST_PUSH", args.getFromChangeId());
-        assertEquals("LOCAL_CHANGES_NOT_COMMITTED", args.getToChangeId());
-        assertEquals(GitHelper.openCurrentFolder(), args.getRepository());
+        Assert.assertEquals("LATEST_PUSH", args.getFromChangeId());
+        Assert.assertEquals("LOCAL_CHANGES_NOT_COMMITTED", args.getToChangeId());
+        Assert.assertEquals(GitHelper.openCurrentFolder(), args.getRepository());
         Assert.assertTrue(args.isRunSelectiveModeIfBuildFileHasChanged());
     }
 }

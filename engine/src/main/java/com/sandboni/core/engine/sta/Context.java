@@ -6,6 +6,8 @@ import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeScope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
@@ -14,12 +16,18 @@ import java.util.stream.Stream;
 
 public class Context {
 
+    private static final Logger log = LoggerFactory.getLogger(Context.class);
+    private static final String CLASSPATH_PROPERTY_NAME = "java.class.path";
+    private static final String DEFAULT_APPLICATION_ID = "sandboni.default.AppId";
+
     private final String filter;
     private Set<Link> links = new HashSet<>();
     private String currentLocation;
     private ChangeScope<Change> changeScope;
     private Collection<String> srcLocations;
     private Collection<String> testLocations;
+    private String classPath;
+    private String applicationId;
 
     private Set<LinkType> adoptedLinkTypes;
 
@@ -35,17 +43,31 @@ public class Context {
         return changeScope;
     }
 
+    // Visible for testing only
     public Context(String[] srcLocation, String[] testLocation, String filter, ChangeScope<Change> changes) {
-        this(srcLocation, testLocation, filter, changes, null);
+        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[]{}, filter, changes, null);
     }
 
-    public Context(String[] srcLocation, String[] testLocation, String filter, ChangeScope<Change> changes, String currentLocation) {
+    public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
+                   String filter, ChangeScope<Change> changes) {
+        this(applicationId == null ? DEFAULT_APPLICATION_ID : applicationId,
+                srcLocation, testLocation, dependencies, filter, changes, null);
+    }
+
+    public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
+                   String filter, ChangeScope<Change> changes, String currentLocation) {
+        this.applicationId = applicationId;
         this.srcLocations = Collections.unmodifiableCollection(Arrays.stream(srcLocation)
                 .map(l -> new File(l).getAbsolutePath())
                 .collect(Collectors.toCollection(ArrayList::new)));
         this.testLocations = Collections.unmodifiableCollection(Arrays.stream(testLocation)
                 .map(l -> new File(l).getAbsolutePath())
                 .collect(Collectors.toCollection(ArrayList::new)));
+        Collection<String> dependenciesPaths = Collections.unmodifiableCollection(Arrays.stream(dependencies)
+                .map(l -> new File(l).getAbsolutePath())
+                .collect(Collectors.toCollection(ArrayList::new)));
+
+        this.classPath = getExecutionClasspath(srcLocations, testLocations, dependenciesPaths);
 
         this.filter = filter;
         this.changeScope = changes;
@@ -53,8 +75,38 @@ public class Context {
         this.currentLocation = currentLocation;
     }
 
+    private String getExecutionClasspath(Collection<String> srcLocation, Collection<String> testLocation, Collection<String> dependencies) {
+        String currentJavaClasspath = System.getProperty(CLASSPATH_PROPERTY_NAME, "");
+        log.debug("Current java.class.path is: {}", currentJavaClasspath);
+
+        Set<String> projectClasspath = new HashSet<>(Arrays.asList(currentJavaClasspath.split(File.pathSeparator)));
+        projectClasspath.addAll(srcLocation);
+        projectClasspath.addAll(testLocation);
+        projectClasspath.addAll(dependencies);
+
+        String updatedClassPath = String.join(File.pathSeparator, projectClasspath);
+        log.debug("Execution java.class.path is: {}", updatedClassPath);
+
+        return updatedClassPath;
+    }
+
+    private Context(Context source) {
+        this.applicationId = source.applicationId;
+        this.srcLocations = Collections.unmodifiableCollection(source.srcLocations);
+        this.testLocations = Collections.unmodifiableCollection(source.testLocations);
+        this.classPath = source.classPath;
+        this.filter = source.filter;
+        this.changeScope = source.changeScope;
+        this.currentLocation = source.currentLocation;
+        this.adoptedLinkTypes = new HashSet<>();
+    }
+
     public Context getLocalContext() {
-        return new Context(this.srcLocations.toArray(new String[0]), this.testLocations.toArray(new String[0]), this.filter, this.changeScope, this.currentLocation);
+        return new Context(this);
+    }
+
+    public String getClassPath() {
+        return classPath;
     }
 
     public synchronized Stream<Link> getLinks() {
@@ -108,5 +160,9 @@ public class Context {
 
     public Collection<String> getTestLocations() {
         return testLocations;
+    }
+
+    public String getApplicationId() {
+        return applicationId;
     }
 }

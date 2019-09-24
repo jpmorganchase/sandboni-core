@@ -53,7 +53,8 @@ public class TestHttpMethodVisitor extends TestMethodVisitor {
 
         if (httpReference != null && verbReference != null && urlReference != null) {
             context.addLink(LinkFactory.createInstance(
-                    new Vertex.Builder(javaClass.getClassName(), MethodUtils.formatMethod(method)).build(),
+                    context.getApplicationId(),
+                    new Vertex.Builder(javaClass.getClassName(), formatMethod(method)).build(),
                     new Vertex.Builder(verb + " " + HttpConsts.HTTP_LOCALHOST, urlReference, context.getCurrentLocation())
                             .markSpecial()
                             .build(),

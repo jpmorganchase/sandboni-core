@@ -13,8 +13,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class CachedRepository extends GitRepository {
-    private static ConcurrentMap<String, ChangeScope<Change>> changesCache = new ConcurrentHashMap<>(10000);
-    private static ConcurrentMap<String, Set<RevInfo>> blameCache = new ConcurrentHashMap<>(10000);
+
+    // Is safe to have these objects living in parallel execution because change scope doesn't change
+    // between multiple projects during build lifecycle
+    private static ConcurrentMap<String, ChangeScope<Change>> changesCache = new ConcurrentHashMap<>();
+    private static ConcurrentMap<String, Set<RevInfo>> blameCache = new ConcurrentHashMap<>(1000);
 
     public CachedRepository(String repositoryPath, SourceControlFilter... filters) {
         super(repositoryPath, filters);

@@ -33,7 +33,7 @@ public final class RawUtil {
         }
         String packagePath = getPackageName(content);
         if (packagePath == null) {
-            return path;
+            return removeSourceSet(path);
         }
         String packageName = packagePath + SLASH + lastElementBy(path, SLASH);
         return trimNonPackageFolders(path, packageName);

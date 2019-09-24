@@ -2,26 +2,22 @@ package com.sandboni.core.engine.sta.graph;
 
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LinkFactory {
 
-    private static Map<Vertex, Vertex> concurrentHashSet;
-
-    static {
-        concurrentHashSet = new ConcurrentHashMap<>();
-    }
+    private static ConcurrentHashMap<String, ConcurrentHashMap<Vertex, Vertex>> linkFactories = new ConcurrentHashMap<>();
 
     private LinkFactory(){}
 
-    public static Link createInstance(Vertex caller, Vertex callee, LinkType linkType) {
-        return new Link(checkup(caller), checkup(callee), linkType);
+    public static Link createInstance(String factoryId, Vertex caller, Vertex callee, LinkType linkType) {
+        return new Link(checkup(factoryId, caller), checkup(factoryId, callee), linkType);
     }
 
-    private static Vertex checkup(Vertex v) {
-        return concurrentHashSet.merge(v, v, LinkFactory::mergeVertex);
+    private static Vertex checkup(String factoryId, Vertex v) {
+        return linkFactories.computeIfAbsent(factoryId, key -> new ConcurrentHashMap<>())
+                .merge(v, v, LinkFactory::mergeVertex);
     }
 
     private static Vertex mergeVertex(Vertex oldVertex, Vertex newVertex) {
@@ -31,7 +27,10 @@ public class LinkFactory {
         return oldVertex;
     }
 
-    public static void clear(){
-        concurrentHashSet.clear();
+    public static void clear(String factoryId){
+        if (factoryId == null) {
+            return;
+        }
+        linkFactories.remove(factoryId);
     }
 }

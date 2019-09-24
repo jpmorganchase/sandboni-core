@@ -7,8 +7,31 @@ import com.sandboni.core.scm.scope.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ChangeDetectorResultMock implements GitInterface {
+
+    private Change createChange(){
+        return new SCMChangeBuilder().with(scm -> {
+            scm.path = "pom.xml";
+            scm.changedLines = Stream.of(1,2).collect(Collectors.toSet());
+            scm.changeType = ChangeType.MODIFY;
+            scm.fileContent = "";
+        }).build();
+    }
+
+    private Change createParentPOMChange(){
+        return new SCMChangeBuilder().with(scm -> {
+            String rootPom = "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n" +
+                    "<modelVersion>4.0.0</modelVersion>\r\n<groupId>com.github.jpmorganchase.sandboni</groupId>\r\n<artifactId>sandboni-core</artifactId>\r\n<version>0.0.1</version>\r\n</project>";
+
+            scm.path = "../scm/src/test/resources/parentPOM.xml";
+            scm.changedLines = Stream.of(5).collect(Collectors.toSet());
+            scm.changeType = ChangeType.MODIFY;
+            scm.fileContent = rootPom;
+        }).build();
+    }
 
     @Override
     public ChangeScope getChanges(String fromRev, String toRev){
@@ -25,7 +48,7 @@ public class ChangeDetectorResultMock implements GitInterface {
                 //only cnfg
                 changeScope = new ChangeScopeImpl();
 
-                changeScope.addChange(new SCMChange("pom.xml", s, ChangeType.ADD));
+                changeScope.addChange(createChange());
             } else if ("2".equals(fromRev)) {
                 //only java
                 changeScope = new ChangeScopeImpl();
@@ -34,7 +57,12 @@ public class ChangeDetectorResultMock implements GitInterface {
             } else if ("3".equals(fromRev)) {
                 //both
                 changeScope = new ChangeScopeImpl();
-                changeScope.addChange(new SCMChange("pom.xml", s, ChangeType.ADD));
+                changeScope.addChange(createChange());
+                changeScope.addChange(new SCMChange("change.java", s, ChangeType.MODIFY));
+            } else if ("4".equals(fromRev)) {
+                //both
+                changeScope = new ChangeScopeImpl();
+                changeScope.addChange(createParentPOMChange());
                 changeScope.addChange(new SCMChange("change.java", s, ChangeType.MODIFY));
             }
         }

@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static com.sandboni.core.engine.finder.bcel.visitors.ClassUtils.getInScopeInterfacesSafe;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
+import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.getRelativeFileName;
 
 /**
  * Visit Java classes that implement an interface.
@@ -46,11 +47,12 @@ public class ImplementingClassVisitor extends ClassVisitorBase implements ClassV
         @Override
         public void visitMethod(Method method) {
             if (implementingClassMethods.contains(method)) {
-                String methodName = MethodUtils.formatMethod(method);
+                String methodName = formatMethod(method);
                 context.addLink(LinkFactory.createInstance(
+                        context.getApplicationId(),
                         new Vertex.Builder(javaClass.getClassName(), methodName, context.getCurrentLocation()).build(),
                         new Vertex.Builder(implementingClass.getClassName(), methodName)
-                                .withFilePath(MethodUtils.getRelativeFileName(implementingClass))
+                                .withFilePath(getRelativeFileName(implementingClass))
                                 .withLineNumbers(MethodUtils.getMethodLineNumbers(method))
                                 .build(),
                         LinkType.INTERFACE_IMPL));
@@ -65,6 +67,6 @@ public class ImplementingClassVisitor extends ClassVisitorBase implements ClassV
     @Override
     public void visitJavaClass(JavaClass jc) {
         InterfaceVisitor visitor = new InterfaceVisitor(jc, context);
-        getInScopeInterfacesSafe(jc).forEach(visitor::start);
+        getInScopeInterfacesSafe(jc, context.getClassPath()).forEach(visitor::start);
     }
 }

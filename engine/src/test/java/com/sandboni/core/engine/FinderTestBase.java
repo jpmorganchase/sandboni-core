@@ -13,6 +13,9 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.sandboni.core.engine.MockChangeDetector.PACKAGE_NAME;
+import static com.sandboni.core.engine.MockChangeDetector.TEST_LOCATION;
+
 public abstract class FinderTestBase {
 
     protected String location;
@@ -20,7 +23,7 @@ public abstract class FinderTestBase {
     private String filter;
 
     protected FinderTestBase() {
-        location = Paths.get(MockChangeDetector.TEST_LOCATION).normalize().toAbsolutePath().toString();
+        location = Paths.get(TEST_LOCATION).normalize().toAbsolutePath().toString();
     }
 
     protected FinderTestBase(String path, String filter) {
@@ -29,7 +32,7 @@ public abstract class FinderTestBase {
     }
 
     protected void initializeContext(ChangeScope<Change> changeScope) {
-        this.context = new Context(new String[]{location}, new String[]{}, filter == null ? MockChangeDetector.PACKAGE_NAME : filter, changeScope);
+        this.context = new Context(new String[]{location}, new String[]{}, filter == null ? PACKAGE_NAME : filter, changeScope);
     }
 
     protected void initializeContext() {
@@ -37,7 +40,7 @@ public abstract class FinderTestBase {
     }
 
     protected Link newLink(Vertex caller, Vertex callee, LinkType linkType) {
-        return LinkFactory.createInstance(caller, callee, linkType);
+        return LinkFactory.createInstance(context.getApplicationId(), caller, callee, linkType);
     }
 
     protected void assertLinksExist(Link... expectedLinks) {

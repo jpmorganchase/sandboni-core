@@ -5,7 +5,6 @@ import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.CucumberVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
-import com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes;
 import com.sandboni.core.scm.scope.ChangeType;
 import com.sandboni.core.scm.scope.SCMChange;
 import org.junit.Assert;
@@ -19,6 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.CUCUMBER_VERTEX;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
 import static org.junit.Assert.*;
 
 public class CucumberFeatureFinderTest extends FinderTestBase {
@@ -40,13 +41,13 @@ public class CucumberFeatureFinderTest extends FinderTestBase {
 
         CucumberVertex testVertex1 = new CucumberVertex.Builder("Bookmarks List Display Grid", "Displays bookmarks and default actions in Bookmark page")
                 .withFeaturePath(file.getAbsolutePath()).withScenarioLine(15).build();
-        Link expectedLink1 = newLink(VertexInitTypes.START_VERTEX, testVertex1, LinkType.ENTRY_POINT);
+        Link expectedLink1 = newLink(START_VERTEX, testVertex1, LinkType.ENTRY_POINT);
 
         CucumberVertex testVertex2 = new CucumberVertex.Builder("Bookmarks List Display Grid", "Verify Date Added Sort works in Bookmark Page")
                 .withFeaturePath((file.getAbsolutePath())).withScenarioLine(23).build();
-        Link expectedLink2 = newLink(VertexInitTypes.START_VERTEX, testVertex2, LinkType.ENTRY_POINT);
+        Link expectedLink2 = newLink(START_VERTEX, testVertex2, LinkType.ENTRY_POINT);
 
-        CucumberVertex tagVertex1 = new CucumberVertex.Builder(VertexInitTypes.CUCUMBER_VERTEX.getActor(), "RSPPORTAL-862").build();
+        CucumberVertex tagVertex1 = new CucumberVertex.Builder(CUCUMBER_VERTEX.getActor(), "RSPPORTAL-862").build();
 
         Link expectedLink3 = newLink(testVertex1, tagVertex1, LinkType.CUCUMBER_TEST_TAG);
         Link expectedLink4 = newLink(testVertex2, tagVertex1, LinkType.CUCUMBER_TEST_TAG);
@@ -72,10 +73,10 @@ public class CucumberFeatureFinderTest extends FinderTestBase {
 
         CucumberVertex testVertex1 = new CucumberVertex.Builder("Receive and process Cash Forecast messages of type cash management", "Cash Forecast should receive and process Cash Forecasts of type cash management")
                 .withFeaturePath(file.getAbsolutePath()).withScenarioLine(3).build();
-        Link expectedLink1 = newLink(VertexInitTypes.START_VERTEX, testVertex1, LinkType.ENTRY_POINT);
+        Link expectedLink1 = newLink(START_VERTEX, testVertex1, LinkType.ENTRY_POINT);
         CucumberVertex testVertex2 = new CucumberVertex.Builder("cucumber", "The time is 2017-09-19T00:00:00.00Z").build();
         Link expectedLink2 = newLink(testVertex1, testVertex2, LinkType.CUCUMBER_TEST);
-        CucumberVertex testVertex3 = new CucumberVertex.Builder("cucumber", "The following CashForecast messages are stored in CashODS").build();
+        CucumberVertex testVertex3 = new CucumberVertex.Builder("cucumber", "The following CashForecast messages are stored").build();
         Link expectedLink3 = newLink(testVertex1, testVertex3, LinkType.CUCUMBER_TEST);
         CucumberVertex testVertex4 = new CucumberVertex.Builder("cucumber", "Cash Forecast App receives the aaa following lightweight notifications").build();
         Link expectedLink4 = newLink(testVertex1, testVertex4, LinkType.CUCUMBER_TEST);
@@ -84,14 +85,14 @@ public class CucumberFeatureFinderTest extends FinderTestBase {
 
         CucumberVertex testVertex6 = new CucumberVertex.Builder("Receive and process Cash Forecast messages of type cash management", "Cash Forecast should receive and generate offsets for updates to a previously submitted Cash Forecast of type cash management")
         .withFeaturePath(file.getAbsolutePath()).withScenarioLine(16).build();
-        Link expectedLink6 = newLink(VertexInitTypes.START_VERTEX, testVertex6, LinkType.ENTRY_POINT);
+        Link expectedLink6 = newLink(START_VERTEX, testVertex6, LinkType.ENTRY_POINT);
         CucumberVertex testVertex7 = new CucumberVertex.Builder("cucumber", "The time is 2017-10-02T00:00:00.00Z").build();
         Link expectedLink7 = newLink(testVertex6, testVertex7, LinkType.CUCUMBER_TEST);
-        CucumberVertex testVertex8 = new CucumberVertex.Builder("cucumber", "The following CashForecast messages are stored in CashODS").build();
+        CucumberVertex testVertex8 = new CucumberVertex.Builder("cucumber", "The following CashForecast messages are stored").build();
         Link expectedLink8 = newLink(testVertex6, testVertex8, LinkType.CUCUMBER_TEST);
         CucumberVertex testVertex9 = new CucumberVertex.Builder("cucumber", "Cash Forecast App receives the following lightweight notifications").build();
         Link expectedLink9 = newLink(testVertex6, testVertex9, LinkType.CUCUMBER_TEST);
-        CucumberVertex testVertex10 = new CucumberVertex.Builder("cucumber", "the following CashForecast messages should be persisted in CASH_FORECAST_EVENT").build();
+        CucumberVertex testVertex10 = new CucumberVertex.Builder("cucumber", "the following CashForecast messages should be persisted in CASH_FORECAST").build();
         Link expectedLink10 = newLink(testVertex6, testVertex10, LinkType.CUCUMBER_TEST);
 
         assertLinksExist(expectedLink1, expectedLink2, expectedLink3, expectedLink4, expectedLink5, expectedLink6, expectedLink7, expectedLink8, expectedLink9, expectedLink10);

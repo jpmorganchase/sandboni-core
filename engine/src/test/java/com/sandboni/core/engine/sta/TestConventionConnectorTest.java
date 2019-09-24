@@ -6,12 +6,13 @@ import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
-import com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes;
 import com.sandboni.core.scm.scope.ChangeScopeImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Optional;
+
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
 
 public class TestConventionConnectorTest {
 
@@ -22,8 +23,8 @@ public class TestConventionConnectorTest {
     private Context setupContext() {
         Context context = new Context(new String[]{}, new String[]{}, "", new ChangeScopeImpl());
 
-        Link link1 = LinkFactory.createInstance(VertexInitTypes.START_VERTEX, test, LinkType.ENTRY_POINT);
-        Link link2 = LinkFactory.createInstance(code, code2, LinkType.METHOD_CALL);
+        Link link1 = LinkFactory.createInstance(context.getApplicationId(), START_VERTEX, test, LinkType.ENTRY_POINT);
+        Link link2 = LinkFactory.createInstance(context.getApplicationId(), code, code2, LinkType.METHOD_CALL);
 
         context.addLinks(link1, link2);
         return context;

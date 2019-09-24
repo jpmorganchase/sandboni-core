@@ -9,6 +9,8 @@ public class Arguments {
 
     private final String[] srcLocation;
     private final String[] testLocation;
+    private final String[] dependencies;
+    private final String applicationId;
     private final String filter;
     private final String fromChangeId;
     private final String toChangeId;
@@ -23,8 +25,9 @@ public class Arguments {
     private final String reportDir;
 
     @SuppressWarnings("squid:S00107")
-    Arguments(String[] srcLocation,
+    public Arguments(String[] srcLocation,
               String[] testLocation,
+              String[] dependencies,
               String filter,
               String fromChangeId,
               String toChangeId,
@@ -36,9 +39,11 @@ public class Arguments {
               boolean runSelectiveModeIfBuildFileHasChanged,
               boolean runAllExternalTests,
               boolean gitCache,
-              boolean coreCache) {
+              boolean coreCache,
+              String applicationId) {
         this.srcLocation = srcLocation;
         this.testLocation = testLocation;
+        this.dependencies = dependencies;
         this.filter = filter;
         this.fromChangeId = fromChangeId;
         this.toChangeId = toChangeId;
@@ -51,6 +56,7 @@ public class Arguments {
         this.runAllExternalTests = runAllExternalTests;
         this.gitCache = gitCache;
         this.coreCache = coreCache;
+        this.applicationId = applicationId;
     }
 
     public String[] getSrcLocation() {
@@ -59,6 +65,10 @@ public class Arguments {
 
     public String[] getTestLocation() {
         return testLocation;
+    }
+
+    public String[] getDependencies() {
+        return dependencies;
     }
 
     public String getRepository() {
@@ -93,7 +103,7 @@ public class Arguments {
         return toChangeId;
     }
 
-    String getTrackingSort() {
+    public String getTrackingSort() {
         return trackingSort;
     }
 
@@ -107,9 +117,14 @@ public class Arguments {
         return reportDir;
     }
 
+    public String getApplicationId() {
+        return applicationId;
+    }
+
     public String toString() {
         return "source locations: " + Arrays.toString(srcLocation) +
                 " | test locations: " + Arrays.toString(testLocation) +
+                " | dependencies: " + Arrays.toString(dependencies) +
                 " | filter: " + filter +
                 " | fromChangeId: " + fromChangeId +
                 " | toChangeId: " + toChangeId +
@@ -121,6 +136,7 @@ public class Arguments {
                 " | runSelectiveModeIfBuildFileHasChanged: " + runSelectiveModeIfBuildFileHasChanged +
                 " | runAllExternalTests: " + runAllExternalTests +
                 " | gitCache: " + gitCache +
-                " | coreCache: " + coreCache;
+                " | coreCache: " + coreCache +
+                " | applicationId: " + applicationId;
     }
 }

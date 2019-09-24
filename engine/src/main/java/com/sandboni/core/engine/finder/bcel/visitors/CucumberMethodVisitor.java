@@ -25,6 +25,7 @@ public class CucumberMethodVisitor extends CallerFieldOrMethodVisitor {
             String cucumberText = getAnnotationParameter(annotation, "value");
             if (cucumberText != null && !cucumberText.isEmpty()) {
                 super.addLink(LinkFactory.createInstance(
+                        context.getApplicationId(),
                         new Vertex.Builder(CUCUMBER_VERTEX.getActor(), cucumberText, context.getCurrentLocation()).build(),
                         new Vertex.Builder(javaClass.getClassName(), formatMethod(method)).build(),
                         LinkType.CUCUMBER_SOURCE));

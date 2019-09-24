@@ -5,31 +5,30 @@ import com.sandboni.core.engine.exception.ParseRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class Config {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
+public class ApplicationProperties {
+    private static final Logger log = LoggerFactory.getLogger(ApplicationProperties.class);
     public static final String PROP_PATH_KEY = "applicationProps";
     private static final String DEFAULT_PROP_PATH = "/application.properties";
-    private final Map<ConfigProp, String> configMap = new EnumMap<>(ConfigProp.class);
-    private static Supplier<Config> configSupplier = new CachingSupplier<>(Config::new);
+    private final Map<ApplicationProperty, String> configMap = new EnumMap<>(ApplicationProperty.class);
+    private static Supplier<ApplicationProperties> configSupplier = new CachingSupplier<>(ApplicationProperties::new);
 
-    public String get(ConfigProp configProp) {
-        return configMap.get(configProp);
+    public String get(ApplicationProperty applicationProperty) {
+        return configMap.get(applicationProperty);
     }
 
-    public static Config getInstance() {
+    public static ApplicationProperties getInstance() {
         return configSupplier.get();
     }
 
     //to help with test cases
     static synchronized void clearInstance() {
-        configSupplier = new CachingSupplier<>(Config::new);
+        configSupplier = new CachingSupplier<>(ApplicationProperties::new);
     }
 
-    private Config() {
+    private ApplicationProperties() {
        init();
     }
 
@@ -40,17 +39,17 @@ public class Config {
             fileProps.load(this.getClass().getResourceAsStream(propertyFilePath));
 
             //load props from file
-            Arrays.stream(ConfigProp.values()).forEach(p -> configMap.put(p, fileProps.getProperty(p.toString())));
+            Arrays.stream(ApplicationProperty.values()).forEach(p -> configMap.put(p, fileProps.getProperty(p.toString())));
 
             //override props from file with those from System
-            Arrays.stream(ConfigProp.values()).forEach(p -> {
+            Arrays.stream(ApplicationProperty.values()).forEach(p -> {
                 String property = System.getProperty(p.toString());
                 if(property != null) {
                     configMap.put(p, property);
                 }
             });
-            LOGGER.info("Loaded props: {}", configMap);
-        } catch (IOException e) {
+            log.info("Loaded props: {}", configMap);
+        } catch (Exception e) {
             throw new ParseRuntimeException(e);
         }
     }

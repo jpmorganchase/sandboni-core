@@ -7,13 +7,14 @@ import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.CucumberVertex;
-import com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
+
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.CUCUMBER_VERTEX;
 
 public class JsonConnector implements Connector {
     private static final Logger log = LoggerFactory.getLogger(JsonConnector.class);
@@ -65,8 +66,9 @@ public class JsonConnector implements Connector {
                         .findFirst()
                         .ifPresent(scenarioVertex -> {
                             for(String url: entry.getUrls()) {
-                                links.add(LinkFactory.createInstance(scenarioVertex,
-                                        new CucumberVertex.Builder(VertexInitTypes.CUCUMBER_VERTEX.getActor(), url)
+                                links.add(LinkFactory.createInstance(
+                                        context.getApplicationId(), scenarioVertex,
+                                        new CucumberVertex.Builder(CUCUMBER_VERTEX.getActor(), url)
                                                 .build(),
                                         LinkType.HTTP_REQUEST));
                             }

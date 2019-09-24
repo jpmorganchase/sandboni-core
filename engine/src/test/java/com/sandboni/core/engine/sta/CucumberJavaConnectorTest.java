@@ -18,14 +18,14 @@ public class CucumberJavaConnectorTest {
         Context context = new Context(new String[]{}, new String[]{}, "", new ChangeScopeImpl());
 
         if (Objects.nonNull(callerActon)) {
-            context.addLink(LinkFactory.createInstance(
+            context.addLink(LinkFactory.createInstance(context.getApplicationId(),
                     new Vertex.Builder("cucumber", callerActon).markSpecial().build(),
                     new Vertex.Builder("cucumber", "callee").markSpecial().build(),
                     LinkType.CUCUMBER_SOURCE));
         }
 
         if (Objects.nonNull(calleeAction)) {
-            context.addLink(LinkFactory.createInstance(
+            context.addLink(LinkFactory.createInstance(context.getApplicationId(),
                     new Vertex.Builder("cucumber", "caller").markSpecial().build(),
                     new Vertex.Builder("cucumber", calleeAction).markSpecial().build(),
                     LinkType.CUCUMBER_TEST));

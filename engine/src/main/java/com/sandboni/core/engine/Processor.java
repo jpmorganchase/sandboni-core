@@ -8,21 +8,20 @@ import com.sandboni.core.engine.result.FilterIndicator;
 import com.sandboni.core.engine.sta.Builder;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.connector.Connector;
+import com.sandboni.core.engine.sta.operation.GraphOperations;
 import com.sandboni.core.scm.GitInterface;
 import com.sandboni.core.scm.exception.SourceControlException;
 import com.sandboni.core.scm.proxy.filter.FileExtensions;
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeScope;
-import com.sandboni.core.scm.scope.ChangeScopeAnalyzer;
+import com.sandboni.core.scm.scope.analysis.ChangeScopeAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 public class Processor  {
 
@@ -62,7 +61,7 @@ public class Processor  {
     }
 
     public ResultGenerator getResultGenerator(){
-        return new ResultGenerator(builderSupplier, arguments);
+        return new ResultGenerator(new GraphOperations(builderSupplier.get().getGraph(), contextSupplier.get()), arguments, builderSupplier.get().getFilterIndicator());
     }
 
     public Builder getGraphBuilder() {
@@ -95,7 +94,7 @@ public class Processor  {
     private boolean proceed(ChangeScope<Change> changeChangeScope) {
         return (!isRunAllExternalTests() || !isIntegrationStage()) && (arguments.isRunSelectiveModeIfBuildFileHasChanged() ||
                 changeChangeScope.isEmpty() ||
-                !ChangeScopeAnalyzer.detectConfigurationFile(changeChangeScope, getBuildFiles()));
+                ChangeScopeAnalyzer.analyzeConfigurationFiles(changeChangeScope, getBuildFiles()));
     }
 
     private boolean isRunAllExternalTests() {
@@ -115,43 +114,34 @@ public class Processor  {
     }
 
     private Context createContext(){
-        return new Context(arguments.getSrcLocation(), arguments.getTestLocation(), arguments.getFilter(), changeScopeSupplier.get());
+        return new Context(arguments.getApplicationId(), arguments.getSrcLocation(), arguments.getTestLocation(),
+                arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get());
     }
 
     private Builder getBuilder(Context context) {
-        final String classPathPropertyName = "java.class.path";
+        //proceed iff change scope contains at least one java file
+        if (proceed(context.getChangeScope())) {
+            context.getChangeScope().include(FileExtensions.JAVA, FileExtensions.FEATURE);
+            log.info("Found changes: {}", context.getChangeScope());
 
-        String classPath = System.getProperty(classPathPropertyName);
-        try {
-
-            System.setProperty(classPathPropertyName, String.join(File.pathSeparator, Stream.of(arguments.getSrcLocation(), arguments.getTestLocation()).flatMap(Stream::of).toArray(String[]::new)) + File.pathSeparator + classPath);
-
-            //proceed iff change scope contains at least one java file
-            if (proceed(context.getChangeScope())) {
-                context.getChangeScope().include(FileExtensions.JAVA, FileExtensions.FEATURE);
-                log.info("Found changes: {}", context.getChangeScope());
-
-                Instant start = Instant.now();
-                finders.parallelStream().forEach(f -> f.findSafe(context));
-                Instant finish = Instant.now();
-                log.debug("....Finders execution total time: {}", Duration.between(start, finish).toMillis());
-                start = Instant.now();
-                connectors.parallelStream().filter(c-> c.proceed(context)).forEach(c -> c.connect(context));
-                finish = Instant.now();
-                log.debug("....Connectors execution total time: {}", Duration.between(start, finish).toMillis());
-            } else if (isRunAllExternalTests() && isIntegrationStage()){
-                log.info("Running All External Tests");
-                finders.parallelStream().forEach(f -> f.findSafe(context));
-                return new Builder(context, FilterIndicator.ALL_EXTERNAL);
-            }else{ //only cnfg files
-                log.info("Found changes: {}", context.getChangeScope());
-                log.info(" ** configuration file(s) were changed; All tests will be executed ** ");
-                return new Builder(context, FilterIndicator.ALL);
-            }
-            return new Builder(context);
-        } finally {
-            System.setProperty(classPathPropertyName, classPath);
+            Instant start = Instant.now();
+            finders.parallelStream().forEach(f -> f.findSafe(context));
+            Instant finish = Instant.now();
+            log.debug("....Finders execution total time: {}", Duration.between(start, finish).toMillis());
+            start = Instant.now();
+            connectors.parallelStream().filter(c-> c.proceed(context)).forEach(c -> c.connect(context));
+            finish = Instant.now();
+            log.debug("....Connectors execution total time: {}", Duration.between(start, finish).toMillis());
+        } else if (isRunAllExternalTests() && isIntegrationStage()){
+            log.info("Running All External Tests");
+            finders.parallelStream().forEach(f -> f.findSafe(context));
+            return new Builder(context, FilterIndicator.ALL_EXTERNAL);
+        } else { //only cnfg files
+            log.info("Found changes: {}", context.getChangeScope());
+            log.info(" ** configuration file(s) were changed; All tests will be executed ** ");
+            return new Builder(context, FilterIndicator.ALL);
         }
+        return new Builder(context);
     }
 
     private static String[] getBuildFiles() {

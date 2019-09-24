@@ -13,18 +13,20 @@ public class ArgumentsBuilder implements BuilderPattern<Arguments, ArgumentsBuil
     public String trackingSort;
     public boolean selectiveMode;
     public String stage;
-    public String reportDir;
+    public String reportDir = ".";
     public boolean runAllExternalTests;
     public boolean gitCache;
     public boolean coreCache;
-
+    public String applicationId;
     public Set<String> srcLocations;
     public Set<String> testLocations;
-    public String outputFormat;
+    public Set<String> dependencies;
+    public String outputFormat = "csv";
 
     public ArgumentsBuilder(){
         this.srcLocations = new HashSet<>();
         this.testLocations = new HashSet<>();
+        this.dependencies = new HashSet<>();
     }
 
     @Override
@@ -37,6 +39,7 @@ public class ArgumentsBuilder implements BuilderPattern<Arguments, ArgumentsBuil
         return new Arguments(
                 srcLocations.toArray(new String[0]),
                 testLocations.toArray(new String[0]),
+                dependencies.toArray(new String[0]),
                 filter,
                 fromChangeId,
                 toChangeId,
@@ -48,6 +51,7 @@ public class ArgumentsBuilder implements BuilderPattern<Arguments, ArgumentsBuil
                 selectiveMode,
                 runAllExternalTests,
                 gitCache,
-                coreCache);
+                coreCache,
+                applicationId);
     }
 }

@@ -7,8 +7,6 @@ import java.util.Set;
 
 public class RelatedTestsFileRenderer extends AbstractCSVFileRenderer<Set<TestVertex>>{
 
-    private static final MessageFormat rowFormat = new MessageFormat("{0},{1},{2},{3},{4}\n");
-
     public static final String IS_DISCONNECTED_TESTS = "isDisconnectedTests";
 
     public enum TestTypes {UNIT, INTEGRATION}
@@ -24,8 +22,9 @@ public class RelatedTestsFileRenderer extends AbstractCSVFileRenderer<Set<TestVe
 
             final String actor = t.getActor();
 
-           String isConnected = attr.containsKey(IS_DISCONNECTED_TESTS) && Boolean.valueOf(attr.get(IS_DISCONNECTED_TESTS))? "N" : "Y";
+           String isConnected = attr.containsKey(IS_DISCONNECTED_TESTS) && Boolean.parseBoolean(attr.get(IS_DISCONNECTED_TESTS))? "N" : "Y";
 
+            MessageFormat rowFormat = new MessageFormat("{0},{1},{2},{3},{4}\n");
             /* plain UTs */
             if (actor.contains(DOT)) {
                 int lastDot = actor.lastIndexOf(DOT);
