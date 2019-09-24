@@ -21,7 +21,7 @@ public class CucumberJavaConnector implements Connector {
             Optional<Link> matchingHandler = cucumberTest.stream()
                     .filter(t -> s.getCaller().getActor().equals(t.getCallee().getActor())
                             && isMatch(s.getCaller().getAction(), t.getCallee().getAction())).findAny();
-            matchingHandler.ifPresent(link -> context.addLink(LinkFactory.createInstance(link.getCallee(), s.getCaller(), LinkType.CUCUMBER_MAP)));
+            matchingHandler.ifPresent(link -> context.addLink(LinkFactory.createInstance(context.getApplicationId(), link.getCallee(), s.getCaller(), LinkType.CUCUMBER_MAP)));
         });
     }
 

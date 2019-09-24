@@ -16,7 +16,7 @@ public enum FileExtensions {
     }
 
     public boolean in(FileExtensions... extensions) {
-        return Arrays.stream(extensions).anyMatch(e -> e == this);
+        return Arrays.stream(extensions).anyMatch(extension -> extension == this);
     }
 
     public static FileExtensions fromText(String extension) {

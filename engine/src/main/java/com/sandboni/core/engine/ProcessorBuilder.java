@@ -37,14 +37,9 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
 
     @SuppressWarnings("squid:S3358")
     public Processor build() {
-        if (arguments.isGitCache()) {
-            CachedRepository.clearCache();
-        }
-        if (arguments.isCoreCache()) {
-            CachedBcelFinder.clearLinkCache();
-        }
-        //clearing cache before running in each module
-        LinkFactory.clear();
+        BcelFinder bcelFinder = arguments.isCoreCache() ?
+                new CachedBcelFinder(getVisitors()) : new BcelFinder(getVisitors());
+        LinkFactory.clear(arguments.getApplicationId());
 
         return new Processor(Objects.requireNonNull(this.arguments),
                 Objects.nonNull(gitDetector) ? gitDetector :
@@ -52,8 +47,7 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
                                 new GitRepository(this.arguments.getRepository()),
                 Objects.nonNull(finders) ? this.finders :
                         new Finder[]{new ExplicitFinder(),
-                                arguments.isCoreCache() ? new CachedBcelFinder(getVisitors()) :
-                                        new BcelFinder(getVisitors()),
+                                bcelFinder,
                                 new CucumberFeatureFinder(),
                                 new JarFinder(getVisitors())},
                 Objects.nonNull(this.connectors) ? this.connectors : getConnectors());

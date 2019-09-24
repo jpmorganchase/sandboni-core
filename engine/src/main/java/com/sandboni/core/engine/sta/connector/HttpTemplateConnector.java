@@ -23,7 +23,7 @@ public class HttpTemplateConnector implements Connector {
         httpRequests.forEach(r -> {
             Optional<Link> matchingHandler = httpHandlers.stream()
                     .filter(l ->  isMatch(r.getCallee().getAction(), l.getCaller().getAction())).findAny();
-            matchingHandler.ifPresent(link -> context.addLink(LinkFactory.createInstance(r.getCallee(), link.getCaller(), LinkType.HTTP_MAP)));
+            matchingHandler.ifPresent(link -> context.addLink(LinkFactory.createInstance(context.getApplicationId(), r.getCallee(), link.getCaller(), LinkType.HTTP_MAP)));
         });
     }
 

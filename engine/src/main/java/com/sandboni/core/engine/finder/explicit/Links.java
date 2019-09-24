@@ -1,4 +1,3 @@
-
 package com.sandboni.core.engine.finder.explicit;
 
 import javax.xml.bind.annotation.XmlAttribute;

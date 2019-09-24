@@ -12,7 +12,6 @@ import com.sandboni.core.engine.render.file.writer.FileWriter;
 import com.sandboni.core.engine.render.file.writer.PropertiesFileWriter;
 import com.sandboni.core.engine.render.file.xml.XMLFileRenderer;
 import com.sandboni.core.engine.render.file.xml.XMLFileStrategy;
-import com.sandboni.core.engine.result.Result;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 
 import java.io.File;
@@ -26,8 +25,9 @@ public class FileWriterEngine {
     private FileWriterEngine() {
     }
 
-    public static void write(Result result, FileOptions options) throws RendererException {
-        Object content = Objects.requireNonNull(getFileStrategy(options, result.get())).render();
+    public static void write(Object result, FileOptions options) throws RendererException {
+        Objects.requireNonNull(result);
+        Object content = Objects.requireNonNull(getFileStrategy(options, result)).render();
 
         FileWriter fileWriter = getFileWriter(options.getType());
         fileWriter.write(new File(options.getName()).toPath(), content);
@@ -41,16 +41,16 @@ public class FileWriterEngine {
     }
 
     @SuppressWarnings("unchecked")
-    private static FileStrategy getFileStrategy(FileOptions fileOptions, Object res) {
+    private static FileStrategy getFileStrategy(FileOptions fileOptions, Object result) {
         FileType type = fileOptions.getType();
         if (type == FileType.CSV) {
-            return new CSVFileStrategy<>((Set<TestVertex>) res, new RelatedTestsFileRenderer(), fileOptions);
+            return new CSVFileStrategy<>((Set<TestVertex>) result, new RelatedTestsFileRenderer(), fileOptions);
         } else if (type == FileType.JSON) {
-            return new JSONFileStrategy<>((Collection<Object>) res, new JSONFileRenderer<>(), fileOptions);
+            return new JSONFileStrategy<>((Collection<Object>) result, new JSONFileRenderer<>(), fileOptions);
         } else if (type == FileType.PROPERTIES) {
-            return new PropertiesFileStrategy<>((Map<String, Object>) res, new PropertiesFileRenderer<>(), fileOptions);
+            return new PropertiesFileStrategy<>((Map<String, Object>) result, new PropertiesFileRenderer<>(), fileOptions);
         } else { // type == FileType.XML
-            return new XMLFileStrategy<>((Collection<Object>) res, new XMLFileRenderer(), fileOptions);
+            return new XMLFileStrategy<>((Collection<Object>) result, new XMLFileRenderer(), fileOptions);
         }
     }
 }

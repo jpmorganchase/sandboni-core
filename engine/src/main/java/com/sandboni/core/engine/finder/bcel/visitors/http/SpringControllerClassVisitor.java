@@ -12,7 +12,7 @@ import org.apache.bcel.classfile.Method;
 import java.util.stream.Stream;
 
 /**
- * Visit Java classes that uses Spring.CONTROLLER annotations.
+ * Visit Java classes that uses Spring.Controller annotations.
  * Note: This class is not thread safe.
  */
 public class SpringControllerClassVisitor extends ClassVisitorBase implements ClassVisitor {

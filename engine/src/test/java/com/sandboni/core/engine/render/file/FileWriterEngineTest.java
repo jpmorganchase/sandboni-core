@@ -57,7 +57,7 @@ public class FileWriterEngineTest {
 
         Result res = new Result();
         res.put(ResultContent.RELATED_TESTS, Set.class, set);
-        FileWriterEngine.write(res, new FileOptions.FileOptionsBuilder().with(fo -> {fo.name = MY_TEST_FILE; fo.type = FileType.CSV ;}).build());
+        FileWriterEngine.write(set, new FileOptions.FileOptionsBuilder().with(fo -> {fo.name = MY_TEST_FILE; fo.type = FileType.CSV ;}).build());
         assertTrue(new File(System.getProperty("user.dir"), MY_TEST_FILE).exists());
     }
 
@@ -70,7 +70,7 @@ public class FileWriterEngineTest {
 
         Result res = new Result();
         res.put(ResultContent.RELATED_TESTS, Set.class, set);
-        FileWriterEngine.write(res, new FileOptions.FileOptionsBuilder().with(fo -> {fo.name = MY_JSON_TEST_FILE; fo.type = FileType.JSON ;}).build());
+        FileWriterEngine.write(set, new FileOptions.FileOptionsBuilder().with(fo -> {fo.name = MY_JSON_TEST_FILE; fo.type = FileType.JSON ;}).build());
         assertTrue(new File(System.getProperty("user.dir"), MY_JSON_TEST_FILE).exists());
     }
 
@@ -87,7 +87,7 @@ public class FileWriterEngineTest {
 
         Result res = new Result();
         res.put(ResultContent.OUTPUT_TO_FILE, Map.class, map);
-        FileWriterEngine.write(res, new FileOptions.FileOptionsBuilder().with(fo -> {fo.name = MY_PROP_TEST_FILE; fo.type = FileType.PROPERTIES ;}).build());
+        FileWriterEngine.write(map, new FileOptions.FileOptionsBuilder().with(fo -> {fo.name = MY_PROP_TEST_FILE; fo.type = FileType.PROPERTIES ;}).build());
         assertTrue(new File(System.getProperty("user.dir"), MY_PROP_TEST_FILE).exists());
     }
 
@@ -172,8 +172,9 @@ public class FileWriterEngineTest {
             $.toChangeId = "999eee";
             $.repository = ".";
             $.selectiveMode = runSelectiveModeIfBuildFileHasChanged;
-            $.outputFormat = "json";
+            $.outputFormat = "csv";
             $.reportDir = tempDir.toString();
+            $.trackingSort = "key";
         }).build();
     }
 }

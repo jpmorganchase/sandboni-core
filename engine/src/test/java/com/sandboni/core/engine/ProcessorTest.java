@@ -8,15 +8,9 @@ import com.sandboni.core.engine.sta.connector.Connector;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import com.sandboni.core.scm.utils.GitHelper;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +19,7 @@ import static org.junit.Assert.*;
 
 public class ProcessorTest {
 
+    public static final String JAVA_CLASS_PATH = "java.class.path";
     private Processor processor;
 
     public ProcessorTest() {
@@ -34,6 +29,7 @@ public class ProcessorTest {
 
     private Arguments getArguments() {
         return new ArgumentsBuilder().with($->{
+            $.applicationId = "sandboni.default";
             $.fromChangeId = "1";
             $.toChangeId = "2";
             $.repository = GitHelper.openCurrentFolder();
@@ -46,15 +42,9 @@ public class ProcessorTest {
 
     @Test
     public void testRun() {
-        Map<String, Set<String>> result = processor.getResultGenerator().generate(ResultContent.ENTRY_POINTS).get();
+        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS).get();
         assertNotNull(result);
         assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void testGetEntryPoints() {
-        Map<String, Set<String>> result = processor.getResultGenerator().generate(ResultContent.ENTRY_POINTS).get();
-        assertEquals("No entry points found", 0, result.size());
     }
 
     @Test
@@ -113,8 +103,8 @@ public class ProcessorTest {
     }
 
     @Test
-    public void testGetDisconnectedEntryPoints() {
-        Map<String, Set<String>> result = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_ENTRY_POINTS).get();
+    public void testGetDisconnectedTests() {
+        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_TESTS).get();
         assertEquals("Should contain no disconnected entry points", 0, result.size());
     }
 
@@ -125,32 +115,29 @@ public class ProcessorTest {
     }
 
     @Test
-    public void testOutputMetadataLinks() {
-        processor.getGraphBuilder().outputMetadataLinks();
-        assertTrue(new File(System.getProperty("user.dir"), "JiraReport.csv").exists());
-    }
-
-    @Test
-    public void testGetUnreachableExitPoints() {
-        Map<String, Set<String>> result = processor.getResultGenerator().generate(ResultContent.UNREACHABLE_EXIT_POINTS).get();
+    public void testGetUnreachableChanges() {
+        Map<String, Set<String>> result = processor.getResultGenerator().generate(ResultContent.UNREACHABLE_CHANGES).get();
         assertEquals("Should contain no disconnected tests vertices", 0, result.size());
     }
 
     @Test
-    public void testGetExitPoints() {
-        Map<String, Set<String>> result = processor.getResultGenerator().generate(ResultContent.EXIT_POINTS).get();
+    public void testGetChanges() {
+        Map<String, Set<String>> result = processor.getResultGenerator().generate(ResultContent.CHANGES).get();
         assertEquals("Should contain no exit points", 0, result.size());
     }
 
     @Test
-    public void testGetAllEntryPoints() {
+    public void testGetAllTests() {
         Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.ALL_TESTS).get();
         assertEquals("Should contain no exit points", 0, result.size());
     }
 
-    @After
-    public void after() throws IOException {
-        Path path = Paths.get(System.getProperty("user.dir"), "JiraReport.csv");
-        Files.deleteIfExists(path);
+    @Test
+    public void testJavaClassPathIsNotModified() {
+        String currentJavaClasspath = System.getProperty(JAVA_CLASS_PATH, "");
+        processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
+        String afterExecJavaClasspath = System.getProperty(JAVA_CLASS_PATH, "");
+        assertEquals(currentJavaClasspath, afterExecJavaClasspath);
     }
+
 }

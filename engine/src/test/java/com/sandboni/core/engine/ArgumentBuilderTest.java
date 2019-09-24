@@ -28,7 +28,7 @@ public class ArgumentBuilderTest {
         Assert.assertNull( args.getFilter());
         Assert.assertNull( args.getTrackingSort());
         Assert.assertFalse( args.isRunSelectiveModeIfBuildFileHasChanged());
-        Assert.assertNull( args.getReportDir());
+        Assert.assertEquals(".", args.getReportDir());
     }
 
 

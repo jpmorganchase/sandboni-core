@@ -10,7 +10,7 @@ public class TestVertex extends Vertex {
     private final boolean ignore;
     private boolean externalLocation;
 
-    @SuppressWarnings("squid:S00107")
+    @SuppressWarnings("squid:S00107") // private constructor used only in Builder
     protected TestVertex(String actor, String action, boolean isSpecial, String filePath,
                        List<Integer> lineNumbers, String filter,
                        String location, boolean ignore,
@@ -53,6 +53,10 @@ public class TestVertex extends Vertex {
     }
 
     public static class Builder extends AbstractTestVertexBuilder<Builder> {
+
+        public Builder(String actor, String action) {
+            this(actor, action, null);
+        }
 
         public Builder(String actor, String action, String location) {
             super(actor, action, location);

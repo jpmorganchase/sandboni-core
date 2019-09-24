@@ -3,6 +3,7 @@ package com.sandboni.core.engine.finder.bcel;
 import com.sandboni.core.engine.contract.ThrowingBiConsumer;
 import com.sandboni.core.engine.finder.ExtensionType;
 import com.sandboni.core.engine.finder.FileTreeFinder;
+import com.sandboni.core.engine.finder.bcel.visitors.ClassUtils;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.Link;
 import org.apache.bcel.classfile.ClassParser;
@@ -25,6 +26,7 @@ public class BcelFinder extends FileTreeFinder {
         map.put(ExtensionType.CLASS.type(), (file, context) -> {
             ClassParser cp = new ClassParser(file.getAbsolutePath());
             JavaClass jc = cp.parse();
+            jc.setRepository(ClassUtils.getRepository(context.getClassPath()));
             context.addLinks(startVisitors(jc, context));
         });
 

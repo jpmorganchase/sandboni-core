@@ -6,7 +6,6 @@ import com.sandboni.core.engine.finder.bcel.visitors.Annotations;
 import com.sandboni.core.engine.finder.bcel.visitors.MethodVisitorBase;
 import com.sandboni.core.engine.finder.bcel.visitors.RedirectVisitor;
 import com.sandboni.core.engine.sta.Context;
-import com.sandboni.core.engine.finder.bcel.visitors.MethodUtils;
 import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.ConstantPool;
 import org.apache.bcel.classfile.JavaClass;
@@ -18,6 +17,7 @@ import java.util.Set;
 
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotation;
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotationParameter;
+import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
 import static com.sandboni.core.engine.finder.bcel.visitors.http.HttpLinkHelper.addHttpLinks;
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.SpringAnnotations.*;
 
@@ -46,7 +46,7 @@ public class SpringControllerMethodVisitor extends MethodVisitorBase {
                     }else{
                         requestMethods = HttpConsts.getHttpVerb();
                     }
-                    HttpLinkHelper.addHttpLinks(requestMethods, context, requestUrl, javaClass.getClassName(), MethodUtils.formatMethod(method), controllerSide);
+                    addHttpLinks(requestMethods, context, requestUrl, javaClass.getClassName(), formatMethod(method), controllerSide);
                 }
                 new RedirectVisitor(method, javaClass, context, false).start();
             }

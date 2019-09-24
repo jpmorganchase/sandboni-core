@@ -1,12 +1,12 @@
 package com.sandboni.core.engine.config;
 
-public enum ConfigProp {
+public enum ApplicationProperty {
     SERVER_BASE_URL("serverBaseUrl"),
     SAVE_COVERAGE("saveCoverage");
 
     private String key;
 
-    ConfigProp(String key) {
+    ApplicationProperty(String key) {
         this.key = key;
     }
 

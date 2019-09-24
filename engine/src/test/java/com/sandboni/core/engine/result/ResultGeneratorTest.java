@@ -61,6 +61,17 @@ public class ResultGeneratorTest {
         Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
     }
 
+
+    @Test
+    public void testWhenCnfgVVersionChangeAndJavaContext(){
+        Processor processor = getProcessor("4", false, false, Arguments.BUILD_STAGE);
+        Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
+        Assert.assertTrue(res.isSuccess());
+        Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
+    }
+
+
+
     @Test
     public void testResultWhenEmptyContextAndRunSelectiveModeIsTrue(){
         Processor processor = getProcessor("0", true, false, Arguments.BUILD_STAGE);

@@ -46,20 +46,24 @@ public class GitRepository implements GitInterface {
     }
 
     public static Repository buildRepository(String repositoryPath) {
+        FileRepositoryBuilder fileRepositoryBuilder = new FolderRepositoryBuilder(repositoryPath);
         try {
-            FileRepositoryBuilder fileRepositoryBuilder = new FolderRepositoryBuilder(repositoryPath);
             return new FileRepository(fileRepositoryBuilder);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new SourceControlRuntimeException(ErrorMessages.UNABLE_TO_FIND_REPOSITORY + repositoryPath, e);
         }
     }
 
-    private static class FolderRepositoryBuilder extends FileRepositoryBuilder {
-        FolderRepositoryBuilder(String path) throws IOException {
-            File dir = new File(path);
-            this.addCeilingDirectory(dir)
-                    .findGitDir(dir)
-                    .build();
+    public static class FolderRepositoryBuilder extends FileRepositoryBuilder {
+        FolderRepositoryBuilder(String path) {
+            try {
+                File dir = new File(path);
+                this.addCeilingDirectory(dir)
+                        .findGitDir(dir)
+                        .build();
+            } catch (Exception e) {
+                throw new SourceControlRuntimeException(ErrorMessages.UNABLE_TO_FIND_REPOSITORY + path, e);
+            }
         }
     }
 }

@@ -24,7 +24,6 @@ public class CachedBcelFinderTest extends FinderTestBase {
 
     @Before
     public void setUp() {
-        CachedBcelFinder.clearLinkCache();
         super.initializeContext();
     }
 

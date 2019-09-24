@@ -39,6 +39,15 @@ public class ChangeScopeImpl implements ChangeScope<Change> {
     }
 
     @Override
+    public List<Change> getChangesForFilesEndWith(String fileName) {
+        return changes.entrySet().stream()
+                .filter(e-> e.getKey().toLowerCase().endsWith(fileName))
+                .map(Map.Entry::getValue)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public boolean contains(String className) {
         return changes.containsKey(className);
     }
