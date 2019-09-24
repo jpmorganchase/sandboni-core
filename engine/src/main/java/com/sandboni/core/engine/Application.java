@@ -38,7 +38,7 @@ public class Application {
     Arguments buildArguments() {
         getProperties();
 
-        arguments = new ArgumentsBuilder().with(ab->{
+        arguments = new ArgumentsBuilder().with(ab -> {
             ab.fromChangeId = getValue(SystemProperties.FROM);
             ab.toChangeId = getValue(SystemProperties.TO);
             ab.repository = getValue(SystemProperties.REPOSITORY);
@@ -74,12 +74,12 @@ public class Application {
 
     private Map<String, String> preparePropertiesMap() {
         Map<String, String> properties = System.getProperties().entrySet().stream()
-                .filter(k-> ((String)k.getKey()).startsWith("sandboni."))
+                .filter(k -> ((String) k.getKey()).startsWith("sandboni."))
                 .collect(Collectors.toMap(
                         e -> (String) e.getKey(),
                         e -> (String) e.getValue()));
 
-        if (properties.isEmpty()){
+        if (properties.isEmpty()) {
             printAvailableProperties();
             throw new IllegalArgumentException("No Sandboni properties were entered. please enter sufficient properties");
         }
