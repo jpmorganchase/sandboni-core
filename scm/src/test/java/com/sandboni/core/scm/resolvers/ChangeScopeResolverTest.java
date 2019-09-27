@@ -27,7 +27,7 @@ public class ChangeScopeResolverTest {
 
     @Test
     public void testComputeChangeScope() throws SourceControlException {
-        RevisionScope<ObjectId> scope = revisionResolver.resolve("d446122593b", "92aa1c55aacc7c");
+        RevisionScope<ObjectId> scope = revisionResolver.resolve("fc776fe5e50", "e6f7c3d2954d6");
         ChangeScope<Change> changeScope = changeScopeResolver.getChangeScope(scope);
         assertNotNull(changeScope);
         assertTrue(changeScope.getAllAffectedClasses().size() > 0);
