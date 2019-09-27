@@ -19,9 +19,9 @@ public class PathFilterTest {
                 , new PathFilter("engine/src/test/resources/")
         );
 
-        ChangeScope<Change> changes = diff.getChanges("34f5ecc6a5c", "3bbbf35036e3");
+        ChangeScope<Change> changes = diff.getChanges("fc776fe5e50", "ca20024b0e9");
 
         changes.getAllAffectedClasses().forEach(System.out::println);
-        Assert.assertTrue(changes.getAllAffectedClasses().contains("engine/resources/test.properties"));
+        Assert.assertTrue(changes.getAllAffectedClasses().contains("engine/resources/test.sandboni"));
     }
 }
