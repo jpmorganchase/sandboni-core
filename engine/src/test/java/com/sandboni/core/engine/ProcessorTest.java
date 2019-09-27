@@ -1,0 +1,143 @@
+package com.sandboni.core.engine;
+
+import com.sandboni.core.engine.contract.Finder;
+import com.sandboni.core.engine.result.Result;
+import com.sandboni.core.engine.result.ResultContent;
+import com.sandboni.core.engine.sta.Builder;
+import com.sandboni.core.engine.sta.connector.Connector;
+import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
+import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.GitHelper;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.Assert.*;
+
+public class ProcessorTest {
+
+    public static final String JAVA_CLASS_PATH = "java.class.path";
+    private Processor processor;
+
+    public ProcessorTest() {
+        Arguments args = getArguments();
+        processor = new Processor(args, new PoCDiffChangeDetector(), new Finder[]{}, new Connector[]{});
+    }
+
+    private Arguments getArguments() {
+        return new ArgumentsBuilder().with($->{
+            $.applicationId = "sandboni.default";
+            $.fromChangeId = "1";
+            $.toChangeId = "2";
+            $.repository = GitHelper.openCurrentFolder();
+            $.filter = "com";
+            $.stage = Arguments.BUILD_STAGE;
+            $.coreCache = true;
+            $.gitCache = true;
+        }).build();
+    }
+
+    @Test
+    public void testRun() {
+        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS).get();
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void getGraphBuilder() {
+        Builder builder  = processor.getGraphBuilder();
+        assertNotNull("Builder is not null", builder);
+    }
+
+    @Test
+    public void testGetRelatedTests() {
+        Set<Vertex> result = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS).get();
+        assertEquals("No Related tests found", 0, result.size());
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetWith2RCs() {
+        processor.getResultGenerator().generate(ResultContent.RELATED_TESTS, ResultContent.DISCONNECTED_TESTS).get();
+    }
+
+    @Test
+    public void testOneRCGet() {
+        Result result = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS, ResultContent.DISCONNECTED_TESTS);
+        assertNotNull(result);
+
+        Assert.assertTrue(result.get(ResultContent.RELATED_TESTS) instanceof HashSet);
+        assertEquals(0, ((HashSet)result.get(ResultContent.RELATED_TESTS)).size());
+
+        Assert.assertTrue(result.get(ResultContent.DISCONNECTED_TESTS) instanceof HashSet);
+        assertEquals(0, ((HashSet)result.get(ResultContent.DISCONNECTED_TESTS)).size());
+
+    }
+
+    @Test
+    public void testGetDefaultProcessor() {
+        Arguments args = getArguments();
+
+        Processor p = new ProcessorBuilder()
+                .with(procBuilder ->procBuilder.arguments = args)
+                .build();
+
+        assertNotNull(args.toString());
+        assertNotNull("Default Processor is null", p);
+    }
+
+    @Test
+    public void testCachedGetDefaultProcessor() {
+        Arguments args = getArguments();
+
+        Processor p = new ProcessorBuilder().with(procBuilder ->{
+            procBuilder.arguments = args;
+        }).build();
+
+        assertNotNull(args.toString());
+        assertNotNull("Default Processor is null", p);
+    }
+
+    @Test
+    public void testGetDisconnectedTests() {
+        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_TESTS).get();
+        assertEquals("Should contain no disconnected entry points", 0, result.size());
+    }
+
+    @Test
+    public void testGetDisconnectedVertices() {
+        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_TESTS).get();
+        assertEquals("Should contain no disconnected tests vertices", 0, result.size());
+    }
+
+    @Test
+    public void testGetUnreachableChanges() {
+        Map<String, Set<String>> result = processor.getResultGenerator().generate(ResultContent.UNREACHABLE_CHANGES).get();
+        assertEquals("Should contain no disconnected tests vertices", 0, result.size());
+    }
+
+    @Test
+    public void testGetChanges() {
+        Map<String, Set<String>> result = processor.getResultGenerator().generate(ResultContent.CHANGES).get();
+        assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void testGetAllTests() {
+        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.ALL_TESTS).get();
+        assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void testJavaClassPathIsNotModified() {
+        String currentJavaClasspath = System.getProperty(JAVA_CLASS_PATH, "");
+        processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
+        String afterExecJavaClasspath = System.getProperty(JAVA_CLASS_PATH, "");
+        assertEquals(currentJavaClasspath, afterExecJavaClasspath);
+    }
+
+}

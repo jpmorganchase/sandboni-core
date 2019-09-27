@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+    <suppress>
+        <notes><![CDATA[file name: cucumber-html-0.2.3.jar]]></notes>
+        <filePath regex="true">.*cucumber.*</filePath>
+        <cve>CVE-2015-9251</cve>
+        <cve>CVE-2012-6708</cve>
+        <cve>CVE-2019-11358</cve>
+        <cve>CVE-2017-7957</cve>
+        <cve>CVE-2016-3674</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[file name: bcpg-jdk15on-1.60.jar]]></notes>
+        <filePath regex="true">.*bcpg-jdk15on.*</filePath>
+        <cve>CVE-2005-0366</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[file name: bcprov-jdk15on-1.51.jar]]></notes>
+        <filePath regex="true">.*bcprov-jdk15on.*</filePath>
+        <cve>CVE-2016-1000338</cve>
+        <cve>CVE-2016-1000339</cve>
+        <cve>CVE-2016-1000345</cve>
+        <cve>CVE-2017-13098</cve>
+        <cve>CVE-2016-1000344</cve>
+        <cve>CVE-2016-1000346</cve>
+        <cve>CVE-2016-1000341</cve>
+        <cve>CVE-2016-1000352</cve>
+        <cve>CVE-2016-1000340</cve>
+        <cve>CVE-2018-1000613</cve>
+        <cve>CVE-2016-1000343</cve>
+        <cve>CVE-2016-1000342</cve>
+        <cve>CVE-2015-6644</cve>
+    </suppress>
+</suppressions>
