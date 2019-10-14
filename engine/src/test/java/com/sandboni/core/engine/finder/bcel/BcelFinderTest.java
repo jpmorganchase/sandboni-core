@@ -603,4 +603,22 @@ public class BcelFinderTest extends FinderTestBase {
                 LinkType.HTTP_REQUEST);
         testTestClassVisitor(expectedLink);
     }
+
+    @Test
+    public void testIgnoredClass() {
+        Link expectedLink = newLink(
+                START_VERTEX,
+                new TestVertex.Builder(PACKAGE_NAME + ".IgnoredClassTest", "testHttpVerbCall()", null).withIgnore(true).build(),
+                LinkType.ENTRY_POINT);
+        testTestClassVisitor(expectedLink);
+    }
+
+    @Test
+    public void testNotIgnoredPowerMockClass() {
+        Link expectedLink = newLink(
+                START_VERTEX,
+                new TestVertex.Builder(PACKAGE_NAME + ".PowerMockIgnoreTest", "testSomeMethod()", null).withIgnore(false).build(),
+                LinkType.ENTRY_POINT);
+        testTestClassVisitor(expectedLink);
+    }
 }

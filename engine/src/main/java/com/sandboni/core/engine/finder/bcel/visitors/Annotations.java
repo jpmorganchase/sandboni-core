@@ -3,7 +3,7 @@ package com.sandboni.core.engine.finder.bcel.visitors;
 public enum Annotations {
 
     ;public enum TEST{
-        IGNORE("Ignore"),
+        IGNORE("org/junit/Ignore"),
         BEFORE("Before"),
         AFTER("After"),
         TEST("Test");
