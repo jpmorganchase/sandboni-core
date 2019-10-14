@@ -55,6 +55,11 @@
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-core</artifactId>
+            <version>${powermock.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>javax.ws.rs</groupId>
