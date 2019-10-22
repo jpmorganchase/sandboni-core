@@ -26,5 +26,5 @@ public class Arguments {
     private boolean coreCache;
     private String stage;
     private String reportDir;
-    private Set<String> includeAnnotations;
+    private String includeAnnotation;
 }

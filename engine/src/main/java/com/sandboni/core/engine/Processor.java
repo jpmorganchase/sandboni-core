@@ -115,7 +115,7 @@ public class Processor  {
 
     private Context createContext(){
         return new Context(arguments.getApplicationId(), arguments.getSrcLocation(), arguments.getTestLocation(),
-                arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get());
+                arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get(), arguments.getIncludeAnnotation());
     }
 
     private Builder getBuilder(Context context) {

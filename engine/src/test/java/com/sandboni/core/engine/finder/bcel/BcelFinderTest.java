@@ -56,7 +56,7 @@ public class BcelFinderTest extends FinderTestBase {
     }
 
     private void testTestClassVisitor(Link... expectedLinks) {
-        testVisitor(expectedLinks, new TestClassVisitor(new String[0]));
+        testVisitor(expectedLinks, new TestClassVisitor());
     }
 
     private void testInheritanceVisitor(Link... expectedLinks) {

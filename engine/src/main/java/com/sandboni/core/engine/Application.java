@@ -51,7 +51,7 @@ public class Application {
                 .testLocation(new HashSet<>(Arrays.asList(getValue(SystemProperties.TEST_LOCATION).split(","))))
                 .dependencies(new HashSet<>(Arrays.asList(getValue(SystemProperties.DEPENDENCIES).split(","))))
                 .outputFormat(getValue(SystemProperties.OUTPUT_FORMAT))
-                .includeAnnotations(new HashSet<>(Arrays.asList(getValue(SystemProperties.INCLUDE_ANNOTATIONS).split(","))))
+                .includeAnnotation(getValue(SystemProperties.INCLUDE_ANNOTATION))
                 .build();
 
         log.debug("[arguments collected] {}", arguments);

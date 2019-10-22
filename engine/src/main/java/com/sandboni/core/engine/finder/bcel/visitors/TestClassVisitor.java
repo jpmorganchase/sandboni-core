@@ -22,20 +22,12 @@ import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMe
 public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     static final String JUNIT_PACKAGE = "org/junit/Test";
     static final String TESTING_PACKAGE = "org/testing/annotations/Test";
-    private static final String[] INCLUDE_ANNOTATIONS = new String[] { "IncludeTest" };
 
     private Set<String> testMethods = new HashSet<>();
     private Map<String, LinkType> initMethods = new HashMap<>();
 
-    private final String[] includeAnnotations;
-
     private boolean ignore;
     private boolean classIncluded;
-
-    public TestClassVisitor(String[] includeAnnotations) {
-        this.includeAnnotations = includeAnnotations.length == 0 ?
-                INCLUDE_ANNOTATIONS : includeAnnotations;
-    }
 
     public void setUp() {
         ignore = false;
@@ -49,7 +41,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     public void visitMethod(Method method) {
         boolean testMethod = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
         if (testMethod) {
-            new TestMethodVisitor(method, javaClass, context, ignore, includeAnnotations, classIncluded).start();
+            new TestMethodVisitor(method, javaClass, context, ignore, classIncluded).start();
             new TestHttpMethodVisitor(method, javaClass, context).start();
             new SpringControllerMethodVisitor(method, javaClass, context, false).start();
             new JavaxControllerMethodVisitor(method, javaClass, context, null, false).start();
@@ -67,7 +59,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     public synchronized void visitJavaClass(JavaClass jc) {
         setUp();
         this.ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
-        this.classIncluded = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, includeAnnotations));
+        this.classIncluded = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, context.getIncludeTestAnnotation()));
         super.visitJavaClass(jc);
 
         testMethods.stream()

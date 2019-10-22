@@ -17,7 +17,7 @@ public enum SystemProperties {
     GIT_CACHE("sandboni.gitCache", "Caches changes found in Git repository", false, Boolean.FALSE.toString()),
     CORE_CACHE("sandboni.coreCache", "Caches core internal data", false, Boolean.FALSE.toString()),
     FILTER("sandboni.filter", "Filter elements pattern", false),
-    INCLUDE_ANNOTATIONS("sandboni.includeAnnotations", "Include annotations", false);
+    INCLUDE_ANNOTATION("sandboni.includeAnnotation", "Include annotation", false);
 
     SystemProperties(String name, String description , boolean required) {
         this.name = name;

@@ -19,6 +19,7 @@ public class Context {
     private static final Logger log = LoggerFactory.getLogger(Context.class);
     private static final String CLASSPATH_PROPERTY_NAME = "java.class.path";
     private static final String DEFAULT_APPLICATION_ID = "sandboni.default.AppId";
+    private static final String INCLUDE_ANNOTATION = "IncludeTest";
 
     private final String filter;
     private Set<Link> links = new HashSet<>();
@@ -28,6 +29,7 @@ public class Context {
     private Collection<String> testLocations;
     private String classPath;
     private String applicationId;
+    private String includeTestAnnotation;
 
     private Set<LinkType> adoptedLinkTypes;
 
@@ -45,17 +47,17 @@ public class Context {
 
     // Visible for testing only
     public Context(Set<String> srcLocation, Set<String> testLocation, String filter, ChangeScope<Change> changes) {
-        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new HashSet<>(), filter, changes, null);
+        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new HashSet<>(), filter, changes, null, null);
     }
 
     public Context(String applicationId, Set<String> srcLocation, Set<String> testLocation, Set<String> dependencies,
-                   String filter, ChangeScope<Change> changes) {
+                   String filter, ChangeScope<Change> changes, String includeTestAnnotation) {
         this(applicationId == null ? DEFAULT_APPLICATION_ID : applicationId,
-                srcLocation, testLocation, dependencies, filter, changes, null);
+                srcLocation, testLocation, dependencies, filter, changes, null, includeTestAnnotation);
     }
 
     public Context(String applicationId, Set<String> srcLocation, Set<String> testLocation, Set<String> dependencies,
-                   String filter, ChangeScope<Change> changes, String currentLocation) {
+                   String filter, ChangeScope<Change> changes, String currentLocation, String includeTestAnnotation) {
         this.applicationId = applicationId;
         this.srcLocations = getCollection(srcLocation);
         this.testLocations = getCollection(testLocation);
@@ -66,6 +68,7 @@ public class Context {
         this.changeScope = changes;
         this.adoptedLinkTypes = new HashSet<>();
         this.currentLocation = currentLocation;
+        this.includeTestAnnotation = includeTestAnnotation;
     }
 
     private Collection<String> getCollection(Set<String> set) {
@@ -162,5 +165,9 @@ public class Context {
 
     public String getApplicationId() {
         return applicationId;
+    }
+
+    public String getIncludeTestAnnotation() {
+        return includeTestAnnotation == null ? INCLUDE_ANNOTATION : includeTestAnnotation;
     }
 }

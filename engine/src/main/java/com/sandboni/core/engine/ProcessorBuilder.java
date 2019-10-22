@@ -65,12 +65,6 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
                 new InheritanceClassVisitor(),
                 new JavaxControllerClassVisitor(),
                 new SpringControllerClassVisitor(),
-                new TestClassVisitor(getIncludeAnnotations())};
+                new TestClassVisitor()};
     }
-
-    private String[] getIncludeAnnotations() {
-        return arguments.getIncludeAnnotations() == null ?
-                new String[0] : arguments.getIncludeAnnotations().toArray(new String[0]);
-    }
-
 }
