@@ -10,13 +10,14 @@ public enum SystemProperties {
     REPOSITORY("sandboni.scm.repository", "Git repository location", true),
     OUTPUTS("sandboni.outputs", "List of preferab;e outputs", false, "tests"),
     OUTPUT_FORMAT("sandboni.output.format", "Format to output to", false, "csv"),
-    STAGE("sandboni.stage", "Build Stage", false, Arguments.BUILD_STAGE),
+    STAGE("sandboni.stage", "Build Stage", false, Stage.BUILD.name()),
     REPORT_DIR("sandboni.reportDir", "Report folder", false),
     SELECTIVE_MODE("sandboni.selectiveMode",  "Run in selective mode",false, Boolean.FALSE.toString()),
     RUN_ALL_EXTERNAL_TESTS("sandboni.runAllExternalTests", "Run all external tests", false, Boolean.FALSE.toString()),
     GIT_CACHE("sandboni.gitCache", "Caches changes found in Git repository", false, Boolean.FALSE.toString()),
     CORE_CACHE("sandboni.coreCache", "Caches core internal data", false, Boolean.FALSE.toString()),
-    FILTER("sandboni.filter", "Filter elements pattern", false);
+    FILTER("sandboni.filter", "Filter elements pattern", false),
+    INCLUDE_ANNOTATIONS("sandboni.includeAnnotations", "Include annotations", false);
 
     SystemProperties(String name, String description , boolean required) {
         this.name = name;

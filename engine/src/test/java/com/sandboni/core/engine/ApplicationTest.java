@@ -14,7 +14,7 @@ public class ApplicationTest {
         System.setProperty("sandboni.scm.repository", GitHelper.openCurrentFolder());
         System.setProperty("sandboni.selectiveMode", "true");
         System.setProperty("sandboni.runAllExternaltests", "false");
-        System.setProperty("sandboni.stage", Arguments.BUILD_STAGE);
+        System.setProperty("sandboni.stage", Stage.BUILD.getName());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -66,12 +66,12 @@ public class ApplicationTest {
         Application app = new Application();
         app.buildArguments();
         Arguments args = app.getArguments();
-        Assert.assertEquals("./target/classes", args.getSrcLocation()[0]);
-        Assert.assertEquals("./target/test-classes", args.getTestLocation()[0]);
+        Assert.assertTrue(args.getSrcLocation().stream().anyMatch(l -> l.equals("./target/classes")));
+        Assert.assertTrue(args.getTestLocation().stream().anyMatch(l -> l.equals("./target/test-classes")));
         Assert.assertEquals("LATEST_PUSH", args.getFromChangeId());
         Assert.assertEquals("LOCAL_CHANGES_NOT_COMMITTED", args.getToChangeId());
         Assert.assertEquals(GitHelper.openCurrentFolder(), args.getRepository());
-        Assert.assertTrue(args.isRunSelectiveModeIfBuildFileHasChanged());
+        Assert.assertTrue(args.isRunSelectiveMode());
         Assert.assertFalse(args.isRunAllExternalTests());
     }
 
@@ -84,13 +84,13 @@ public class ApplicationTest {
         Arguments args = app.getArguments();
 
         Assert.assertNotNull(args.getSrcLocation());
-        Assert.assertSame(1, args.getSrcLocation().length);
+        Assert.assertSame(1, args.getSrcLocation().size());
         Assert.assertNotNull(args.getTestLocation());
-        Assert.assertSame(1, args.getTestLocation().length);
+        Assert.assertSame(1, args.getTestLocation().size());
 
         Assert.assertEquals("LATEST_PUSH", args.getFromChangeId());
         Assert.assertEquals("LOCAL_CHANGES_NOT_COMMITTED", args.getToChangeId());
         Assert.assertEquals(GitHelper.openCurrentFolder(), args.getRepository());
-        Assert.assertTrue(args.isRunSelectiveModeIfBuildFileHasChanged());
+        Assert.assertTrue(args.isRunSelectiveMode());
     }
 }

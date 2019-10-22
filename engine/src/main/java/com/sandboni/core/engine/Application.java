@@ -37,22 +37,22 @@ public class Application {
     //synchronized was added because of SonarQube demand
     Arguments buildArguments() {
         getProperties();
-
-        arguments = new ArgumentsBuilder().with(ab -> {
-            ab.fromChangeId = getValue(SystemProperties.FROM);
-            ab.toChangeId = getValue(SystemProperties.TO);
-            ab.repository = getValue(SystemProperties.REPOSITORY);
-            ab.filter = getValue(SystemProperties.FILTER);
-            ab.selectiveMode = Boolean.parseBoolean(getValue(SystemProperties.SELECTIVE_MODE));
-            ab.reportDir = getValue(SystemProperties.REPORT_DIR);
-            ab.runAllExternalTests = Boolean.valueOf(getValue(SystemProperties.RUN_ALL_EXTERNAL_TESTS));
-            ab.gitCache = Boolean.parseBoolean(getValue(SystemProperties.GIT_CACHE));
-            ab.coreCache = Boolean.parseBoolean(getValue(SystemProperties.CORE_CACHE));
-            ab.srcLocations = new HashSet<>(Arrays.asList(getValue(SystemProperties.SRC_LOCATION).split(",")));
-            ab.testLocations = new HashSet<>(Arrays.asList(getValue(SystemProperties.TEST_LOCATION).split(",")));
-            ab.dependencies = new HashSet<>(Arrays.asList(getValue(SystemProperties.DEPENDENCIES).split(",")));
-            ab.outputFormat = getValue(SystemProperties.OUTPUT_FORMAT);
-        }).build();
+        arguments = Arguments.builder()
+                .fromChangeId(getValue(SystemProperties.FROM))
+                .toChangeId(getValue(SystemProperties.TO))
+                .repository(getValue(SystemProperties.REPOSITORY))
+                .filter(getValue(SystemProperties.FILTER))
+                .runSelectiveMode(Boolean.parseBoolean(getValue(SystemProperties.SELECTIVE_MODE)))
+                .reportDir(getValue(SystemProperties.REPORT_DIR))
+                .runAllExternalTests(Boolean.valueOf(getValue(SystemProperties.RUN_ALL_EXTERNAL_TESTS)))
+                .gitCache(Boolean.parseBoolean(getValue(SystemProperties.GIT_CACHE)))
+                .coreCache(Boolean.parseBoolean(getValue(SystemProperties.CORE_CACHE)))
+                .srcLocation(new HashSet<>(Arrays.asList(getValue(SystemProperties.SRC_LOCATION).split(","))))
+                .testLocation(new HashSet<>(Arrays.asList(getValue(SystemProperties.TEST_LOCATION).split(","))))
+                .dependencies(new HashSet<>(Arrays.asList(getValue(SystemProperties.DEPENDENCIES).split(","))))
+                .outputFormat(getValue(SystemProperties.OUTPUT_FORMAT))
+                .includeAnnotations(new HashSet<>(Arrays.asList(getValue(SystemProperties.INCLUDE_ANNOTATIONS).split(","))))
+                .build();
 
         log.debug("[arguments collected] {}", arguments);
         return arguments;

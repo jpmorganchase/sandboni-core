@@ -5,6 +5,7 @@ import com.sandboni.core.engine.result.Result;
 import com.sandboni.core.engine.result.ResultContent;
 import com.sandboni.core.engine.sta.Builder;
 import com.sandboni.core.engine.sta.connector.Connector;
+import com.sandboni.core.engine.sta.graph.vertex.CucumberVertex;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import com.sandboni.core.scm.utils.GitHelper;
@@ -28,16 +29,16 @@ public class ProcessorTest {
     }
 
     private Arguments getArguments() {
-        return new ArgumentsBuilder().with($->{
-            $.applicationId = "sandboni.default";
-            $.fromChangeId = "1";
-            $.toChangeId = "2";
-            $.repository = GitHelper.openCurrentFolder();
-            $.filter = "com";
-            $.stage = Arguments.BUILD_STAGE;
-            $.coreCache = true;
-            $.gitCache = true;
-        }).build();
+        return Arguments.builder()
+                .applicationId("sandboni.default")
+                .fromChangeId("1")
+                .toChangeId("2")
+                .repository(GitHelper.openCurrentFolder())
+                .filter("com")
+                .stage(Stage.BUILD.getName())
+                .coreCache(true)
+                .gitCache(true)
+                .build();
     }
 
     @Test
@@ -140,4 +141,75 @@ public class ProcessorTest {
         assertEquals(currentJavaClasspath, afterExecJavaClasspath);
     }
 
+    @Test
+    public void testGetRelatedUnitTests() {
+        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.RELATED_UNIT).get();
+        assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void testGetRelatedCucumberTests() {
+        Set<CucumberVertex> result = processor.getResultGenerator().generate(ResultContent.RELATED_CUCUMBER).get();
+        assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void testGetDisconnectedUnitTests() {
+        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_UNIT).get();
+        assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void testGetDisconnectedCucumberTests() {
+        Set<CucumberVertex> result = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_CUCUMBER).get();
+        assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void testGetRelatedExternalUnitTests() {
+        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.RELATED_EXTERNAL_UNIT).get();
+        assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void testGetRelatedExternalCucumberTests() {
+        Set<CucumberVertex> result = processor.getResultGenerator().generate(ResultContent.RELATED_EXTERNAL_CUCUMBER).get();
+        assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void testGetAllExternalUnitTests() {
+        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_UNIT).get();
+        assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void testGetAllExternalCucumberTests() {
+        Set<CucumberVertex> result = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_CUCUMBER).get();
+        assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void testGetIncludedByAnnotationTests() {
+        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.INCLUDED_BY_ANNOTATION).get();
+        assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void testGetAllTestsSize() {
+        Long result = processor.getResultGenerator().generate(ResultContent.ALL_TESTS_SIZE).get();
+        assertEquals(0L, (long)result);
+    }
+
+    @Test
+    public void testGetRelatedTestsSize() {
+        Long result = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS_SIZE).get();
+        assertEquals(0L, (long)result);
+    }
+
+    @Test
+    public void testGetDisconnectedTestsSize() {
+        Long result = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_TESTS_SIZE).get();
+        assertEquals(0L, (long)result);
+    }
 }

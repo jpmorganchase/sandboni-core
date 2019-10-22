@@ -13,13 +13,13 @@ public class ContextTest {
 
     public static final String JAVA_CLASS_PATH = "java.class.path";
     private Context context;
-    private String[] sourceLocations;
-    private String[] testLocations;
+    private Set<String> sourceLocations;
+    private Set<String> testLocations;
 
     @Before
     public void setUp() {
-        sourceLocations = new String[]{"./target/classes"};
-        testLocations = new String[]{"./target/test-classes"};
+        sourceLocations = new HashSet<>(Collections.singletonList("./target/classes"));
+        testLocations = new HashSet<>(Collections.singletonList("./target/test-classes"));
         context = new Context(sourceLocations, testLocations, null, null);
     }
 
@@ -40,8 +40,8 @@ public class ContextTest {
         projectClasspath.forEach(item -> assertTrue(context.getClassPath().contains(item)));
     }
 
-    private List<String> getPathItems(String[] sourceLocations) {
-        return Arrays.stream(sourceLocations)
+    private List<String> getPathItems(Set<String> sourceLocations) {
+        return sourceLocations.stream()
                 .map(l -> new File(l).getAbsolutePath())
                 .collect(Collectors.toList());
     }

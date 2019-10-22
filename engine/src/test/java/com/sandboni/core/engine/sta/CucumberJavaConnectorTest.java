@@ -10,12 +10,13 @@ import com.sandboni.core.scm.scope.ChangeScopeImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 
 public class CucumberJavaConnectorTest {
     private Context setupContext(String callerActon, String calleeAction) {
-        Context context = new Context(new String[]{}, new String[]{}, "", new ChangeScopeImpl());
+        Context context = new Context(Collections.emptySet(), Collections.emptySet(), "", new ChangeScopeImpl());
 
         if (Objects.nonNull(callerActon)) {
             context.addLink(LinkFactory.createInstance(context.getApplicationId(),

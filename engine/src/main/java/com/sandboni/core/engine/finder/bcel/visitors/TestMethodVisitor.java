@@ -19,17 +19,26 @@ public class TestMethodVisitor extends MethodVisitorBase {
     final boolean testMethod;
 
     private boolean ignore;
+    private boolean isIncluded;
 
     TestMethodVisitor(Method m, JavaClass jc, Context c) {
-        super(m, jc, c);
-        testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
+        this(m, jc, c, new String[0], false);
     }
 
-    TestMethodVisitor(Method m, JavaClass jc, Context c, boolean ignore) {
+    TestMethodVisitor(Method m, JavaClass jc, Context c, String[] includeAnnotations, boolean isClassIncluded) {
+        super(m, jc, c);
+        testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
+        this.isIncluded = testMethod &&
+                (isClassIncluded || getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, includeAnnotations) != null);
+    }
+
+    TestMethodVisitor(Method m, JavaClass jc, Context c, boolean ignore, String[] includeAnnotations, boolean isClassIncluded) {
         super(m, jc, c);
         testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
         this.ignore = testMethod &&
                 (ignore || Objects.nonNull(getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc())));
+        this.isIncluded = testMethod &&
+                (isClassIncluded || getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, includeAnnotations) != null);
     }
 
     public void start() {
@@ -37,6 +46,7 @@ public class TestMethodVisitor extends MethodVisitorBase {
             String methodName = formatMethod(method);
             TestVertex tv = new TestVertex.Builder(javaClass.getClassName(), methodName, context.getCurrentLocation())
                     .withIgnore(ignore)
+                    .withIncluded(isIncluded)
                     .build();
             context.addLink(LinkFactory.createInstance(context.getApplicationId(), START_VERTEX, tv, LinkType.ENTRY_POINT));
         }

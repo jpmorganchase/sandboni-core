@@ -21,6 +21,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.Collections;
+import java.util.HashSet;
+
 import static com.sandboni.core.engine.MockChangeDetector.PACKAGE_NAME;
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.END_VERTEX;
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
@@ -53,7 +56,7 @@ public class BcelFinderTest extends FinderTestBase {
     }
 
     private void testTestClassVisitor(Link... expectedLinks) {
-        testVisitor(expectedLinks, new TestClassVisitor());
+        testVisitor(expectedLinks, new TestClassVisitor(new String[0]));
     }
 
     private void testInheritanceVisitor(Link... expectedLinks) {
@@ -543,7 +546,8 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test(expected = ParseRuntimeException.class)
     public void testInvalidContextLocation() {
-        Context context = new Context(new String[]{"non-existing-location"}, new String[]{"non-existing-location"}, "com.sandboni", new ChangeScopeImpl());
+
+        Context context = new Context(new HashSet<>(Collections.singletonList("non-existing-location")), new HashSet<>(Collections.singletonList("non-existing-location")),"com.sandboni", new ChangeScopeImpl());
         Finder f = new BcelFinder(new ClassVisitor[]{new CallerClassVisitor()});
         f.findSafe(context);
     }
@@ -620,5 +624,16 @@ public class BcelFinderTest extends FinderTestBase {
                 new TestVertex.Builder(PACKAGE_NAME + ".PowerMockIgnoreTest", "testSomeMethod()", null).withIgnore(false).build(),
                 LinkType.ENTRY_POINT);
         testTestClassVisitor(expectedLink);
+    }
+
+    @Test
+    public void testTestIncludedTest() {
+        Link expectedLink1 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".MustRunClassTest", "testOne()",null).withIncluded(true).build(), LinkType.ENTRY_POINT);
+        Link expectedLink2 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".MustRunClassTest", "testTwo()",null).withIncluded(true).build(), LinkType.ENTRY_POINT);
+
+        Link expectedLink3 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".MustRunMethodTest", "testOne()",null).withIncluded(false).build(), LinkType.ENTRY_POINT);
+        Link expectedLink4 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".MustRunMethodTest", "testTwo()",null).withIncluded(true).build(), LinkType.ENTRY_POINT);
+
+        testTestClassVisitor(expectedLink1, expectedLink2, expectedLink3, expectedLink4);
     }
 }

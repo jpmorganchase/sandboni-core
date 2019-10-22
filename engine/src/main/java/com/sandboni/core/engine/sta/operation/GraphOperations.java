@@ -6,6 +6,7 @@ import com.sandboni.core.engine.result.FormattedChangeStats;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.executor.OperationExecutor;
 import com.sandboni.core.engine.sta.graph.Edge;
+import com.sandboni.core.engine.sta.graph.vertex.CucumberVertex;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import org.jgrapht.Graph;
@@ -21,7 +22,7 @@ public class GraphOperations {
     private final Supplier<Set<TestVertex>> relatedTestsSupplier = new CachingSupplier<>(this::getRelatedTestsImpl);
     private final Supplier<Set<TestVertex>> allTestsSupplier = new CachingSupplier<>(this::getAllTestsImpl);
     private final Supplier<Set<TestVertex>> disconnectedTestsSupplier = new CachingSupplier<>(this::getDisconnectedTestsImpl);
-    private final Supplier<Map<String, Set<String>>> allExternalTestsSupplier = new CachingSupplier<>(this::getAllExternalTestsImpl);
+    private final Supplier<Set<TestVertex>> allExternalTestsSupplier = new CachingSupplier<>(this::getAllExternalTestsImpl);
     private final Supplier<Set<Vertex>> changesSupplier = new CachingSupplier<>(this::getChangesImpl);
     private final Supplier<Map<String, Set<String>>> changesMapSupplier = new CachingSupplier<>(this::getChangesMapImpl);
     private final Supplier<Set<Edge>> allReachableEdgesSupplier = new CachingSupplier<>(this::getAllReachableEdgesImpl);
@@ -45,11 +46,14 @@ public class GraphOperations {
         return operationExecutor.execute(new AllTestsOperation());
     }
 
-    public Map<String, Set<String>> getAllExternalTests() {
-        return allExternalTestsSupplier.get();
+    public Set<TestVertex> getAllExternalUnitTests() {
+        return operationExecutor.execute(new UnitTestsOperation(allExternalTestsSupplier.get(), false));
     }
-    private Map<String, Set<String>> getAllExternalTestsImpl() {
-        return operationExecutor.execute(new AllExternalTestsOperation(allTestsSupplier.get()));
+    public Set<CucumberVertex> getAllExternalCucumberTests() {
+        return operationExecutor.execute(new CucumberTestsOperation(allExternalTestsSupplier.get(), false));
+    }
+    private Set<TestVertex> getAllExternalTestsImpl() {
+        return allTestsSupplier.get();
     }
 
     public Set<Vertex> getChanges() {
@@ -134,5 +138,44 @@ public class GraphOperations {
     }
     private Set<FormattedChangeStats> getFormattedChangeStatsImpl() {
         return operationExecutor.execute(new FormattedChangeStatsOperation(changeStatsSupplier.get()));
+    }
+
+    public Set<TestVertex> getUnitRelatedTests() {
+        return operationExecutor.execute(new UnitTestsOperation(relatedTestsSupplier.get(), false));
+    }
+
+    public Set<TestVertex> getUnitDisconnectedTests() {
+        return operationExecutor.execute(new UnitTestsOperation(disconnectedTestsSupplier.get(), false));
+    }
+
+    public Set<CucumberVertex> getCucumberRelatedTests() {
+        return operationExecutor.execute(new CucumberTestsOperation(relatedTestsSupplier.get(), false));
+    }
+    public Set<CucumberVertex> getCucumberDisconnectedTests() {
+        return operationExecutor.execute(new CucumberTestsOperation(disconnectedTestsSupplier.get(), false));
+    }
+
+    public long getAllTestsSize() {
+        return operationExecutor.execute(new VertexSizeOperation(allTestsSupplier.get()));
+    }
+
+    public long getRelatedTestsSize() {
+        return operationExecutor.execute(new VertexSizeOperation(relatedTestsSupplier.get()));
+    }
+
+    public long getDisconnectedTestsSize() {
+        return operationExecutor.execute(new VertexSizeOperation(disconnectedTestsSupplier.get()));
+    }
+
+    public Set<TestVertex> getUnitRelatedExternalTests() {
+        return operationExecutor.execute(new UnitTestsOperation(relatedTestsSupplier.get(), true));
+    }
+
+    public Set<CucumberVertex> getCucumberRelatedExternalTests() {
+        return operationExecutor.execute(new CucumberTestsOperation(relatedTestsSupplier.get(), true));
+    }
+
+    public Set<TestVertex> getIncludedByAnnotationTest() {
+        return operationExecutor.execute(new IncludedTestOperation(allTestsSupplier.get()));
     }
 }

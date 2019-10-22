@@ -10,6 +10,7 @@ import com.sandboni.core.scm.scope.ChangeScopeImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
@@ -21,7 +22,7 @@ public class TestConventionConnectorTest {
     private Vertex code2 = new Vertex.Builder("package.SomeClass", "someOtherMethod(int, int, int)").build();
 
     private Context setupContext() {
-        Context context = new Context(new String[]{}, new String[]{}, "", new ChangeScopeImpl());
+        Context context = new Context(Collections.emptySet(), Collections.emptySet(), "", new ChangeScopeImpl());
 
         Link link1 = LinkFactory.createInstance(context.getApplicationId(), START_VERTEX, test, LinkType.ENTRY_POINT);
         Link link2 = LinkFactory.createInstance(context.getApplicationId(), code, code2, LinkType.METHOD_CALL);

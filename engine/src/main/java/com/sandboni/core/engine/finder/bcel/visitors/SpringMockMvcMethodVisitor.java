@@ -14,8 +14,6 @@ import org.apache.bcel.generic.LDC;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
 
 public class SpringMockMvcMethodVisitor extends TestMethodVisitor {
-
-
     private final ConstantPoolGen cp;
     private String value;
 

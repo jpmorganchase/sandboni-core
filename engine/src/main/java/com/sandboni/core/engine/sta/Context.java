@@ -44,35 +44,33 @@ public class Context {
     }
 
     // Visible for testing only
-    public Context(String[] srcLocation, String[] testLocation, String filter, ChangeScope<Change> changes) {
-        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[]{}, filter, changes, null);
+    public Context(Set<String> srcLocation, Set<String> testLocation, String filter, ChangeScope<Change> changes) {
+        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new HashSet<>(), filter, changes, null);
     }
 
-    public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
+    public Context(String applicationId, Set<String> srcLocation, Set<String> testLocation, Set<String> dependencies,
                    String filter, ChangeScope<Change> changes) {
         this(applicationId == null ? DEFAULT_APPLICATION_ID : applicationId,
                 srcLocation, testLocation, dependencies, filter, changes, null);
     }
 
-    public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
+    public Context(String applicationId, Set<String> srcLocation, Set<String> testLocation, Set<String> dependencies,
                    String filter, ChangeScope<Change> changes, String currentLocation) {
         this.applicationId = applicationId;
-        this.srcLocations = Collections.unmodifiableCollection(Arrays.stream(srcLocation)
-                .map(l -> new File(l).getAbsolutePath())
-                .collect(Collectors.toCollection(ArrayList::new)));
-        this.testLocations = Collections.unmodifiableCollection(Arrays.stream(testLocation)
-                .map(l -> new File(l).getAbsolutePath())
-                .collect(Collectors.toCollection(ArrayList::new)));
-        Collection<String> dependenciesPaths = Collections.unmodifiableCollection(Arrays.stream(dependencies)
-                .map(l -> new File(l).getAbsolutePath())
-                .collect(Collectors.toCollection(ArrayList::new)));
+        this.srcLocations = getCollection(srcLocation);
+        this.testLocations = getCollection(testLocation);
 
-        this.classPath = getExecutionClasspath(srcLocations, testLocations, dependenciesPaths);
+        this.classPath = getExecutionClasspath(srcLocations, testLocations, getCollection(dependencies));
 
         this.filter = filter;
         this.changeScope = changes;
         this.adoptedLinkTypes = new HashSet<>();
         this.currentLocation = currentLocation;
+    }
+
+    private Collection<String> getCollection(Set<String> set) {
+        return set == null ? Collections.emptySet() :
+                set.stream().map(l -> new File(l).getAbsolutePath()).collect(Collectors.toSet());
     }
 
     private String getExecutionClasspath(Collection<String> srcLocation, Collection<String> testLocation, Collection<String> dependencies) {
