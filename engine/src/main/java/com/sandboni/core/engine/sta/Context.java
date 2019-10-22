@@ -56,6 +56,7 @@ public class Context {
                 srcLocation, testLocation, dependencies, filter, changes, null, includeTestAnnotation);
     }
 
+    @SuppressWarnings("squid:S00107")
     public Context(String applicationId, Set<String> srcLocation, Set<String> testLocation, Set<String> dependencies,
                    String filter, ChangeScope<Change> changes, String currentLocation, String includeTestAnnotation) {
         this.applicationId = applicationId;
@@ -68,7 +69,7 @@ public class Context {
         this.changeScope = changes;
         this.adoptedLinkTypes = new HashSet<>();
         this.currentLocation = currentLocation;
-        this.includeTestAnnotation = includeTestAnnotation;
+        this.includeTestAnnotation = includeTestAnnotation == null ? INCLUDE_ANNOTATION : includeTestAnnotation;
     }
 
     private Collection<String> getCollection(Set<String> set) {
@@ -100,6 +101,7 @@ public class Context {
         this.changeScope = source.changeScope;
         this.currentLocation = source.currentLocation;
         this.adoptedLinkTypes = new HashSet<>();
+        this.includeTestAnnotation = source.includeTestAnnotation;
     }
 
     public Context getLocalContext() {
@@ -168,6 +170,6 @@ public class Context {
     }
 
     public String getIncludeTestAnnotation() {
-        return includeTestAnnotation == null ? INCLUDE_ANNOTATION : includeTestAnnotation;
+        return includeTestAnnotation;
     }
 }
