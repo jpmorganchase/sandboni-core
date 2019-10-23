@@ -155,18 +155,6 @@ public class GraphOperations {
         return operationExecutor.execute(new CucumberTestsOperation(disconnectedTestsSupplier.get(), false));
     }
 
-    public long getAllTestsSize() {
-        return operationExecutor.execute(new VertexSizeOperation(allTestsSupplier.get()));
-    }
-
-    public long getRelatedTestsSize() {
-        return operationExecutor.execute(new VertexSizeOperation(relatedTestsSupplier.get()));
-    }
-
-    public long getDisconnectedTestsSize() {
-        return operationExecutor.execute(new VertexSizeOperation(disconnectedTestsSupplier.get()));
-    }
-
     public Set<TestVertex> getUnitRelatedExternalTests() {
         return operationExecutor.execute(new UnitTestsOperation(relatedTestsSupplier.get(), true));
     }

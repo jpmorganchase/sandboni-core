@@ -16,7 +16,7 @@ public class ApplicationTest {
         System.setProperty("sandboni.scm.repository", GitHelper.openCurrentFolder());
         System.setProperty("sandboni.selectiveMode", "true");
         System.setProperty("sandboni.runAllExternaltests", "false");
-        System.setProperty("sandboni.stage", Stage.BUILD.getName());
+        System.setProperty("sandboni.stage", Stage.BUILD.name());
     }
 
     @Test(expected = IllegalArgumentException.class)

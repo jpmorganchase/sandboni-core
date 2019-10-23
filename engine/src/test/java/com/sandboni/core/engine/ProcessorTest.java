@@ -35,7 +35,7 @@ public class ProcessorTest {
                 .toChangeId("2")
                 .repository(GitHelper.openCurrentFolder())
                 .filter("com")
-                .stage(Stage.BUILD.getName())
+                .stage(Stage.BUILD.name())
                 .coreCache(true)
                 .gitCache(true)
                 .build();
@@ -193,23 +193,5 @@ public class ProcessorTest {
     public void testGetIncludedByAnnotationTests() {
         Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.INCLUDED_BY_ANNOTATION).get();
         assertEquals("Should contain no exit points", 0, result.size());
-    }
-
-    @Test
-    public void testGetAllTestsSize() {
-        Long result = processor.getResultGenerator().generate(ResultContent.ALL_TESTS_SIZE).get();
-        assertEquals(0L, (long)result);
-    }
-
-    @Test
-    public void testGetRelatedTestsSize() {
-        Long result = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS_SIZE).get();
-        assertEquals(0L, (long)result);
-    }
-
-    @Test
-    public void testGetDisconnectedTestsSize() {
-        Long result = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_TESTS_SIZE).get();
-        assertEquals(0L, (long)result);
     }
 }

@@ -137,12 +137,6 @@ public class ResultGenerator {
                 return graphOperations.getAllExternalUnitTests();
             case ALL_EXTERNAL_CUCUMBER:
                 return graphOperations.getAllExternalCucumberTests();
-            case ALL_TESTS_SIZE:
-                return graphOperations.getAllTestsSize();
-            case RELATED_TESTS_SIZE:
-                return graphOperations.getRelatedTestsSize();
-            case DISCONNECTED_TESTS_SIZE:
-                return graphOperations.getDisconnectedTestsSize();
             case INCLUDED_BY_ANNOTATION:
                 return graphOperations.getIncludedByAnnotationTest();
             default:

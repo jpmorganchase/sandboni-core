@@ -1,6 +1,7 @@
 package com.sandboni.core.engine;
 
 import com.sandboni.core.engine.result.ResultContent;
+import com.sandboni.core.engine.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,10 +101,9 @@ public class Application {
     private String getValue(SystemProperties ppty) {
         String value = getProperties().get(ppty.getName());
         log.debug("[property: {} required:{} ] retrieved value is {}", ppty.getName(), ppty.isRequired(), value);
-        if ((value == null || value.isEmpty())) {
+        if (StringUtil.isEmptyOrNull(value)) {
             if (ppty.isRequired())
                 throw new IllegalArgumentException(String.format("[%s] Property is missing or empty", ppty.getName()));
-
             value = (ppty.getDefaultValue() != null) ? ppty.getDefaultValue() : "";
         }
         return value.trim();

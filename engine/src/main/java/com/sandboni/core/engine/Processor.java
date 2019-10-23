@@ -102,7 +102,7 @@ public class Processor  {
     }
 
     private boolean isIntegrationStage() {
-        return arguments.getStage().equals(Stage.INTEGRATION.getName());
+        return arguments.getStage().equals(Stage.INTEGRATION.name());
     }
 
     public ChangeScope<Change> getScope(){

@@ -4,6 +4,7 @@ import com.sandboni.core.engine.contract.ThrowingConsumer;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.engine.utils.StringUtil;
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeScope;
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public class Context {
         this.changeScope = changes;
         this.adoptedLinkTypes = new HashSet<>();
         this.currentLocation = currentLocation;
-        this.includeTestAnnotation = includeTestAnnotation == null ? INCLUDE_ANNOTATION : includeTestAnnotation;
+        this.includeTestAnnotation = StringUtil.isEmptyOrNull(includeTestAnnotation) ? INCLUDE_ANNOTATION : includeTestAnnotation;
     }
 
     private Collection<String> getCollection(String[] array) {

@@ -21,16 +21,13 @@ public class TestMethodVisitor extends MethodVisitorBase {
     private boolean ignore;
     private boolean isIncluded;
 
-    TestMethodVisitor(Method m, JavaClass jc, Context c, boolean isClassIncluded) {
-        super(m, jc, c);
-        testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
-        this.isIncluded = testMethod &&
-                (isClassIncluded || getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, context.getIncludeTestAnnotation()) != null);
+    TestMethodVisitor(Method m, JavaClass jc, Context c) {
+        this(m, jc, c, false, false);
     }
 
     TestMethodVisitor(Method m, JavaClass jc, Context c, boolean ignore, boolean isClassIncluded) {
         super(m, jc, c);
-        testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
+        this.testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
         this.ignore = testMethod &&
                 (ignore || Objects.nonNull(getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc())));
         this.isIncluded = testMethod &&

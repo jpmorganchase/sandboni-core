@@ -20,9 +20,6 @@ public enum ResultContent {
     RELATED_EXTERNAL_CUCUMBER,
     ALL_EXTERNAL_UNIT,
     ALL_EXTERNAL_CUCUMBER,
-    ALL_TESTS_SIZE,
-    RELATED_TESTS_SIZE,
-    DISCONNECTED_TESTS_SIZE,
     INCLUDED_BY_ANNOTATION;
 
     private boolean outputToFile;

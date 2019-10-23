@@ -12,7 +12,7 @@ public class ResultGeneratorTest {
             .toChangeId("999eee")
             .repository(".")
             .runSelectiveMode(selectiveMode)
-            .stage(stage.getName())
+            .stage(stage.name())
             .runAllExternalTests(runAllExternalTests).build();
     }
 

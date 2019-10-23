@@ -34,7 +34,7 @@ public class TestHttpMethodVisitor extends TestMethodVisitor {
     private ConstantPoolGen cp;
 
     TestHttpMethodVisitor(Method m, JavaClass jc, Context c) {
-        super(m, jc, c, false);
+        super(m, jc, c);
         cp = new ConstantPoolGen(jc.getConstantPool());
     }
 
