@@ -10,6 +10,8 @@ import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import com.sandboni.core.scm.scope.ChangeScopeImpl;
 import org.junit.Before;
 
+import java.util.Collections;
+
 import static com.sandboni.core.engine.sta.graph.LinkType.ENTRY_POINT;
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.END_VERTEX;
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
@@ -29,12 +31,13 @@ public abstract class GraphOperationsTest {
     protected final Vertex testLocation;
     protected final CucumberVertex cucumberTest;
     protected final CucumberVertex affectedCucumberTest;
+    protected final Vertex includeTest;
 
     protected GraphOperations graphOperations;
     protected Builder builder;
 
     public GraphOperationsTest() {
-        context = new Context(new String[]{}, new String[]{}, "", new ChangeScopeImpl());
+        context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
 
         modified = new Vertex.Builder("ClassA", "coveredMethod()").build();
         modifiedUncovered = new Vertex.Builder("ClassA", "uncoveredMethod()").build();
@@ -49,6 +52,8 @@ public abstract class GraphOperationsTest {
 
         cucumberTest = new CucumberVertex.Builder("featureFile", "scenario1").build();
         affectedCucumberTest = new CucumberVertex.Builder("featureFile", "scenario2").markAffected(true).build();
+
+        includeTest = new TestVertex.Builder("MustRunMethodTest", "testTwo()").withIncluded(true).build();
     }
 
     @Before
@@ -63,6 +68,7 @@ public abstract class GraphOperationsTest {
         context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, cucumberTest, ENTRY_POINT));
         context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, affectedCucumberTest, ENTRY_POINT));
         context.addLink(LinkFactory.createInstance(APP_ID, affectedCucumberTest, modified, LinkType.CUCUMBER_TEST));
+        context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, includeTest, ENTRY_POINT));
 
         builder = new Builder(context);
 

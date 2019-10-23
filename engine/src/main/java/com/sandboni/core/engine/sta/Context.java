@@ -4,6 +4,7 @@ import com.sandboni.core.engine.contract.ThrowingConsumer;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.engine.utils.StringUtil;
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeScope;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ public class Context {
     private static final Logger log = LoggerFactory.getLogger(Context.class);
     private static final String CLASSPATH_PROPERTY_NAME = "java.class.path";
     private static final String DEFAULT_APPLICATION_ID = "sandboni.default.AppId";
+    private static final String INCLUDE_ANNOTATION = "IncludeTest";
 
     private final String filter;
     private Set<Link> links = new HashSet<>();
@@ -28,6 +30,7 @@ public class Context {
     private Collection<String> testLocations;
     private String classPath;
     private String applicationId;
+    private String includeTestAnnotation;
 
     private Set<LinkType> adoptedLinkTypes;
 
@@ -45,34 +48,34 @@ public class Context {
 
     // Visible for testing only
     public Context(String[] srcLocation, String[] testLocation, String filter, ChangeScope<Change> changes) {
-        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[]{}, filter, changes, null);
+        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[0], filter, changes, null, null);
     }
 
     public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
-                   String filter, ChangeScope<Change> changes) {
+                   String filter, ChangeScope<Change> changes, String includeTestAnnotation) {
         this(applicationId == null ? DEFAULT_APPLICATION_ID : applicationId,
-                srcLocation, testLocation, dependencies, filter, changes, null);
+                srcLocation, testLocation, dependencies, filter, changes, null, includeTestAnnotation);
     }
 
+    @SuppressWarnings("squid:S00107")
     public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
-                   String filter, ChangeScope<Change> changes, String currentLocation) {
+                   String filter, ChangeScope<Change> changes, String currentLocation, String includeTestAnnotation) {
         this.applicationId = applicationId;
-        this.srcLocations = Collections.unmodifiableCollection(Arrays.stream(srcLocation)
-                .map(l -> new File(l).getAbsolutePath())
-                .collect(Collectors.toCollection(ArrayList::new)));
-        this.testLocations = Collections.unmodifiableCollection(Arrays.stream(testLocation)
-                .map(l -> new File(l).getAbsolutePath())
-                .collect(Collectors.toCollection(ArrayList::new)));
-        Collection<String> dependenciesPaths = Collections.unmodifiableCollection(Arrays.stream(dependencies)
-                .map(l -> new File(l).getAbsolutePath())
-                .collect(Collectors.toCollection(ArrayList::new)));
+        this.srcLocations = getCollection(srcLocation);
+        this.testLocations = getCollection(testLocation);
 
-        this.classPath = getExecutionClasspath(srcLocations, testLocations, dependenciesPaths);
+        this.classPath = getExecutionClasspath(srcLocations, testLocations, getCollection(dependencies));
 
         this.filter = filter;
         this.changeScope = changes;
         this.adoptedLinkTypes = new HashSet<>();
         this.currentLocation = currentLocation;
+        this.includeTestAnnotation = StringUtil.isEmptyOrNull(includeTestAnnotation) ? INCLUDE_ANNOTATION : includeTestAnnotation;
+    }
+
+    private Collection<String> getCollection(String[] array) {
+        return array == null ? Collections.emptySet() :
+                Arrays.stream(array).map(l -> new File(l).getAbsolutePath()).collect(Collectors.toSet());
     }
 
     private String getExecutionClasspath(Collection<String> srcLocation, Collection<String> testLocation, Collection<String> dependencies) {
@@ -99,6 +102,7 @@ public class Context {
         this.changeScope = source.changeScope;
         this.currentLocation = source.currentLocation;
         this.adoptedLinkTypes = new HashSet<>();
+        this.includeTestAnnotation = source.includeTestAnnotation;
     }
 
     public Context getLocalContext() {
@@ -164,5 +168,9 @@ public class Context {
 
     public String getApplicationId() {
         return applicationId;
+    }
+
+    public String getIncludeTestAnnotation() {
+        return includeTestAnnotation;
     }
 }

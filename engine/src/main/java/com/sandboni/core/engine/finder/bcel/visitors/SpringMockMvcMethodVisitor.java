@@ -14,13 +14,10 @@ import org.apache.bcel.generic.LDC;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
 
 public class SpringMockMvcMethodVisitor extends TestMethodVisitor {
-
-
     private final ConstantPoolGen cp;
     private String value;
 
     private static final String MOCK_HTTP_REQUEST_BUILDER = "MockHttpServletRequestBuilder";
-
 
     SpringMockMvcMethodVisitor(Method m, JavaClass jc, Context c) {
         super(m, jc, c);

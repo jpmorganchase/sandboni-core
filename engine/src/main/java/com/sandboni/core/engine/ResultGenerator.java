@@ -60,6 +60,10 @@ public class ResultGenerator {
         return result;
     }
 
+    public FilterIndicator getFilterIndicator() {
+        return filterIndicator;
+    }
+
     private void writeOutputToFile(Result result, ResultContent resultContent) {
         try {
             FileWriterEngine.write(result.get(resultContent), getFileOptions(resultContent));
@@ -104,8 +108,6 @@ public class ResultGenerator {
                 return graphOperations.getAllTests();
             case DISCONNECTED_TESTS:
                 return graphOperations.getDisconnectedTests();
-            case ALL_EXTERNAL_TESTS:
-                return graphOperations.getAllExternalTests();
             case CHANGES:
                 return graphOperations.getChangesMap();
             case RELATED_TESTS:
@@ -119,6 +121,24 @@ public class ResultGenerator {
                 return graphOperations.getChangeStats();
             case FORMATTED_CHANGE_STATS:
                 return graphOperations.getFormattedChangeStats();
+            case RELATED_UNIT:
+                return graphOperations.getUnitRelatedTests();
+            case RELATED_CUCUMBER:
+                return graphOperations.getCucumberRelatedTests();
+            case DISCONNECTED_UNIT:
+                return graphOperations.getUnitDisconnectedTests();
+            case DISCONNECTED_CUCUMBER:
+                return graphOperations.getCucumberDisconnectedTests();
+            case RELATED_EXTERNAL_UNIT:
+                return graphOperations.getUnitRelatedExternalTests();
+            case RELATED_EXTERNAL_CUCUMBER:
+                return graphOperations.getCucumberRelatedExternalTests();
+            case ALL_EXTERNAL_UNIT:
+                return graphOperations.getAllExternalUnitTests();
+            case ALL_EXTERNAL_CUCUMBER:
+                return graphOperations.getAllExternalCucumberTests();
+            case INCLUDED_BY_ANNOTATION:
+                return graphOperations.getIncludedByAnnotationTest();
             default:
                  return null;
         }

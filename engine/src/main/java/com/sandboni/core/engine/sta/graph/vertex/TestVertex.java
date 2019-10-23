@@ -1,29 +1,37 @@
 package com.sandboni.core.engine.sta.graph.vertex;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 import java.util.Objects;
 
+@Getter
+@Setter
 public class TestVertex extends Vertex {
 
     private static final long serialVersionUID = 4024645517577346150L;
 
     private final boolean ignore;
     private boolean externalLocation;
+    private boolean included;
 
     @SuppressWarnings("squid:S00107") // private constructor used only in Builder
     protected TestVertex(String actor, String action, boolean isSpecial, String filePath,
                        List<Integer> lineNumbers, String filter,
                        String location, boolean ignore,
-                       boolean externalLocation) {
+                       boolean externalLocation, boolean included) {
         super(actor, action, isSpecial, filePath, lineNumbers, filter, location);
         this.ignore = ignore;
         this.externalLocation = externalLocation;
+        this.included = included;
     }
 
     protected abstract static class AbstractTestVertexBuilder<T extends AbstractTestVertexBuilder<T>> extends AbstractVertexBuilder<T> {
 
         protected boolean ignore;
         boolean externalLocation;
+        boolean included;
 
         public AbstractTestVertexBuilder(String actor, String action, String location) {
             super(actor, action, location);
@@ -38,6 +46,11 @@ public class TestVertex extends Vertex {
             return getThis();
         }
 
+        public T withIncluded(boolean included) {
+            this.included = included;
+            return getThis();
+        }
+
         public T markAsExternalLocation() {
             this.externalLocation = true;
             return getThis();
@@ -46,7 +59,7 @@ public class TestVertex extends Vertex {
         @Override
         public TestVertex build() {
             return new TestVertex(this.actor, this.action, this.isSpecial, this.filePath, this.lineNumbers,
-                    this.filter, this.location, this.ignore, this.externalLocation);
+                    this.filter, this.location, this.ignore, this.externalLocation, this.included);
         }
 
         protected abstract T getThis();
@@ -66,10 +79,6 @@ public class TestVertex extends Vertex {
         protected Builder getThis() {
             return this;
         }
-    }
-
-    public boolean isIgnore() {
-        return ignore;
     }
 
     @Override
@@ -92,14 +101,6 @@ public class TestVertex extends Vertex {
     @Override
     public int hashCode() {
         return Objects.hash(getActor(), getAction(), isSpecial(), ignore);
-    }
-
-    public boolean isExternalLocation() {
-        return externalLocation;
-    }
-
-    public void setExternalLocation(boolean externalLocation) {
-        this.externalLocation = externalLocation;
     }
 
 }

@@ -67,5 +67,4 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
                 new SpringControllerClassVisitor(),
                 new TestClassVisitor()};
     }
-
 }
