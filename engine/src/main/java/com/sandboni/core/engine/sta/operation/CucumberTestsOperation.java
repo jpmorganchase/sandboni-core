@@ -14,6 +14,10 @@ public class CucumberTestsOperation extends AbstractGraphOperation<SetResult<Cuc
     private final Set<TestVertex> tests;
     private final boolean isExternal;
 
+    CucumberTestsOperation(Set<TestVertex> tests){
+        this(tests, false);
+    }
+
     CucumberTestsOperation(Set<TestVertex> tests, boolean isExternal) {
         Objects.requireNonNull(tests, INVALID_ARGUMENT);
         this.tests = tests;

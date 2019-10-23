@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotNull;
 public class CucumberTestsOperationTest extends GraphOperationsTest {
     @Test
     public void testExecute() {
-        CucumberTestsOperation includedTestOperation = new CucumberTestsOperation(graphOperations.getAllTests(), false);
+        CucumberTestsOperation includedTestOperation = new CucumberTestsOperation(graphOperations.getAllTests());
         SetResult<CucumberVertex> result = includedTestOperation.execute(builder.getGraph());
 
         assertNotNull(result);

@@ -14,6 +14,10 @@ public class UnitTestsOperation extends AbstractGraphOperation<SetResult<TestVer
     private final Set<TestVertex> tests;
     private final boolean isExternal;
 
+    UnitTestsOperation(Set<TestVertex> tests) {
+        this(tests, false);
+    }
+
     UnitTestsOperation(Set<TestVertex> tests, boolean isExternal) {
         Objects.requireNonNull(tests, INVALID_ARGUMENT);
         this.tests = tests;

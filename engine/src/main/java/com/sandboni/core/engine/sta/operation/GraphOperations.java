@@ -47,10 +47,10 @@ public class GraphOperations {
     }
 
     public Set<TestVertex> getAllExternalUnitTests() {
-        return operationExecutor.execute(new UnitTestsOperation(allExternalTestsSupplier.get(), false));
+        return operationExecutor.execute(new UnitTestsOperation(allExternalTestsSupplier.get()));
     }
     public Set<CucumberVertex> getAllExternalCucumberTests() {
-        return operationExecutor.execute(new CucumberTestsOperation(allExternalTestsSupplier.get(), false));
+        return operationExecutor.execute(new CucumberTestsOperation(allExternalTestsSupplier.get()));
     }
     private Set<TestVertex> getAllExternalTestsImpl() {
         return allTestsSupplier.get();
@@ -141,18 +141,18 @@ public class GraphOperations {
     }
 
     public Set<TestVertex> getUnitRelatedTests() {
-        return operationExecutor.execute(new UnitTestsOperation(relatedTestsSupplier.get(), false));
+        return operationExecutor.execute(new UnitTestsOperation(relatedTestsSupplier.get()));
     }
 
     public Set<TestVertex> getUnitDisconnectedTests() {
-        return operationExecutor.execute(new UnitTestsOperation(disconnectedTestsSupplier.get(), false));
+        return operationExecutor.execute(new UnitTestsOperation(disconnectedTestsSupplier.get()));
     }
 
     public Set<CucumberVertex> getCucumberRelatedTests() {
-        return operationExecutor.execute(new CucumberTestsOperation(relatedTestsSupplier.get(), false));
+        return operationExecutor.execute(new CucumberTestsOperation(relatedTestsSupplier.get()));
     }
     public Set<CucumberVertex> getCucumberDisconnectedTests() {
-        return operationExecutor.execute(new CucumberTestsOperation(disconnectedTestsSupplier.get(), false));
+        return operationExecutor.execute(new CucumberTestsOperation(disconnectedTestsSupplier.get()));
     }
 
     public Set<TestVertex> getUnitRelatedExternalTests() {

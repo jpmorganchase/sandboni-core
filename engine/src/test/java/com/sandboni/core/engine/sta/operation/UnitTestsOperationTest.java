@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 public class UnitTestsOperationTest extends GraphOperationsTest  {
     @Test
     public void testExecute() {
-        UnitTestsOperation includedTestOperation = new UnitTestsOperation(graphOperations.getAllTests(), false);
+        UnitTestsOperation includedTestOperation = new UnitTestsOperation(graphOperations.getAllTests());
         SetResult<TestVertex> result = includedTestOperation.execute(builder.getGraph());
 
         assertNotNull(result);
