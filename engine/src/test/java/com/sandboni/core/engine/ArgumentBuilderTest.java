@@ -72,13 +72,13 @@ public class ArgumentBuilderTest {
                 .fromChangeId("1")
                 .toChangeId("2")
                 .repository(".")
-                .srcLocation(new HashSet<>(Collections.singletonList("a\\b\\c")))
-                .testLocation(new HashSet<>(Collections.singletonList("a\\b\\c")))
+                .srcLocation(new String[] {"a\\b\\c"})
+                .testLocation(new String[] {"a\\b\\c"})
                 .build();
         Assert.assertNotNull(args.getSrcLocation());
-        Assert.assertEquals(1, args.getSrcLocation().size());
+        Assert.assertEquals(1, args.getSrcLocation().length);
         Assert.assertNotNull(args.getTestLocation());
-        Assert.assertEquals(1, args.getTestLocation().size());
+        Assert.assertEquals(1, args.getTestLocation().length);
     }
 
     @Test
@@ -87,30 +87,14 @@ public class ArgumentBuilderTest {
                 .fromChangeId("1")
                 .toChangeId("2")
                 .repository(".")
-                .srcLocation(new HashSet<>(Arrays.asList("a\\b\\c", "d\\e\\f", "g\\h\\i")))
-                .testLocation(new HashSet<>(Arrays.asList("a\\b\\c", "d\\e\\f", "g\\h\\i")))
+                .srcLocation(new String[] {"a\\b\\c", "d\\e\\f", "g\\h\\i"})
+                .testLocation(new String[] {"a\\b\\c", "d\\e\\f", "g\\h\\i"})
                 .build();
 
         Assert.assertNotNull(args.getSrcLocation());
-        Assert.assertEquals(3, args.getSrcLocation().size());
+        Assert.assertEquals(3, args.getSrcLocation().length);
         Assert.assertNotNull(args.getTestLocation());
-        Assert.assertEquals(3, args.getTestLocation().size());
-    }
-
-    @Test
-    public void setMultipleSimilarLocation() {
-        Arguments args = Arguments.builder()
-                .fromChangeId("1")
-                .toChangeId("2")
-                .repository(".")
-                .srcLocation(new HashSet<>(Arrays.asList("a\\b\\c", "d\\e\\f", "d\\e\\f", "g\\h\\i", "a\\b\\c")))
-                .testLocation(new HashSet<>(Arrays.asList("a\\b\\c", "d\\e\\f", "d\\e\\f", "g\\h\\i", "a\\b\\c")))
-                .build();
-
-        Assert.assertNotNull(args.getSrcLocation());
-        Assert.assertEquals(3, args.getSrcLocation().size());
-        Assert.assertNotNull(args.getTestLocation());
-        Assert.assertEquals(3, args.getTestLocation().size());
+        Assert.assertEquals(3, args.getTestLocation().length);
     }
 
     @Test

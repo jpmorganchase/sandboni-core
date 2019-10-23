@@ -4,15 +4,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.Set;
-
 @Builder
 @ToString
 @Getter
 public class Arguments {
-    private Set<String> srcLocation;
-    private Set<String> testLocation;
-    private Set<String> dependencies;
+    private String[] srcLocation;
+    private String[] testLocation;
+    private String[] dependencies;
     private String applicationId;
     private String filter;
     private String fromChangeId;

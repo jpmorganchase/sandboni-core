@@ -547,7 +547,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test(expected = ParseRuntimeException.class)
     public void testInvalidContextLocation() {
 
-        Context context = new Context(new HashSet<>(Collections.singletonList("non-existing-location")), new HashSet<>(Collections.singletonList("non-existing-location")),"com.sandboni", new ChangeScopeImpl());
+        Context context = new Context(new String[]{"non-existing-location"}, new String[]{"non-existing-location"}, "com.sandboni", new ChangeScopeImpl());
         Finder f = new BcelFinder(new ClassVisitor[]{new CallerClassVisitor()});
         f.findSafe(context);
     }
@@ -556,7 +556,7 @@ public class BcelFinderTest extends FinderTestBase {
     public void testPoCDiffChangeDetector() {
         PoCDiffChangeDetector detector = new PoCDiffChangeDetector();
         ChangeScope<Change> changes = detector.getChanges("1", "2");
-        Assert.assertTrue(!changes.getAllAffectedClasses().isEmpty());
+        Assert.assertFalse(changes.getAllAffectedClasses().isEmpty());
     }
 
     @Test(expected = AssertionError.class)

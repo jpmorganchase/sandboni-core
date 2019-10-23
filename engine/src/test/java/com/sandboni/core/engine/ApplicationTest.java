@@ -4,6 +4,8 @@ import com.sandboni.core.scm.utils.GitHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 public class ApplicationTest {
 
     private void fillSystemProperties(){
@@ -66,8 +68,8 @@ public class ApplicationTest {
         Application app = new Application();
         app.buildArguments();
         Arguments args = app.getArguments();
-        Assert.assertTrue(args.getSrcLocation().stream().anyMatch(l -> l.equals("./target/classes")));
-        Assert.assertTrue(args.getTestLocation().stream().anyMatch(l -> l.equals("./target/test-classes")));
+        Assert.assertTrue(Arrays.asList(args.getSrcLocation()).contains("./target/classes"));
+        Assert.assertTrue(Arrays.asList(args.getTestLocation()).contains("./target/test-classes"));
         Assert.assertEquals("LATEST_PUSH", args.getFromChangeId());
         Assert.assertEquals("LOCAL_CHANGES_NOT_COMMITTED", args.getToChangeId());
         Assert.assertEquals(GitHelper.openCurrentFolder(), args.getRepository());
@@ -84,9 +86,9 @@ public class ApplicationTest {
         Arguments args = app.getArguments();
 
         Assert.assertNotNull(args.getSrcLocation());
-        Assert.assertSame(1, args.getSrcLocation().size());
+        Assert.assertSame(1, args.getSrcLocation().length);
         Assert.assertNotNull(args.getTestLocation());
-        Assert.assertSame(1, args.getTestLocation().size());
+        Assert.assertSame(1, args.getTestLocation().length);
 
         Assert.assertEquals("LATEST_PUSH", args.getFromChangeId());
         Assert.assertEquals("LOCAL_CHANGES_NOT_COMMITTED", args.getToChangeId());

@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class CucumberJavaConnectorTest {
     private Context setupContext(String callerActon, String calleeAction) {
-        Context context = new Context(Collections.emptySet(), Collections.emptySet(), "", new ChangeScopeImpl());
+        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
 
         if (Objects.nonNull(callerActon)) {
             context.addLink(LinkFactory.createInstance(context.getApplicationId(),

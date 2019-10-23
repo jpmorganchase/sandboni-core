@@ -11,7 +11,6 @@ import com.sandboni.core.scm.scope.ChangeScopeImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,7 +19,7 @@ public class HttpTemplateConnectorTest {
     private String sampleVerb =  HttpConsts.getHttpVerb().stream().findFirst().get();
 
     private Context setupContext(String callerActon, String calleeAction) {
-        Context context = new Context(Collections.emptySet(), Collections.emptySet(), "", new ChangeScopeImpl());
+        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
 
         if (Objects.nonNull(callerActon)) {
             context.addLink(LinkFactory.createInstance(

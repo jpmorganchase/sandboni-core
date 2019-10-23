@@ -37,7 +37,7 @@ public abstract class GraphOperationsTest {
     protected Builder builder;
 
     public GraphOperationsTest() {
-        context = new Context(Collections.emptySet(), Collections.emptySet(), "", new ChangeScopeImpl());
+        context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
 
         modified = new Vertex.Builder("ClassA", "coveredMethod()").build();
         modifiedUncovered = new Vertex.Builder("ClassA", "uncoveredMethod()").build();

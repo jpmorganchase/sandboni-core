@@ -44,7 +44,7 @@ public class ChangeStatsOperationTest {
     private GraphOperations graphOperations;
 
     public ChangeStatsOperationTest() {
-        context = new Context(Collections.emptySet(), Collections.emptySet(), "", new ChangeScopeImpl());
+        context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
 
         modified = new Vertex.Builder("ModifiedClass", "modifiedMethod()").build();
         modifiedUncovered = new Vertex.Builder("ModifiedClass", "modifiedUncoveredMethod()").build();

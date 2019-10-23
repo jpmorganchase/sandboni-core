@@ -46,18 +46,18 @@ public class Context {
     }
 
     // Visible for testing only
-    public Context(Set<String> srcLocation, Set<String> testLocation, String filter, ChangeScope<Change> changes) {
-        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new HashSet<>(), filter, changes, null, null);
+    public Context(String[] srcLocation, String[] testLocation, String filter, ChangeScope<Change> changes) {
+        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[0], filter, changes, null, null);
     }
 
-    public Context(String applicationId, Set<String> srcLocation, Set<String> testLocation, Set<String> dependencies,
+    public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
                    String filter, ChangeScope<Change> changes, String includeTestAnnotation) {
         this(applicationId == null ? DEFAULT_APPLICATION_ID : applicationId,
                 srcLocation, testLocation, dependencies, filter, changes, null, includeTestAnnotation);
     }
 
     @SuppressWarnings("squid:S00107")
-    public Context(String applicationId, Set<String> srcLocation, Set<String> testLocation, Set<String> dependencies,
+    public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
                    String filter, ChangeScope<Change> changes, String currentLocation, String includeTestAnnotation) {
         this.applicationId = applicationId;
         this.srcLocations = getCollection(srcLocation);
@@ -72,9 +72,9 @@ public class Context {
         this.includeTestAnnotation = includeTestAnnotation == null ? INCLUDE_ANNOTATION : includeTestAnnotation;
     }
 
-    private Collection<String> getCollection(Set<String> set) {
-        return set == null ? Collections.emptySet() :
-                set.stream().map(l -> new File(l).getAbsolutePath()).collect(Collectors.toSet());
+    private Collection<String> getCollection(String[] array) {
+        return array == null ? Collections.emptySet() :
+                Arrays.stream(array).map(l -> new File(l).getAbsolutePath()).collect(Collectors.toSet());
     }
 
     private String getExecutionClasspath(Collection<String> srcLocation, Collection<String> testLocation, Collection<String> dependencies) {

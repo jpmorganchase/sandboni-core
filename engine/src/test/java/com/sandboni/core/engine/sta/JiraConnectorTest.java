@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 public class JiraConnectorTest {
     private Context setupContext() {
-        Context context = new Context(Collections.emptySet(), Collections.emptySet(), "", new ChangeScopeImpl());
+        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
         context.addLink(LinkFactory.createInstance(
                 context.getApplicationId(),
                 new Vertex.Builder("cucumber", "callerActon")

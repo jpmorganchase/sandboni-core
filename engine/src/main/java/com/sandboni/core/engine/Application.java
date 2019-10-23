@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,9 +46,9 @@ public class Application {
                 .runAllExternalTests(Boolean.valueOf(getValue(SystemProperties.RUN_ALL_EXTERNAL_TESTS)))
                 .gitCache(Boolean.parseBoolean(getValue(SystemProperties.GIT_CACHE)))
                 .coreCache(Boolean.parseBoolean(getValue(SystemProperties.CORE_CACHE)))
-                .srcLocation(new HashSet<>(Arrays.asList(getValue(SystemProperties.SRC_LOCATION).split(","))))
-                .testLocation(new HashSet<>(Arrays.asList(getValue(SystemProperties.TEST_LOCATION).split(","))))
-                .dependencies(new HashSet<>(Arrays.asList(getValue(SystemProperties.DEPENDENCIES).split(","))))
+                .srcLocation(getValue(SystemProperties.SRC_LOCATION).split(","))
+                .testLocation(getValue(SystemProperties.TEST_LOCATION).split(","))
+                .dependencies(getValue(SystemProperties.DEPENDENCIES).split(","))
                 .outputFormat(getValue(SystemProperties.OUTPUT_FORMAT))
                 .includeAnnotation(getValue(SystemProperties.INCLUDE_ANNOTATION))
                 .build();

@@ -25,7 +25,7 @@ public class JsonConnectorTest {
 
     @Test
     public void testGetConsumers() {
-        Context context = new Context(Collections.emptySet(), Collections.emptySet(), "", new ChangeScopeImpl());
+        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
 
         CucumberVertex testVertex = new CucumberVertex.Builder("className", "test-name")
                 .withFeaturePath("features/className.feature")

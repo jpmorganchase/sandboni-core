@@ -29,7 +29,7 @@ public class BuilderTest {
     private Builder builder;
 
     public BuilderTest() {
-        context = new Context(Collections.emptySet(), Collections.emptySet(), "", new ChangeScopeImpl());
+        context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
 
         modified = new Vertex.Builder("SomeClass", "someMethod()").build();
         modifiedUncovered = new Vertex.Builder("SomeClass", "someUncoveredMethod()").build();
