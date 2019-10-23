@@ -10,10 +10,7 @@ import org.jgrapht.DirectedGraph;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static com.sandboni.core.engine.sta.graph.LinkType.*;
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.END_VERTEX;
@@ -32,7 +29,7 @@ public class BuilderTest {
     private Builder builder;
 
     public BuilderTest() {
-        context = new Context(new String[]{}, new String[]{}, "", new ChangeScopeImpl());
+        context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
 
         modified = new Vertex.Builder("SomeClass", "someMethod()").build();
         modifiedUncovered = new Vertex.Builder("SomeClass", "someUncoveredMethod()").build();

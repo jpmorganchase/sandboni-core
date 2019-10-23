@@ -165,16 +165,15 @@ public class FileWriterEngineTest {
             }).build();
     }
 
-    private Arguments getArguments(String fromChangeId, boolean runSelectiveModeIfBuildFileHasChanged) {
-
-        return new ArgumentsBuilder().with($->{
-            $.fromChangeId = fromChangeId;
-            $.toChangeId = "999eee";
-            $.repository = ".";
-            $.selectiveMode = runSelectiveModeIfBuildFileHasChanged;
-            $.outputFormat = "csv";
-            $.reportDir = tempDir.toString();
-            $.trackingSort = "key";
-        }).build();
+    private Arguments getArguments(String fromChangeId, boolean selectiveMode) {
+        return Arguments.builder()
+                .fromChangeId(fromChangeId)
+                .toChangeId("999eee")
+                .repository(".")
+                .runSelectiveMode(selectiveMode)
+                .outputFormat("csv")
+                .reportDir(tempDir.toString())
+                .trackingSort("key")
+                .build();
     }
 }

@@ -92,7 +92,7 @@ public class Processor  {
      * @return boolean
      */
     private boolean proceed(ChangeScope<Change> changeChangeScope) {
-        return (!isRunAllExternalTests() || !isIntegrationStage()) && (arguments.isRunSelectiveModeIfBuildFileHasChanged() ||
+        return (!isRunAllExternalTests() || !isIntegrationStage()) && (arguments.isRunSelectiveMode() ||
                 changeChangeScope.isEmpty() ||
                 ChangeScopeAnalyzer.analyzeConfigurationFiles(changeChangeScope, getBuildFiles()));
     }
@@ -102,7 +102,7 @@ public class Processor  {
     }
 
     private boolean isIntegrationStage() {
-        return arguments.getStage().equals(Arguments.INTEGRATION_STAGE);
+        return arguments.getStage().equals(Stage.INTEGRATION.name());
     }
 
     public ChangeScope<Change> getScope(){
@@ -115,7 +115,7 @@ public class Processor  {
 
     private Context createContext(){
         return new Context(arguments.getApplicationId(), arguments.getSrcLocation(), arguments.getTestLocation(),
-                arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get());
+                arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get(), arguments.getIncludeAnnotation());
     }
 
     private Builder getBuilder(Context context) {

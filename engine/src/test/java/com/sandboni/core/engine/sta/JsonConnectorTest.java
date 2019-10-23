@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.CUCUMBER_VERTEX;
@@ -24,7 +25,7 @@ public class JsonConnectorTest {
 
     @Test
     public void testGetConsumers() {
-        Context context = new Context(new String[]{}, new String[]{}, "", new ChangeScopeImpl());
+        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
 
         CucumberVertex testVertex = new CucumberVertex.Builder("className", "test-name")
                 .withFeaturePath("features/className.feature")

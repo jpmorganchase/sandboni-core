@@ -4,6 +4,8 @@ import com.sandboni.core.scm.utils.GitHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 public class ApplicationTest {
 
     private void fillSystemProperties(){
@@ -14,7 +16,7 @@ public class ApplicationTest {
         System.setProperty("sandboni.scm.repository", GitHelper.openCurrentFolder());
         System.setProperty("sandboni.selectiveMode", "true");
         System.setProperty("sandboni.runAllExternaltests", "false");
-        System.setProperty("sandboni.stage", Arguments.BUILD_STAGE);
+        System.setProperty("sandboni.stage", Stage.BUILD.name());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -66,12 +68,12 @@ public class ApplicationTest {
         Application app = new Application();
         app.buildArguments();
         Arguments args = app.getArguments();
-        Assert.assertEquals("./target/classes", args.getSrcLocation()[0]);
-        Assert.assertEquals("./target/test-classes", args.getTestLocation()[0]);
+        Assert.assertTrue(Arrays.asList(args.getSrcLocation()).contains("./target/classes"));
+        Assert.assertTrue(Arrays.asList(args.getTestLocation()).contains("./target/test-classes"));
         Assert.assertEquals("LATEST_PUSH", args.getFromChangeId());
         Assert.assertEquals("LOCAL_CHANGES_NOT_COMMITTED", args.getToChangeId());
         Assert.assertEquals(GitHelper.openCurrentFolder(), args.getRepository());
-        Assert.assertTrue(args.isRunSelectiveModeIfBuildFileHasChanged());
+        Assert.assertTrue(args.isRunSelectiveMode());
         Assert.assertFalse(args.isRunAllExternalTests());
     }
 
@@ -91,6 +93,6 @@ public class ApplicationTest {
         Assert.assertEquals("LATEST_PUSH", args.getFromChangeId());
         Assert.assertEquals("LOCAL_CHANGES_NOT_COMMITTED", args.getToChangeId());
         Assert.assertEquals(GitHelper.openCurrentFolder(), args.getRepository());
-        Assert.assertTrue(args.isRunSelectiveModeIfBuildFileHasChanged());
+        Assert.assertTrue(args.isRunSelectiveMode());
     }
 }

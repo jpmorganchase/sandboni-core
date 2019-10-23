@@ -20,15 +20,15 @@ public class ProcessorBuilderTest {
 
     @Before
     public void buildArguments() {
-        args = new ArgumentsBuilder().with(argBuilder -> {
-            argBuilder.fromChangeId = "1";
-            argBuilder.toChangeId = "2";
-            argBuilder.repository = GitHelper.openCurrentFolder();
-            argBuilder.stage = Arguments.BUILD_STAGE;
-            argBuilder.runAllExternalTests = false;
-            argBuilder.coreCache = true;
-            argBuilder.gitCache = true;
-        }).build();
+        args = Arguments.builder()
+                .fromChangeId("1")
+                .toChangeId("2")
+                .repository(GitHelper.openCurrentFolder())
+                .stage(Stage.BUILD.name())
+                .runAllExternalTests(false)
+                .coreCache(true)
+                .gitCache(true)
+                .build();
     }
 
     @Test
@@ -53,21 +53,20 @@ public class ProcessorBuilderTest {
         Assert.assertNotNull(p);
         Assert.assertTrue(p.getChangeDetector() instanceof CachedRepository);
         Assert.assertTrue(p.getFinders().stream().anyMatch(f-> f instanceof CachedBcelFinder));
-        Assert.assertTrue(p.getFinders().stream().noneMatch(f-> !(f instanceof CachedBcelFinder) &&
-                f instanceof BcelFinder));
+        Assert.assertTrue(p.getFinders().stream().noneMatch(f-> !(f instanceof CachedBcelFinder) && f instanceof BcelFinder));
     }
 
     @Test
     public void testNoCacheProcessor() {
-        args = new ArgumentsBuilder().with(argBuilder -> {
-            argBuilder.fromChangeId = "1";
-            argBuilder.toChangeId = "2";
-            argBuilder.repository = GitHelper.openCurrentFolder();
-            argBuilder.stage = Arguments.BUILD_STAGE;
-            argBuilder.runAllExternalTests = false;
-            argBuilder.coreCache = false;
-            argBuilder.gitCache = false;
-        }).build();
+        args = Arguments.builder()
+                .fromChangeId("1")
+                .toChangeId("2")
+                .repository(GitHelper.openCurrentFolder())
+                .stage(Stage.BUILD.name())
+                .runAllExternalTests(false)
+                .coreCache(false)
+                .gitCache(false)
+                .build();
 
         Processor p = new ProcessorBuilder()
                 .with(prBuilder -> prBuilder.arguments = args)

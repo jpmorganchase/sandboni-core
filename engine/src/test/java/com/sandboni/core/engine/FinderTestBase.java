@@ -32,7 +32,7 @@ public abstract class FinderTestBase {
     }
 
     protected void initializeContext(ChangeScope<Change> changeScope) {
-        this.context = new Context(new String[]{location}, new String[]{}, filter == null ? PACKAGE_NAME : filter, changeScope);
+        this.context = new Context(new String[] {location}, new String[0], filter == null ? PACKAGE_NAME : filter, changeScope);
     }
 
     protected void initializeContext() {

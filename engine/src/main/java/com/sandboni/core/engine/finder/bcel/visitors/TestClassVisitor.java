@@ -27,6 +27,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     private Map<String, LinkType> initMethods = new HashMap<>();
 
     private boolean ignore;
+    private boolean classIncluded;
 
     public void setUp() {
         ignore = false;
@@ -40,7 +41,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     public void visitMethod(Method method) {
         boolean testMethod = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
         if (testMethod) {
-            new TestMethodVisitor(method, javaClass, context, ignore).start();
+            new TestMethodVisitor(method, javaClass, context, ignore, classIncluded).start();
             new TestHttpMethodVisitor(method, javaClass, context).start();
             new SpringControllerMethodVisitor(method, javaClass, context, false).start();
             new JavaxControllerMethodVisitor(method, javaClass, context, null, false).start();
@@ -58,6 +59,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     public synchronized void visitJavaClass(JavaClass jc) {
         setUp();
         this.ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
+        this.classIncluded = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, context.getIncludeTestAnnotation()));
         super.visitJavaClass(jc);
 
         testMethods.stream()
