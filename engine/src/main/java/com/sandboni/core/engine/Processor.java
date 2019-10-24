@@ -22,8 +22,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-public class Processor  {
+public class Processor {
 
     private static final Logger log = LoggerFactory.getLogger(Processor.class);
     private final Arguments arguments;
@@ -52,6 +53,7 @@ public class Processor  {
     Collection<Finder> getFinders() {
         return finders;
     }
+
     Collection<Connector> getConnectors() {
         return connectors;
     }
@@ -60,7 +62,7 @@ public class Processor  {
         return arguments;
     }
 
-    public ResultGenerator getResultGenerator(){
+    public ResultGenerator getResultGenerator() {
         return new ResultGenerator(new GraphOperations(builderSupplier.get().getGraph(), contextSupplier.get()), arguments, builderSupplier.get().getFilterIndicator());
     }
 
@@ -88,13 +90,14 @@ public class Processor  {
      * Returns true if first: is build stage or runAllExternalTests is false
      * then: (a) no change was made (b) change was made and contains at least one java file (not just cnfg files)
      *
-     * @param changeChangeScope the change scope
+     * @param changeScope the change scope
      * @return boolean
      */
-    private boolean proceed(ChangeScope<Change> changeChangeScope) {
-        return (!isRunAllExternalTests() || !isIntegrationStage()) && (arguments.isRunSelectiveMode() ||
-                changeChangeScope.isEmpty() ||
-                ChangeScopeAnalyzer.analyzeConfigurationFiles(changeChangeScope, getBuildFiles()));
+    private boolean proceed(ChangeScope<Change> changeScope) {
+        return (!isRunAllExternalTests() || !isIntegrationStage())
+                && (arguments.isRunSelectiveMode()
+                || (ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles())
+                    && ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles())));
     }
 
     private boolean isRunAllExternalTests() {
@@ -105,7 +108,7 @@ public class Processor  {
         return arguments.getStage().equals(Stage.INTEGRATION.name());
     }
 
-    public ChangeScope<Change> getScope(){
+    public ChangeScope<Change> getScope() {
         try {
             return changeDetector.getChanges(arguments.getFromChangeId(), arguments.getToChangeId());
         } catch (SourceControlException e) {
@@ -113,14 +116,17 @@ public class Processor  {
         }
     }
 
-    private Context createContext(){
+    private Context createContext() {
         return new Context(arguments.getApplicationId(), arguments.getSrcLocation(), arguments.getTestLocation(),
                 arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get(), arguments.getIncludeAnnotation());
     }
 
     private Builder getBuilder(Context context) {
         //proceed iff change scope contains at least one java file
-        if (proceed(context.getChangeScope())) {
+        if (context.getChangeScope().isEmpty()) {
+            log.info("There are no changes in this project");
+            return new Builder(context, FilterIndicator.NONE);
+        } else if (proceed(context.getChangeScope())) {
             context.getChangeScope().include(FileExtensions.JAVA, FileExtensions.FEATURE);
             log.info("Found changes: {}", context.getChangeScope());
 
@@ -129,16 +135,16 @@ public class Processor  {
             Instant finish = Instant.now();
             log.debug("....Finders execution total time: {}", Duration.between(start, finish).toMillis());
             start = Instant.now();
-            connectors.parallelStream().filter(c-> c.proceed(context)).forEach(c -> c.connect(context));
+            connectors.parallelStream().filter(c -> c.proceed(context)).forEach(c -> c.connect(context));
             finish = Instant.now();
             log.debug("....Connectors execution total time: {}", Duration.between(start, finish).toMillis());
-        } else if (isRunAllExternalTests() && isIntegrationStage()){
+        } else if (isRunAllExternalTests() && isIntegrationStage()) {
             log.info("Running All External Tests");
             finders.parallelStream().forEach(f -> f.findSafe(context));
             return new Builder(context, FilterIndicator.ALL_EXTERNAL);
         } else { //only cnfg files
             log.info("Found changes: {}", context.getChangeScope());
-            log.info(" ** configuration file(s) were changed; All tests will be executed ** ");
+            log.info(" ** configuration files or files outside of Sandboni scope were changed; All tests will be executed ** ");
             return new Builder(context, FilterIndicator.ALL);
         }
         return new Builder(context);
@@ -146,5 +152,9 @@ public class Processor  {
 
     private static String[] getBuildFiles() {
         return new String[]{"pom.xml", "build.gradle"};
+    }
+
+    private static String[] getSupportedFiles() {
+        return Stream.of(FileExtensions.values()).map(FileExtensions::extension).toArray(String[]::new);
     }
 }

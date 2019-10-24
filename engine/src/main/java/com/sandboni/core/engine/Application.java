@@ -2,6 +2,7 @@ package com.sandboni.core.engine;
 
 import com.sandboni.core.engine.result.ResultContent;
 import com.sandboni.core.engine.utils.StringUtil;
+import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +28,8 @@ public class Application {
                 .with(pb -> pb.arguments = arguments)
                 .build();
 
-        Map<String, Set<String>> relatedTests = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS).get();
-        Map<String, Set<String>> disconnectedTests = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_TESTS).get();
+        Set<TestVertex> relatedTests = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS).get();
+        Set<TestVertex> disconnectedTests = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_TESTS).get();
 
         log.info("Related tests to execute: {}", relatedTests);
         log.info("Disconnected tests to execute: {}", disconnectedTests);

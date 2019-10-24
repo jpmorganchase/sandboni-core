@@ -2,11 +2,11 @@ package com.sandboni.core.scm.scope.analysis;
 
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeScope;
+import com.sandboni.core.scm.utils.FileUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ChangeScopeAnalyzer {
 
@@ -35,5 +35,13 @@ public class ChangeScopeAnalyzer {
             return false;
 
         return changes.stream().allMatch(ChangeScanners.ALL::scan);
+    }
+
+    public static boolean onlySupportedFiles(ChangeScope<Change> changeScope, String... files) {
+        Set<String> extensions = Stream.of(files).collect(Collectors.toSet());
+        return changeScope.getAllAffectedClasses().stream()
+                .map(FileUtil::getExtension)
+                .map(op -> op.orElse(""))
+                .allMatch(extensions::contains);
     }
 }

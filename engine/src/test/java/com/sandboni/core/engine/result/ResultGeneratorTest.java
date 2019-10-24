@@ -29,7 +29,7 @@ public class ResultGeneratorTest {
 
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
-        Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
+        Assert.assertEquals(FilterIndicator.NONE, res.getFilterIndicator());
     }
 
     @Test
@@ -49,6 +49,22 @@ public class ResultGeneratorTest {
     }
 
     @Test
+    public void testResultWhenOnlyNonSupportedFileContext(){
+        Processor processor = getProcessor("5", false, false, Stage.BUILD);
+        Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
+        Assert.assertTrue(res.isSuccess());
+        Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
+    }
+
+    @Test
+    public void testResultWhenOnlyNonSupportedFileContextRunSelectiveTrue(){
+        Processor processor = getProcessor("5", true, false, Stage.BUILD);
+        Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
+        Assert.assertTrue(res.isSuccess());
+        Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
+    }
+
+    @Test
     public void testResultWhenBothBuildCnfgAndJavaContext(){
         Processor processor = getProcessor("3", false, false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
@@ -56,6 +72,61 @@ public class ResultGeneratorTest {
         Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
     }
 
+    @Test
+    public void testResultWhenBothBuildCnfgAndJavaContextRunSelectiveTrue(){
+        Processor processor = getProcessor("3", true, false, Stage.BUILD);
+        Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
+        Assert.assertTrue(res.isSuccess());
+        Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
+    }
+
+    @Test
+    public void testResultWhenBothBuildCnfgAndNonSupportedFileContext(){
+        Processor processor = getProcessor("6", false, false, Stage.BUILD);
+        Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
+        Assert.assertTrue(res.isSuccess());
+        Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
+    }
+
+    @Test
+    public void testResultWhenBothBuildCnfgAndNonSupportedFileContextRunSelectiveTrue(){
+        Processor processor = getProcessor("6", true, false, Stage.BUILD);
+        Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
+        Assert.assertTrue(res.isSuccess());
+        Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
+    }
+
+    @Test
+    public void testResultWhenBuildCnfgJavaAndNonSupportedFileContext(){
+        Processor processor = getProcessor("7", false, false, Stage.BUILD);
+        Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
+        Assert.assertTrue(res.isSuccess());
+        Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
+    }
+
+    @Test
+    public void testResultWhenBuildCnfgJavaAndNonSupportedFileContextRunSelectiveTrue(){
+        Processor processor = getProcessor("7", true, false, Stage.BUILD);
+        Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
+        Assert.assertTrue(res.isSuccess());
+        Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
+    }
+
+    @Test
+    public void testResultWhenJavaAndNonSupportedFileContext(){
+        Processor processor = getProcessor("8", false, false, Stage.BUILD);
+        Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
+        Assert.assertTrue(res.isSuccess());
+        Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
+    }
+
+    @Test
+    public void testResultWhenJavaAndNonSupportedFileContextRunSelectiveTrue(){
+        Processor processor = getProcessor("8", true, false, Stage.BUILD);
+        Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
+        Assert.assertTrue(res.isSuccess());
+        Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
+    }
 
     @Test
     public void testWhenCnfgVVersionChangeAndJavaContext(){
@@ -70,7 +141,7 @@ public class ResultGeneratorTest {
         Processor processor = getProcessor("0", true, false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
-        Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
+        Assert.assertEquals(FilterIndicator.NONE, res.getFilterIndicator());
     }
 
     @Test
