@@ -44,26 +44,39 @@ public class ChangeDetectorResultMock implements GitInterface {
             s.add(1);
             s.add(6);
 
+            changeScope = new ChangeScopeImpl();
             if ("1".equals(fromRev)) {
                 //only cnfg
-                changeScope = new ChangeScopeImpl();
-
                 changeScope.addChange(createChange());
             } else if ("2".equals(fromRev)) {
                 //only java
-                changeScope = new ChangeScopeImpl();
                 changeScope.addChange(new SCMChange("change.java", s, ChangeType.ADD));
 
             } else if ("3".equals(fromRev)) {
                 //both
-                changeScope = new ChangeScopeImpl();
                 changeScope.addChange(createChange());
                 changeScope.addChange(new SCMChange("change.java", s, ChangeType.MODIFY));
             } else if ("4".equals(fromRev)) {
                 //both
-                changeScope = new ChangeScopeImpl();
                 changeScope.addChange(createParentPOMChange());
                 changeScope.addChange(new SCMChange("change.java", s, ChangeType.MODIFY));
+            } else if ("5".equals(fromRev)) {
+                // only non supported files
+                changeScope.addChange(new SCMChange("script.sql", s, ChangeType.MODIFY));
+            }
+            else if ("6".equals(fromRev)) {
+                // config, non supported files
+                changeScope.addChange(createParentPOMChange());
+                changeScope.addChange(new SCMChange("script.sql", s, ChangeType.MODIFY));
+            } else if ("7".equals(fromRev)) {
+                // Java, config, non supported files
+                changeScope.addChange(createParentPOMChange());
+                changeScope.addChange(new SCMChange("change.java", s, ChangeType.MODIFY));
+                changeScope.addChange(new SCMChange("script.sql", s, ChangeType.MODIFY));
+            } else if ("8".equals(fromRev)) {
+                // Java, non supported files
+                changeScope.addChange(new SCMChange("change.java", s, ChangeType.MODIFY));
+                changeScope.addChange(new SCMChange("script.sql", s, ChangeType.MODIFY));
             }
         }
         return changeScope;

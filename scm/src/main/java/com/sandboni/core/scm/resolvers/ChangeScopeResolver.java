@@ -188,7 +188,7 @@ public class ChangeScopeResolver {
 
             return toBeCommittedChanges.parallelStream()
                     .map(toBeCommittedChange -> diffEntries.stream()
-                            .filter(diffEntry -> diffEntry.getNewPath().endsWith(toBeCommittedChange))
+                            .filter(diffEntry -> diffEntry.getNewPath().equals(toBeCommittedChange))
                             .findFirst().orElse(null))
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
