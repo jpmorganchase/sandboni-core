@@ -1,5 +1,6 @@
 package com.sandboni.core.engine.sta.graph;
 
+import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 
 import java.util.Objects;
@@ -21,10 +22,18 @@ public class LinkFactory {
     }
 
     private static Vertex mergeVertex(Vertex oldVertex, Vertex newVertex) {
-        if ( (Objects.isNull(oldVertex.getLocation()) || oldVertex.getLocation().isEmpty()) &&
-                (Objects.nonNull(newVertex.getLocation()) && !newVertex.getLocation().isEmpty()))
+        if ((Objects.isNull(oldVertex.getLocation()) || oldVertex.getLocation().isEmpty()) &&
+                (Objects.nonNull(newVertex.getLocation()) && !newVertex.getLocation().isEmpty())) {
             oldVertex.setLocation(newVertex.getLocation());
+        }
+        mergeTestVertex(oldVertex, newVertex);
         return oldVertex;
+    }
+
+    private static void mergeTestVertex(Vertex oldVertex, Vertex newVertex) {
+        if (newVertex instanceof TestVertex && oldVertex instanceof TestVertex && ((TestVertex) newVertex).isIncluded()) {
+            ((TestVertex) oldVertex).setIncluded(Boolean.TRUE);
+        }
     }
 
     public static void clear(String factoryId){
