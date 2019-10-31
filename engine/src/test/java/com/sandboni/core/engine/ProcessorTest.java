@@ -194,4 +194,10 @@ public class ProcessorTest {
         Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.INCLUDED_BY_ANNOTATION).get();
         assertEquals("Should contain no exit points", 0, result.size());
     }
+
+    @Test
+    public void testGetDefaultSkipReason() {
+        String skipReason = processor.getResultGenerator().getSkipReason();
+        assertNull(skipReason);
+    }
 }

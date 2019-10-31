@@ -20,15 +20,21 @@ public class Builder {
 
     private Supplier<DirectedGraph<Vertex, Edge>> graphSupplier = new CachingSupplier<>(this::buildGraph);
     private final Context context;
-    private FilterIndicator filterIndicator;
+    private final FilterIndicator filterIndicator;
+    private final String skipReason;
 
     public Builder(Context context) {
-        this(context, FilterIndicator.SELECTIVE);
+        this(context, FilterIndicator.SELECTIVE, null);
     }
 
     public Builder(Context context, FilterIndicator filterIndicator) {
+        this(context, filterIndicator, null);
+    }
+
+    public Builder(Context context, FilterIndicator filterIndicator, String skipReason) {
         this.context = context;
         this.filterIndicator = filterIndicator;
+        this.skipReason = skipReason;
     }
 
     public DirectedGraph<Vertex, Edge> getGraph() {
@@ -62,4 +68,7 @@ public class Builder {
         return filterIndicator;
     }
 
+    public String getSkipReason() {
+        return skipReason;
+    }
 }

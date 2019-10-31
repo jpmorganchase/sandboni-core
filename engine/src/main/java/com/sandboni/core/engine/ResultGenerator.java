@@ -29,12 +29,14 @@ public class ResultGenerator {
     private final Arguments arguments;
     private final GraphOperations graphOperations;
     private final FilterIndicator filterIndicator;
+    private final String skipReason;
 
-    ResultGenerator(GraphOperations graphOperations, Arguments arguments, FilterIndicator filterIndicator) {
+    ResultGenerator(GraphOperations graphOperations, Arguments arguments, FilterIndicator filterIndicator, String skipReason) {
         this.graphOperations = graphOperations;
         this.arguments = arguments;
-        this.result = new Result();
         this.filterIndicator = filterIndicator;
+        this.skipReason = skipReason;
+        this.result = new Result();
     }
 
     public Result generate(ResultContent... resultContents) {
@@ -142,5 +144,9 @@ public class ResultGenerator {
             default:
                  return null;
         }
+    }
+
+    public String getSkipReason() {
+        return skipReason;
     }
 }

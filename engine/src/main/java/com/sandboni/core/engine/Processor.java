@@ -63,7 +63,8 @@ public class Processor {
     }
 
     public ResultGenerator getResultGenerator() {
-        return new ResultGenerator(new GraphOperations(builderSupplier.get().getGraph(), contextSupplier.get()), arguments, builderSupplier.get().getFilterIndicator());
+        return new ResultGenerator(new GraphOperations(builderSupplier.get().getGraph(), contextSupplier.get()),
+                arguments, builderSupplier.get().getFilterIndicator(), builderSupplier.get().getSkipReason());
     }
 
     public Builder getGraphBuilder() {
@@ -122,14 +123,12 @@ public class Processor {
     }
 
     private Builder getBuilder(Context context) {
-        //proceed iff change scope contains at least one java file
         if (context.getChangeScope().isEmpty()) {
             log.info("There are no changes in this project");
-            return new Builder(context, FilterIndicator.NONE);
+            return new Builder(context, FilterIndicator.NONE, "emptyChangeScope");
         } else if (proceed(context.getChangeScope())) {
             context.getChangeScope().include(FileExtensions.JAVA, FileExtensions.FEATURE);
             log.info("Found changes: {}", context.getChangeScope());
-
             Instant start = Instant.now();
             finders.parallelStream().forEach(f -> f.findSafe(context));
             Instant finish = Instant.now();
@@ -142,10 +141,10 @@ public class Processor {
             log.info("Running All External Tests");
             finders.parallelStream().forEach(f -> f.findSafe(context));
             return new Builder(context, FilterIndicator.ALL_EXTERNAL);
-        } else { //only cnfg files
+        } else {
             log.info("Found changes: {}", context.getChangeScope());
             log.info(" ** configuration files or files outside of Sandboni scope were changed; All tests will be executed ** ");
-            return new Builder(context, FilterIndicator.ALL);
+            return new Builder(context, FilterIndicator.ALL, "configurationChanges");
         }
         return new Builder(context);
     }
