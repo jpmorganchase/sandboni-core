@@ -37,16 +37,34 @@ public class AnnotationUtils {
 
             if (pathPair.isPresent()) {
                 ElementValue elementValue = pathPair.get().getValue();
-                if (elementValue.getElementValueType() == 91) {
-                    result = elementValue.stringifyValue();
+                if (elementValue.getElementValueType() == 91 || elementValue.getElementValueType() == 99) {
                     // strings are stored as arrays of chars: [xxxx]
-                    result = result.substring(1, result.length() - 1);
+                    if(elementValue instanceof ArrayElementValue) {
+                        result = "";
+                        StringBuilder strBuilder = new StringBuilder();
+                        ElementValue[] elementValuesArray = ((ArrayElementValue) elementValue).getElementValuesArray();
+                        Arrays.stream(elementValuesArray).forEach(e -> strBuilder.append(formatValue(e)).append(","));
+                        int length = strBuilder.length();
+                        if(length > 0 && strBuilder.charAt(length-1) == ',') {
+                            result = strBuilder.substring(0, length-1);
+                        }
+                    } else {
+                        // strings are stored as arrays of chars: [xxxx]
+                        result = formatValue(elementValue);
+                    }
                 } else {
                     result = elementValue.stringifyValue();
                 }
             }
         }
         return result;
+    }
+
+    private static String formatValue(ElementValue e) {
+        String result = e.stringifyValue();
+        result = e.stringifyValue();
+        // strings are stored as arrays of chars: [xxxx]
+        return result.substring(1, result.length() - 1);
     }
 
     public static class SpringAnnotations {

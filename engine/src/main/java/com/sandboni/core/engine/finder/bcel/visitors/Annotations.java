@@ -6,7 +6,10 @@ public enum Annotations {
         IGNORE("org/junit/Ignore"),
         BEFORE("Before"),
         AFTER("After"),
-        TEST("Test");
+        TEST("Test"),
+        RUN_WITH("RunWith"),
+        RUN_WITH_VALUE_SUITE("org/junit/runners/Suite"),
+        SUITE_CLASSES("Suite$SuiteClasses");
 
         private String desc;
 

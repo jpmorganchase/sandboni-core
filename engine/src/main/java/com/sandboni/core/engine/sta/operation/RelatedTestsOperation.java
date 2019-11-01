@@ -1,6 +1,7 @@
 package com.sandboni.core.engine.sta.operation;
 
 import com.sandboni.core.engine.sta.graph.Edge;
+import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.CucumberVertex;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
@@ -8,13 +9,14 @@ import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.sandboni.core.engine.common.StreamHelper.emptyIfFalse;
-import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.END_VERTEX;
-import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.*;
 
 public class RelatedTestsOperation extends AbstractGraphOperation<SetResult<TestVertex>> {
 
@@ -30,7 +32,22 @@ public class RelatedTestsOperation extends AbstractGraphOperation<SetResult<Test
         ShortestPathAlgorithm<Vertex, Edge> algorithm = new BellmanFordShortestPath<>(graph);
         return new SetResult<>(emptyIfFalse(graph.containsVertex(START_VERTEX) && graph.containsVertex(END_VERTEX),
                 () -> allTests.stream()
-                        .filter(v -> isAffectedCucumberVertex(v) || algorithm.getPath(END_VERTEX, v) != null)));
+                        .filter(v -> isAffectedCucumberVertex(v) || algorithm.getPath(END_VERTEX, v) != null)
+                .flatMap(v -> handleSuiteVertex(v, algorithm, graph).stream())
+        ));
+        // todo: handle dups
+    }
+
+    /**
+     * replace any test which is part of a suite with it's suite vertex
+     */
+    private Set<TestVertex> handleSuiteVertex(TestVertex v, ShortestPathAlgorithm<Vertex, Edge> algorithm, Graph<Vertex, Edge> graph) {
+        boolean hasRelatedTestSuite = algorithm.getPath(v, TEST_SUITE_VERTEX) != null;
+        if(hasRelatedTestSuite) {
+            // get all related test suites
+            return graph.edgesOf(v).stream().filter(e -> e.getLinkType().equals(LinkType.TEST_SUITE)).map(e -> (TestVertex)e.getTarget()).collect(Collectors.toSet());
+
+        } else return Collections.singleton(v);
     }
 
     private boolean isAffectedCucumberVertex(Vertex v) {
