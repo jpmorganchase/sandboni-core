@@ -20,7 +20,8 @@ public enum ResultContent {
     RELATED_EXTERNAL_CUCUMBER,
     ALL_EXTERNAL_UNIT,
     ALL_EXTERNAL_CUCUMBER,
-    INCLUDED_BY_ANNOTATION;
+    INCLUDED_BY_ANNOTATION,
+    CUCUMBER_RUNNERS;
 
     private boolean outputToFile;
 

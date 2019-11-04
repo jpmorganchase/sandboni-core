@@ -7,6 +7,7 @@ import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 
@@ -14,6 +15,7 @@ import java.util.*;
 
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotation;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.CUCUMBER_RUNNER_VERTEX;
 
 /**
  * Visit Java Test classes.
@@ -22,6 +24,10 @@ import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMe
 public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     static final String JUNIT_PACKAGE = "org/junit/Test";
     static final String TESTING_PACKAGE = "org/testing/annotations/Test";
+    private static final String CUCUMBER_RUNNER_CLASS = "Lcucumber/api/junit/Cucumber;";
+    private static final String RUN_WITH = "runWith";
+    private static final String VALUE = "value";
+    private static final String FEATURES = "features";
 
     private Set<String> testMethods = new HashSet<>();
     private Map<String, LinkType> initMethods = new HashMap<>();
@@ -59,6 +65,10 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     public synchronized void visitJavaClass(JavaClass jc) {
         setUp();
         this.ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
+        AnnotationEntry runWithAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.RUN_WITH.getDesc());
+        if (Objects.nonNull(runWithAnnotation)) {
+            visitRunWithAnnotation(runWithAnnotation, jc);
+        }
         this.classIncluded = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, context.getIncludeTestAnnotation()));
         super.visitJavaClass(jc);
 
@@ -71,5 +81,19 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
                 .map(pl -> LinkFactory.createInstance(context.getApplicationId(), new TestVertex.Builder(jc.getClassName(), pl.testMethod, context.getCurrentLocation()).build(),
                         new Vertex.Builder(jc.getClassName(), pl.initMethod,context.getCurrentLocation()).build(), pl.linkType))
                 .forEach(l -> context.addLink(l));
+    }
+
+    private void visitRunWithAnnotation(AnnotationEntry runWithAnnotation, JavaClass jc) {
+        String value = AnnotationUtils.getAnnotationParameter(runWithAnnotation, VALUE);
+        if (CUCUMBER_RUNNER_CLASS.equals(value)) {
+            TestVertex.Builder runnerBuilder = new TestVertex.Builder(jc.getClassName(), RUN_WITH, context.getCurrentLocation());
+            AnnotationEntry cucumberOptionsAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.CUCUMBER_OPTIONS.getDesc());
+            if (Objects.nonNull(cucumberOptionsAnnotation)) {
+                String features = AnnotationUtils.getAnnotationParameter(cucumberOptionsAnnotation, FEATURES);
+                runnerBuilder.withRunWithOptions(features);
+            }
+
+            context.addLink(LinkFactory.createInstance(context.getApplicationId(), runnerBuilder.build(), CUCUMBER_RUNNER_VERTEX, LinkType.CUCUMBER_RUNNER));
+        }
     }
 }
