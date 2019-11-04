@@ -139,6 +139,8 @@ public class ResultGenerator {
                 return graphOperations.getAllExternalCucumberTests();
             case INCLUDED_BY_ANNOTATION:
                 return graphOperations.getIncludedByAnnotationTest();
+            case CUCUMBER_RUNNERS:
+                return graphOperations.getCucumberRunners();
             default:
                  return null;
         }

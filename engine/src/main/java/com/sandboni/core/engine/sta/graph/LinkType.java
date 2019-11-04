@@ -69,7 +69,9 @@ public enum LinkType {
 
     CUCUMBER_TEST_TAG("Cucumber Test Method Tag", true),
 
-    CUCUMBER_MAP("Cucumber Map", false);
+    CUCUMBER_MAP("Cucumber Map", false),
+
+    CUCUMBER_RUNNER("Cucumber Runner", true);
 
     private String description;
 
