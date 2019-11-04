@@ -44,8 +44,10 @@ public class AnnotationUtils {
                     if(elementValue instanceof ArrayElementValue) {
                         ElementValue[] elementValuesArray = ((ArrayElementValue) elementValue).getElementValuesArray();
                         result = Arrays.stream(elementValuesArray).map(AnnotationUtils::formatValue).collect(Collectors.joining(","));
-                    } else {
+                    } else if (elementValue instanceof ClassElementValue) {
                         result = formatValue(elementValue);
+                    } else {
+                        result = elementValue.stringifyValue();
                     }
                 } else {
                     result = elementValue.stringifyValue();
