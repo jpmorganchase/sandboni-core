@@ -11,6 +11,8 @@ import com.sandboni.core.scm.scope.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -18,12 +20,7 @@ import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VE
 
 public class BcelFinderSuiteTest extends FinderTestBase {
 
-    private static final String TEST_LOCATION = "./target/test-classes/com/sandboni/core/scenario/suite";
-    private static final String TEST_PACKAGE = "com.sandboni.core.scenario.suite";
-
-    public BcelFinderSuiteTest() {
-        super(TEST_LOCATION, TEST_PACKAGE);
-    }
+    private static final String TEST_PACKAGE = "com.sandboni.core.engine.scenario.suite";
 
     @Before
     public void setUp() {
@@ -55,11 +52,11 @@ public class BcelFinderSuiteTest extends FinderTestBase {
         @Override
         public ChangeScope<Change> getChanges(String fromChangeId, String toChangeId) {
             ChangeScope<Change> changeScope = new ChangeScopeImpl();
-            changeScope.addChange(new SCMChange(TEST_PACKAGE.replace('.', '/') + "/SuiteTestClass1.java",
+            changeScope.addChange(new SCMChange(TEST_PACKAGE.replace('.', File.separatorChar) + File.separatorChar + "SuiteTestClass1.java",
                     IntStream.range(8, 10).boxed().collect(Collectors.toSet()), ChangeType.MODIFY));
-            changeScope.addChange(new SCMChange(TEST_PACKAGE.replace('.', '/') + "/SuiteTestClass2.java",
+            changeScope.addChange(new SCMChange(TEST_PACKAGE.replace('.', File.separatorChar) + File.separatorChar + "SuiteTestClass2.java",
                     IntStream.range(3, 5).boxed().collect(Collectors.toSet()), ChangeType.MODIFY));
-            changeScope.addChange(new SCMChange(TEST_PACKAGE.replace('.', '/') + "/SuiteTestClass3.java",
+            changeScope.addChange(new SCMChange(TEST_PACKAGE.replace('.', File.separatorChar) + File.separatorChar + "SuiteTestClass3.java",
                     IntStream.range(4, 8).boxed().collect(Collectors.toSet()), ChangeType.MODIFY));
             return changeScope;
         }
