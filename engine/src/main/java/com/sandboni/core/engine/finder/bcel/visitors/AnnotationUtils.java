@@ -37,8 +37,9 @@ public class AnnotationUtils {
 
             if (pathPair.isPresent()) {
                 ElementValue elementValue = pathPair.get().getValue();
-                if (elementValue.getElementValueType() == 91 || elementValue.getElementValueType() == 99) {
-                    // strings are stored as arrays of chars: [xxxx]
+                if (elementValue.getElementValueType() == 91) {
+                    result = formatValue(elementValue);
+                } else if (elementValue.getElementValueType() == 99) {
                     if(elementValue instanceof ArrayElementValue) {
                         result = "";
                         StringBuilder strBuilder = new StringBuilder();
@@ -49,7 +50,6 @@ public class AnnotationUtils {
                             result = strBuilder.substring(0, length-1);
                         }
                     } else {
-                        // strings are stored as arrays of chars: [xxxx]
                         result = formatValue(elementValue);
                     }
                 } else {
@@ -62,7 +62,6 @@ public class AnnotationUtils {
 
     private static String formatValue(ElementValue e) {
         String result = e.stringifyValue();
-        result = e.stringifyValue();
         // strings are stored as arrays of chars: [xxxx]
         return result.substring(1, result.length() - 1);
     }
