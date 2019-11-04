@@ -5,6 +5,7 @@ import org.apache.bcel.classfile.*;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class AnnotationUtils {
 
@@ -41,14 +42,8 @@ public class AnnotationUtils {
                     result = formatValue(elementValue);
                 } else if (elementValue.getElementValueType() == 99) {
                     if(elementValue instanceof ArrayElementValue) {
-                        result = "";
-                        StringBuilder strBuilder = new StringBuilder();
                         ElementValue[] elementValuesArray = ((ArrayElementValue) elementValue).getElementValuesArray();
-                        Arrays.stream(elementValuesArray).forEach(e -> strBuilder.append(formatValue(e)).append(","));
-                        int length = strBuilder.length();
-                        if(length > 0 && strBuilder.charAt(length-1) == ',') {
-                            result = strBuilder.substring(0, length-1);
-                        }
+                        result = Arrays.stream(elementValuesArray).map(AnnotationUtils::formatValue).collect(Collectors.joining(","));
                     } else {
                         result = formatValue(elementValue);
                     }

@@ -22,7 +22,7 @@ public class TestSuiteConnector implements Connector {
 
     @Override
     public void connect(Context context) {
-        List<Link> testSuiteToTestClassLinks = context.getLinks().filter(l -> (l.getLinkType() == LinkType.TEST_SUITE && !l.getCaller().equals(TEST_SUITE_VERTEX))).collect(Collectors.toList());
+        List<Link> testSuiteToTestClassLinks = context.getLinks().filter(l -> (l.getLinkType() == LinkType.TEST_SUITE && !TEST_SUITE_VERTEX.equals(l.getCaller()))).collect(Collectors.toList());
         Stream<Vertex> testSuitesStream = testSuiteToTestClassLinks.stream().map(Link::getCaller);
         if (!testSuitesStream.findAny().isPresent()) return; // nothing to do here
 

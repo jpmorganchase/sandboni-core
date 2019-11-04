@@ -42,12 +42,9 @@ public class RelatedTestsOperation extends AbstractGraphOperation<SetResult<Test
      * replace any test which is part of a suite with it's suite vertex
      */
     private Set<TestVertex> handleSuiteVertex(TestVertex v, ShortestPathAlgorithm<Vertex, Edge> algorithm, Graph<Vertex, Edge> graph) {
-        boolean hasRelatedTestSuite = algorithm.getPath(v, TEST_SUITE_VERTEX) != null;
-        if(hasRelatedTestSuite) {
-            // get all related test suites
-            return graph.edgesOf(v).stream().filter(e -> e.getLinkType().equals(LinkType.TEST_SUITE)).map(e -> (TestVertex)e.getTarget()).collect(Collectors.toSet());
-
-        } else return Collections.singleton(v);
+        // get all related test suites
+        Set<TestVertex> relatedTestSuiteVertices = graph.edgesOf(v).stream().filter(e -> e.getLinkType().equals(LinkType.TEST_SUITE)).map(e -> (TestVertex) e.getTarget()).collect(Collectors.toSet());
+        return relatedTestSuiteVertices.isEmpty()? Collections.singleton(v): relatedTestSuiteVertices;
     }
 
     private boolean isAffectedCucumberVertex(Vertex v) {

@@ -68,7 +68,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
         if (runWithAnnotation != null) {
             String runWithValue = getAnnotationParameter(runWithAnnotation, "value");
             // if this is a test suite - we need to save the relations on the context, for late processing in the connector
-            if(!StringUtil.isEmptyOrNull(runWithValue) && runWithValue.equals(RUN_WITH_VALUE_SUITE.getDesc())) {
+            if(RUN_WITH_VALUE_SUITE.getDesc().equals(runWithValue)) {
                 AnnotationEntry suiteAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.SUITE_CLASSES.getDesc());
                 if(suiteAnnotation != null) {
                     this.isSuite = true;
