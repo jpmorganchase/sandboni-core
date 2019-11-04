@@ -14,7 +14,7 @@ public class CucumberVertex extends TestVertex {
     @SuppressWarnings("squid:S00107") // private constructor used only in Builder
     private CucumberVertex(String actor, String action, boolean isSpecial, String filePath, List<Integer> lineNumbers, String filter,
                           String location, boolean ignore, boolean externalLocation, String featurePath, int scenarioLine, boolean affected) {
-        super(actor, action, isSpecial, filePath, lineNumbers, filter, location, ignore, externalLocation, false);
+        super(actor, action, isSpecial, filePath, lineNumbers, filter, location, ignore, externalLocation, false, null);
         this.featurePath = featurePath;
         this.scenarioLine = scenarioLine;
         this.affected = affected;

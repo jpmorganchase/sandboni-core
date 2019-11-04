@@ -33,6 +33,7 @@ public class GraphOperations {
     private final Supplier<Long> reachableLineNumberCountSupplier = new CachingSupplier<>(this::getReachableLineNumberCountImpl);
     private final Supplier<Map<Vertex, ChangeStats>> changeStatsSupplier = new CachingSupplier<>(this::getChangeStatsImpl);
     private final Supplier<Set<FormattedChangeStats>> formattedChangeStatsSupplier = new CachingSupplier<>(this::getFormattedChangeStatsImpl);
+    private final Supplier<Set<TestVertex>> cucumberRunnersSupplier = new CachingSupplier<>(this::getCucumberRunnersImpl);
 
     public GraphOperations(Graph<Vertex, Edge> graph, Context context) {
         operationExecutor = new OperationExecutor(graph);
@@ -165,5 +166,12 @@ public class GraphOperations {
 
     public Set<TestVertex> getIncludedByAnnotationTest() {
         return operationExecutor.execute(new IncludedTestOperation(allTestsSupplier.get()));
+    }
+
+    public Set<TestVertex> getCucumberRunners() {
+        return cucumberRunnersSupplier.get();
+    }
+    private Set<TestVertex> getCucumberRunnersImpl() {
+        return operationExecutor.execute(new CucumberRunnersOperation());
     }
 }
