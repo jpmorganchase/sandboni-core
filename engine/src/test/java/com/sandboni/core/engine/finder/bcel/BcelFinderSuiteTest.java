@@ -18,8 +18,8 @@ import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VE
 
 public class BcelFinderSuiteTest extends FinderTestBase {
 
-    private static final String TEST_LOCATION = "./target/test-classes/com/sandboni/core/engine/scenario/suite";
-    private static final String TEST_PACKAGE = "com.sandboni.core.engine.scenario.suite";
+    private static final String TEST_LOCATION = "./target/test-classes/com/sandboni/core/scenario/suite";
+    private static final String TEST_PACKAGE = "com.sandboni.core.scenario.suite";
 
     public BcelFinderSuiteTest() {
         super(TEST_LOCATION, TEST_PACKAGE);
