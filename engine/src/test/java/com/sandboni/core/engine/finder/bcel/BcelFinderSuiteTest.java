@@ -5,12 +5,15 @@ import com.sandboni.core.engine.contract.Finder;
 import com.sandboni.core.engine.finder.bcel.visitors.TestClassVisitor;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
+import com.sandboni.core.engine.sta.graph.vertex.TestSuiteVertex;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
+import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import org.junit.Before;
 import org.junit.Test;
 
 import static com.sandboni.core.engine.MockChangeDetector.PACKAGE_NAME;
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.TEST_SUITE_VERTEX;
 
 public class BcelFinderSuiteTest extends FinderTestBase {
 
@@ -38,7 +41,16 @@ public class BcelFinderSuiteTest extends FinderTestBase {
         TestVertex tv3 = new TestVertex.Builder(PACKAGE_NAME + ".SuiteTestClass3", "print()", null).build();
         Link expectedLink3 = newLink(START_VERTEX, tv3, LinkType.ENTRY_POINT);
 
-        testTestClassVisitor(expectedLink1, expectedLink2, expectedLink3);
+        TestSuiteVertex tsv = new TestSuiteVertex.Builder(PACKAGE_NAME + ".TestSuiteExample", "", null).build();
+        Link tsLink = newLink(TEST_SUITE_VERTEX, tsv, LinkType.TEST_SUITE);
+        Vertex tsv1 = new Vertex.Builder(PACKAGE_NAME + ".SuiteTestClass1", "").build();
+        Vertex tsv2 = new Vertex.Builder(PACKAGE_NAME + ".SuiteTestClass2", "").build();
+        Vertex tsv3 = new Vertex.Builder(PACKAGE_NAME + ".SuiteTestClass3", "").build();
+        Link ts2tv1Link = newLink(tsv, tsv1, LinkType.TEST_SUITE);
+        Link ts2tv2Link = newLink(tsv, tsv2, LinkType.TEST_SUITE);
+        Link ts2tv3Link = newLink(tsv, tsv3, LinkType.TEST_SUITE);
+
+        testTestClassVisitor(expectedLink1, expectedLink2, expectedLink3, tsLink, ts2tv1Link, ts2tv2Link, ts2tv3Link);
     }
 
 }

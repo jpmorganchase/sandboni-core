@@ -12,7 +12,6 @@ import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 
-import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -112,7 +111,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
             if(suiteAnnotation != null) {
                 this.isSuite = true;
                 String classesList = getAnnotationParameter(suiteAnnotation, VALUE);
-                List<String> testClasses = Arrays.stream(classesList.split(",")).map(s -> s.replace(File.separatorChar,'.')).collect(Collectors.toList());
+                List<String> testClasses = Arrays.stream(classesList.split(",")).map(s -> s.replace('/','.')).collect(Collectors.toList());
                 String suiteClassName = jc.getClassName();
                 // add a link from TEST_SUITE_VERTEX to suite
                 // note: test suite vertex has to be a TestVertex in order to be able to return it as one for the results for RelatedTestsOperation.execute()..

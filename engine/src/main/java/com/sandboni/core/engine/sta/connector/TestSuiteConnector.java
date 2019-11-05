@@ -5,9 +5,7 @@ import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
-import com.sandboni.core.engine.utils.StringUtil;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,7 +17,7 @@ import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.TEST_SUI
  * Connects between each suite test class to it's related methods (test vertices)
  */
 public class TestSuiteConnector implements Connector {
-    List<Link> testSuiteToTestClassLinks;
+    private List<Link> testSuiteToTestClassLinks;
 
     @Override
     public void connect(Context context) {
