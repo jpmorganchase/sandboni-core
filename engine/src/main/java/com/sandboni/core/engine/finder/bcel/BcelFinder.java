@@ -8,6 +8,8 @@ import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.Link;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
@@ -15,6 +17,7 @@ import java.util.*;
 public class BcelFinder extends FileTreeFinder {
 
     private Collection<ClassVisitor> visitors;
+    private static final Logger log = LoggerFactory.getLogger(BcelFinder.class);
 
     public BcelFinder(ClassVisitor[] visitors) {
         this.visitors = Collections.unmodifiableCollection(Arrays.asList(visitors));
@@ -25,6 +28,7 @@ public class BcelFinder extends FileTreeFinder {
         HashMap<String, ThrowingBiConsumer<File, Context>> map = new HashMap<>();
         map.put(ExtensionType.CLASS.type(), (file, context) -> {
             ClassParser cp = new ClassParser(file.getAbsolutePath());
+            if(file.getName().contains("SuiteTestClass")) log.info(String.format("Creating JavaClass for: %s; ", file.getName()));
             JavaClass jc = cp.parse();
             jc.setRepository(ClassUtils.getRepository(context.getClassPath()));
             context.addLinks(startVisitors(jc, context));

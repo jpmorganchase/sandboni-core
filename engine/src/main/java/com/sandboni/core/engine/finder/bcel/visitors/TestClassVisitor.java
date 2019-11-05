@@ -75,13 +75,15 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
 
     @Override
     public synchronized void visitJavaClass(JavaClass jc) {
+        if(jc.getFileName().contains("SuiteTestClass")) log.info(String.format("visitJavaClass: %s", jc.getFileName()));
         setUp();
         this.ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
         AnnotationEntry runWithAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.RUN_WITH.getDesc());
         if (Objects.nonNull(runWithAnnotation)) {
             visitRunWithAnnotation(runWithAnnotation, jc);
+            if(jc.getFileName().contains("SuiteTestClass")) log.info(String.format("isSuite: %s", isSuite));
+            if(isSuite) return; // test methods are not executed for a suite class
         }
-        if(isSuite) return; // test methods are not executed for a suite class
 
         this.classIncluded = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, context.getIncludeTestAnnotation()));
 
