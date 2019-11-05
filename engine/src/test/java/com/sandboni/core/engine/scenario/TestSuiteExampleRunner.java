@@ -1,4 +1,4 @@
-package com.sandboni.core.engine.scenario.suite;
+package com.sandboni.core.engine.scenario;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;

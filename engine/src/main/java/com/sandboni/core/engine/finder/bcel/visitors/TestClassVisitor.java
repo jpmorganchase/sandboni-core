@@ -111,7 +111,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
             AnnotationEntry suiteAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.SUITE_CLASSES.getDesc());
             if(suiteAnnotation != null) {
                 this.isSuite = true;
-                String classesList = getAnnotationParameter(suiteAnnotation, "value");
+                String classesList = getAnnotationParameter(suiteAnnotation, VALUE);
                 List<String> testClasses = Arrays.stream(classesList.split(",")).map(s -> s.replace(File.separatorChar,'.')).collect(Collectors.toList());
                 String suiteClassName = jc.getClassName();
                 // add a link from TEST_SUITE_VERTEX to suite

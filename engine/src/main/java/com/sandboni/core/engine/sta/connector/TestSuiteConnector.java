@@ -19,15 +19,11 @@ import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.TEST_SUI
  * Connects between each suite test class to it's related methods (test vertices)
  */
 public class TestSuiteConnector implements Connector {
+    List<Link> testSuiteToTestClassLinks;
 
     @Override
     public void connect(Context context) {
-        List<Link> testSuiteToTestClassLinks = context.getLinks().filter(l -> (l.getLinkType() == LinkType.TEST_SUITE && !TEST_SUITE_VERTEX.equals(l.getCaller()))).collect(Collectors.toList());
-        Stream<Vertex> testSuitesStream = testSuiteToTestClassLinks.stream().map(Link::getCaller);
-        if (!testSuitesStream.findAny().isPresent()) return; // nothing to do here
-
         Set<Vertex> tests = context.getLinks().filter(l -> l.getLinkType() == LinkType.ENTRY_POINT).map(Link::getCallee).collect(Collectors.toSet());
-
         // connect test suite to relevant test (if applicable)
         tests.forEach(t -> {
             // check if we have a related suite class
@@ -40,6 +36,8 @@ public class TestSuiteConnector implements Connector {
 
     @Override
     public boolean proceed(Context context) {
-        return true;
+        testSuiteToTestClassLinks = context.getLinks().filter(l -> (l.getLinkType() == LinkType.TEST_SUITE && !TEST_SUITE_VERTEX.equals(l.getCaller()))).collect(Collectors.toList());
+        Stream<Vertex> testSuitesStream = testSuiteToTestClassLinks.stream().map(Link::getCaller);
+        return (testSuitesStream.findAny().isPresent());
     }
 }

@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -20,7 +19,7 @@ import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VE
 
 public class BcelFinderSuiteTest extends FinderTestBase {
 
-    private static final String TEST_PACKAGE = "com.sandboni.core.engine.scenario.suite";
+    private static final String TEST_PACKAGE = "com.sandboni.core.engine.scenario";
 
     @Before
     public void setUp() {
@@ -40,9 +39,12 @@ public class BcelFinderSuiteTest extends FinderTestBase {
 
     @Test
     public void testTestSuiteIsDetected() {
-        Link expectedLink1 = newLink(START_VERTEX, new TestVertex.Builder(TEST_PACKAGE + ".SuiteTestClass1", "print()",null).withIncluded(true).build(), LinkType.ENTRY_POINT);
-        Link expectedLink2 = newLink(START_VERTEX, new TestVertex.Builder(TEST_PACKAGE + ".SuiteTestClass2", "print()",null).withIncluded(true).build(), LinkType.ENTRY_POINT);
-        Link expectedLink3 = newLink(START_VERTEX, new TestVertex.Builder(TEST_PACKAGE + ".SuiteTestClass3", "print()",null).withIncluded(false).build(), LinkType.ENTRY_POINT);
+        TestVertex tv1 = new TestVertex.Builder(TEST_PACKAGE + ".SuiteTestClass1", "print()", null).build();
+        Link expectedLink1 = newLink(START_VERTEX, tv1, LinkType.ENTRY_POINT);
+        TestVertex tv2 = new TestVertex.Builder(TEST_PACKAGE + ".SuiteTestClass2", "print()", null).build();
+        Link expectedLink2 = newLink(START_VERTEX, tv2, LinkType.ENTRY_POINT);
+        TestVertex tv3 = new TestVertex.Builder(TEST_PACKAGE + ".SuiteTestClass3", "print()", null).build();
+        Link expectedLink3 = newLink(START_VERTEX, tv3, LinkType.ENTRY_POINT);
 
         testTestClassVisitor(expectedLink1, expectedLink2, expectedLink3);
     }
