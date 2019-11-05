@@ -7,6 +7,7 @@ public enum Annotations {
         BEFORE("Before"),
         AFTER("After"),
         TEST("Test"),
+        CUCUMBER_OPTIONS("cucumber/api/CucumberOptions"),
         RUN_WITH("RunWith"),
         RUN_WITH_VALUE_SUITE("org/junit/runners/Suite"),
         SUITE_CLASSES("Suite$SuiteClasses");

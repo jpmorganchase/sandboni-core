@@ -71,6 +71,8 @@ public enum LinkType {
 
     CUCUMBER_MAP("Cucumber Map", false),
 
+    CUCUMBER_RUNNER("Cucumber Runner", true),
+
     TEST_SUITE("Test Suite", false);
 
     private String description;

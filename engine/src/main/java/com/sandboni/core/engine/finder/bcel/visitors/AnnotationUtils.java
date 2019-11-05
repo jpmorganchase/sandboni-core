@@ -12,7 +12,7 @@ public class AnnotationUtils {
     private AnnotationUtils() {
     }
 
-    public static AnnotationEntry getAnnotation(ConstantPool constantPool, Supplier<AnnotationEntry[]> annotationSupplier, String ... annotationName) {
+    public static AnnotationEntry getAnnotation(ConstantPool constantPool, Supplier<AnnotationEntry[]> annotationSupplier, String... annotationName) {
         return Arrays.stream(annotationSupplier.get())
                 .filter(e -> Arrays.stream(annotationName).anyMatch(getTypeSignature(constantPool, e.getTypeIndex())::contains))
                 .findFirst().orElse(null);
@@ -38,17 +38,11 @@ public class AnnotationUtils {
 
             if (pathPair.isPresent()) {
                 ElementValue elementValue = pathPair.get().getValue();
-                if (elementValue.getElementValueType() == 91) {
-                    result = formatValue(elementValue);
-                } else if (elementValue.getElementValueType() == 99) {
-                    if(elementValue instanceof ArrayElementValue) {
-                        ElementValue[] elementValuesArray = ((ArrayElementValue) elementValue).getElementValuesArray();
-                        result = Arrays.stream(elementValuesArray).map(AnnotationUtils::formatValue).collect(Collectors.joining(","));
-                    } else if (elementValue instanceof ClassElementValue) {
-                        result = formatValue(elementValue);
-                    } else {
-                        result = elementValue.stringifyValue();
-                    }
+                if (elementValue.getElementValueType() == 91) { //ArrayElementValue
+                    ElementValue[] elementValuesArray = ((ArrayElementValue) elementValue).getElementValuesArray();
+                    result = Arrays.stream(elementValuesArray).map(AnnotationUtils::getValueByType).collect(Collectors.joining(","));
+                } else if (elementValue.getElementValueType() == 99) { //ClassElementValue
+                    result = trim(elementValue);
                 } else {
                     result = elementValue.stringifyValue();
                 }
@@ -57,14 +51,20 @@ public class AnnotationUtils {
         return result;
     }
 
-    private static String formatValue(ElementValue e) {
+    private static String getValueByType(ElementValue e){
+        if(e.getElementValueType() == 99) return trim(e);
+        else return e.stringifyValue();
+    }
+    private static String trim(ElementValue e) {
         String result = e.stringifyValue();
         // strings are stored as arrays of chars: [xxxx]
         return result.substring(1, result.length() - 1);
     }
 
     public static class SpringAnnotations {
-        private SpringAnnotations() {}
+        private SpringAnnotations() {
+        }
+
         public static String[] getAvailableRequestMappingAnnotations() {
             return new String[]{com.sandboni.core.engine.finder.bcel.visitors.Annotations.SPRING.REQUEST_MAPPING.getDesc(), com.sandboni.core.engine.finder.bcel.visitors.Annotations.SPRING.GET_MAPPING.getDesc(),
                     com.sandboni.core.engine.finder.bcel.visitors.Annotations.SPRING.DELETE_MAPPING.getDesc(), com.sandboni.core.engine.finder.bcel.visitors.Annotations.SPRING.POST_MAPPING.getDesc(),
