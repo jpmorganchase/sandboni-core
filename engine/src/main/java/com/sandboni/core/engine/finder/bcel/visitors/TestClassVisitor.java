@@ -11,6 +11,8 @@ import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
@@ -42,6 +44,8 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     private boolean ignore;
     private boolean classIncluded;
     private boolean isSuite;
+
+    private static final Logger log = LoggerFactory.getLogger(TestClassVisitor.class);
 
     public void setUp() {
         ignore = false;
@@ -80,6 +84,8 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
         if(isSuite) return; // test methods are not executed for a suite class
 
         this.classIncluded = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, context.getIncludeTestAnnotation()));
+
+        if(jc.getFileName().contains("SuiteTestClass")) log.info(String.format("Class Name: %s; classIncluded: %s", jc.getFileName(), this.classIncluded));
 
         super.visitJavaClass(jc);
 

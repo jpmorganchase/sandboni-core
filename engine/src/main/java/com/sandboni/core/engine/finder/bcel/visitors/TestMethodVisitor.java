@@ -6,6 +6,8 @@ import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -21,6 +23,8 @@ public class TestMethodVisitor extends MethodVisitorBase {
     private boolean ignore;
     private boolean isIncluded;
 
+    private static final Logger log = LoggerFactory.getLogger(TestMethodVisitor.class);
+
     TestMethodVisitor(Method m, JavaClass jc, Context c) {
         super(m, jc, c);
         testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
@@ -33,6 +37,7 @@ public class TestMethodVisitor extends MethodVisitorBase {
                 (ignore || Objects.nonNull(getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc())));
         this.isIncluded = testMethod &&
                 (isClassIncluded || getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, context.getIncludeTestAnnotation()) != null);
+        if(jc.getFileName().contains("SuiteTestClass")) log.info(String.format("Class Name: %s; testMethod: %s", jc.getFileName(), this.testMethod));
     }
 
     public void start() {

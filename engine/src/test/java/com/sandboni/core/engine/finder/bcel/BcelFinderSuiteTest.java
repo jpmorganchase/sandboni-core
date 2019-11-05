@@ -27,7 +27,7 @@ public class BcelFinderSuiteTest extends FinderTestBase {
 
     @Before
     public void setUp() {
-        super.initializeContext(new MockForSuiteChangeDetector().getChanges("1", "2"));
+        super.initializeContext();
     }
 
     private void testVisitor(Link[] expectedLinks, ClassVisitor... visitors) {
