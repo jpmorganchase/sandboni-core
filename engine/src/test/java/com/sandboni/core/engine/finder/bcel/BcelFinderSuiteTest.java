@@ -1,5 +1,6 @@
 package com.sandboni.core.engine.finder.bcel;
 
+import com.sandboni.core.engine.Application;
 import com.sandboni.core.engine.FinderTestBase;
 import com.sandboni.core.engine.contract.ChangeDetector;
 import com.sandboni.core.engine.contract.Finder;
@@ -10,6 +11,8 @@ import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.scm.scope.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.stream.Collectors;
@@ -20,6 +23,7 @@ import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VE
 public class BcelFinderSuiteTest extends FinderTestBase {
 
     private static final String TEST_PACKAGE = "com.sandboni.core.engine.scenario";
+    private static final Logger log = LoggerFactory.getLogger(BcelFinderSuiteTest.class);
 
     @Before
     public void setUp() {
@@ -29,7 +33,7 @@ public class BcelFinderSuiteTest extends FinderTestBase {
     private void testVisitor(Link[] expectedLinks, ClassVisitor... visitors) {
         Finder f = new BcelFinder(visitors);
         f.findSafe(context);
-
+        context.getLinks().forEach(l -> log.info(String.format("Link: %s; caller isSpecial: %s, callee isSpecial: %s", l.toString(), l.getCaller().isSpecial(), l.getCallee().isSpecial())));
         assertLinksExist(expectedLinks);
     }
 
