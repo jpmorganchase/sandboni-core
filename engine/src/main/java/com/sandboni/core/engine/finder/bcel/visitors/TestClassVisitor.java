@@ -111,17 +111,11 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
             if(suiteAnnotation != null) {
                 this.isSuite = true;
                 String classesList = getAnnotationParameter(suiteAnnotation, VALUE);
-                List<String> testClasses = Arrays.stream(classesList.split(",")).map(s -> s.replace('/','.')).collect(Collectors.toList());
-                String suiteClassName = jc.getClassName();
-                // add a link from TEST_SUITE_VERTEX to suite
+                Set<String> testClasses = Arrays.stream(classesList.split(",")).map(s -> s.replace('/','.')).collect(Collectors.toSet());
+                // add a link from TEST_SUITE_VERTEX to TestSuiteVertex, which will hold all test class names
                 // note: test suite vertex has to be a TestVertex in order to be able to return it as one for the results for RelatedTestsOperation.execute()..
-                TestSuiteVertex sv = new TestSuiteVertex.Builder(suiteClassName, "", context.getCurrentLocation()).build();
+                TestSuiteVertex sv = new TestSuiteVertex.Builder(jc.getClassName(), testClasses, context.getCurrentLocation()).build();
                 context.addLink(LinkFactory.createInstance(context.getApplicationId(), TEST_SUITE_VERTEX, sv, LinkType.TEST_SUITE));
-                // add links from suite to each test class
-                testClasses.forEach(c -> {
-                    Vertex cv = new Vertex.Builder(c, "", context.getCurrentLocation()).build();
-                    context.addLink(LinkFactory.createInstance(context.getApplicationId(), sv, cv, LinkType.TEST_SUITE));
-                });
             }
         }
     }

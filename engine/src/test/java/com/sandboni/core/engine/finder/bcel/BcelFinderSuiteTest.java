@@ -7,9 +7,11 @@ import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.TestSuiteVertex;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
-import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 import static com.sandboni.core.engine.MockChangeDetector.PACKAGE_NAME;
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
@@ -35,25 +37,23 @@ public class BcelFinderSuiteTest extends FinderTestBase {
 
     @Test
     public void testTestSuiteIsDetected() {
-        TestVertex tv1 = new TestVertex.Builder(PACKAGE_NAME + ".SuiteTestClass1", "testPrint()", null).build();
-        Link expectedLink1 = newLink(START_VERTEX, tv1, LinkType.ENTRY_POINT);
-        TestVertex tv2 = new TestVertex.Builder(PACKAGE_NAME + ".SuiteTestClass2", "testPrint()", null).build();
-        Link expectedLink2 = newLink(START_VERTEX, tv2, LinkType.ENTRY_POINT);
-        TestVertex tv3 = new TestVertex.Builder(PACKAGE_NAME + ".SuiteTestClass3", "testPrint()", null).build();
-        Link expectedLink3 = newLink(START_VERTEX, tv3, LinkType.ENTRY_POINT);
+        String TEST_CLASS_1 = PACKAGE_NAME + ".SuiteTestClass1";
+        String TEST_CLASS_2 = PACKAGE_NAME + ".SuiteTestClass2";
+        String TEST_CLASS_3 = PACKAGE_NAME + ".SuiteTestClass3";
+
+        TestVertex tv1 = new TestVertex.Builder(TEST_CLASS_1, "testPrint()", null).build();
+        TestVertex tv2 = new TestVertex.Builder(TEST_CLASS_2, "testPrint()", null).build();
+        TestVertex tv3 = new TestVertex.Builder(TEST_CLASS_3, "testPrint()", null).build();
         TestVertex tv4 = new TestVertex.Builder(PACKAGE_NAME + ".TestSuiteExample", "testPrint()", null).build();
+        TestSuiteVertex tsv = new TestSuiteVertex.Builder(PACKAGE_NAME + ".TestSuiteExample", new HashSet<>(Arrays.asList(TEST_CLASS_1, TEST_CLASS_2, TEST_CLASS_3)), null).build();
+
+        Link expectedLink1 = newLink(START_VERTEX, tv1, LinkType.ENTRY_POINT);
+        Link expectedLink2 = newLink(START_VERTEX, tv2, LinkType.ENTRY_POINT);
+        Link expectedLink3 = newLink(START_VERTEX, tv3, LinkType.ENTRY_POINT);
         Link notExpectedLink4 = newLink(START_VERTEX, tv4, LinkType.ENTRY_POINT);
-
-        TestSuiteVertex tsv = new TestSuiteVertex.Builder(PACKAGE_NAME + ".TestSuiteExample", "", null).build();
         Link tsLink = newLink(TEST_SUITE_VERTEX, tsv, LinkType.TEST_SUITE);
-        Vertex tsv1 = new Vertex.Builder(PACKAGE_NAME + ".SuiteTestClass1", "").build();
-        Vertex tsv2 = new Vertex.Builder(PACKAGE_NAME + ".SuiteTestClass2", "").build();
-        Vertex tsv3 = new Vertex.Builder(PACKAGE_NAME + ".SuiteTestClass3", "").build();
-        Link ts2tv1Link = newLink(tsv, tsv1, LinkType.TEST_SUITE);
-        Link ts2tv2Link = newLink(tsv, tsv2, LinkType.TEST_SUITE);
-        Link ts2tv3Link = newLink(tsv, tsv3, LinkType.TEST_SUITE);
 
-        Link[] expectedLinks = new Link[]{expectedLink1, expectedLink2, expectedLink3, tsLink, ts2tv1Link, ts2tv2Link, ts2tv3Link};
+        Link[] expectedLinks = new Link[]{expectedLink1, expectedLink2, expectedLink3, tsLink};
         Link[] notExpectedLinks = new Link[]{notExpectedLink4};
         testTestClassVisitor(expectedLinks, notExpectedLinks);
     }
