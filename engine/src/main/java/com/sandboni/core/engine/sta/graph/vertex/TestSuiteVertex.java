@@ -19,7 +19,7 @@ public class TestSuiteVertex extends TestVertex {
         private Set<String> relatedTestClasses;
 
         public Builder(String actor, Set<String> relatedTestClasses, String location) {
-            super(actor, "", location);
+            super(actor, "all test classes included in suite", location);
             this.relatedTestClasses = relatedTestClasses;
         }
 
