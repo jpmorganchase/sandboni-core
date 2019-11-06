@@ -4,6 +4,7 @@ import java.util.List;
 
 public class TestSuiteVertex extends TestVertex {
 
+    @SuppressWarnings("squid:S00107") // private constructor used only in Builder
     private TestSuiteVertex(String actor, String action, boolean isSpecial, String filePath, List<Integer> lineNumbers, String filter, String location, boolean ignore, boolean externalLocation, boolean included, String runWithOptions) {
         super(actor, action, isSpecial, filePath, lineNumbers, filter, location, ignore, externalLocation, included, runWithOptions);
     }

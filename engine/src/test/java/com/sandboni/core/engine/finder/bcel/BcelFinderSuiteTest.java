@@ -22,24 +22,27 @@ public class BcelFinderSuiteTest extends FinderTestBase {
         super.initializeContext();
     }
 
-    private void testVisitor(Link[] expectedLinks, ClassVisitor... visitors) {
+    private void testVisitor(Link[] expectedLinks, Link[] notExpectedLinks, ClassVisitor... visitors) {
         Finder f = new BcelFinder(visitors);
         f.findSafe(context);
         assertLinksExist(expectedLinks);
+        assertLinksNotExist(notExpectedLinks);
     }
 
-    private void testTestClassVisitor(Link... expectedLinks) {
-        testVisitor(expectedLinks, new TestClassVisitor());
+    private void testTestClassVisitor(Link[] expectedLinks, Link[] notExpectedLinks) {
+        testVisitor(expectedLinks, notExpectedLinks, new TestClassVisitor());
     }
 
     @Test
     public void testTestSuiteIsDetected() {
-        TestVertex tv1 = new TestVertex.Builder(PACKAGE_NAME + ".SuiteTestClass1", "print()", null).build();
+        TestVertex tv1 = new TestVertex.Builder(PACKAGE_NAME + ".SuiteTestClass1", "testPrint()", null).build();
         Link expectedLink1 = newLink(START_VERTEX, tv1, LinkType.ENTRY_POINT);
-        TestVertex tv2 = new TestVertex.Builder(PACKAGE_NAME + ".SuiteTestClass2", "print()", null).build();
+        TestVertex tv2 = new TestVertex.Builder(PACKAGE_NAME + ".SuiteTestClass2", "testPrint()", null).build();
         Link expectedLink2 = newLink(START_VERTEX, tv2, LinkType.ENTRY_POINT);
-        TestVertex tv3 = new TestVertex.Builder(PACKAGE_NAME + ".SuiteTestClass3", "print()", null).build();
+        TestVertex tv3 = new TestVertex.Builder(PACKAGE_NAME + ".SuiteTestClass3", "testPrint()", null).build();
         Link expectedLink3 = newLink(START_VERTEX, tv3, LinkType.ENTRY_POINT);
+        TestVertex tv4 = new TestVertex.Builder(PACKAGE_NAME + ".TestSuiteExample", "testPrint()", null).build();
+        Link notExpectedLink4 = newLink(START_VERTEX, tv4, LinkType.ENTRY_POINT);
 
         TestSuiteVertex tsv = new TestSuiteVertex.Builder(PACKAGE_NAME + ".TestSuiteExample", "", null).build();
         Link tsLink = newLink(TEST_SUITE_VERTEX, tsv, LinkType.TEST_SUITE);
@@ -50,7 +53,9 @@ public class BcelFinderSuiteTest extends FinderTestBase {
         Link ts2tv2Link = newLink(tsv, tsv2, LinkType.TEST_SUITE);
         Link ts2tv3Link = newLink(tsv, tsv3, LinkType.TEST_SUITE);
 
-        testTestClassVisitor(expectedLink1, expectedLink2, expectedLink3, tsLink, ts2tv1Link, ts2tv2Link, ts2tv3Link);
+        Link[] expectedLinks = new Link[]{expectedLink1, expectedLink2, expectedLink3, tsLink, ts2tv1Link, ts2tv2Link, ts2tv3Link};
+        Link[] notExpectedLinks = new Link[]{notExpectedLink4};
+        testTestClassVisitor(expectedLinks, notExpectedLinks);
     }
 
 }

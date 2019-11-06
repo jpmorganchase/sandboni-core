@@ -33,7 +33,7 @@ public class RelatedTestsOperation extends AbstractGraphOperation<SetResult<Test
         return new SetResult<>(emptyIfFalse(graph.containsVertex(START_VERTEX) && graph.containsVertex(END_VERTEX),
                 () -> allTests.stream()
                         .filter(v -> isAffectedCucumberVertex(v) || algorithm.getPath(END_VERTEX, v) != null)
-                .flatMap(v -> handleSuiteVertex(v, algorithm, graph).stream())
+                .flatMap(v -> handleSuiteVertex(v, graph).stream())
         ));
         // todo: handle dups
     }
@@ -41,7 +41,7 @@ public class RelatedTestsOperation extends AbstractGraphOperation<SetResult<Test
     /**
      * replace any test which is part of a suite with it's suite vertex
      */
-    private Set<TestVertex> handleSuiteVertex(TestVertex v, ShortestPathAlgorithm<Vertex, Edge> algorithm, Graph<Vertex, Edge> graph) {
+    private Set<TestVertex> handleSuiteVertex(TestVertex v, Graph<Vertex, Edge> graph) {
         // get all related test suites
         Set<TestVertex> relatedTestSuiteVertices = graph.edgesOf(v).stream().filter(e -> e.getLinkType().equals(LinkType.TEST_SUITE)).map(e -> (TestVertex) e.getTarget()).collect(Collectors.toSet());
         return relatedTestSuiteVertices.isEmpty()? Collections.singleton(v): relatedTestSuiteVertices;
