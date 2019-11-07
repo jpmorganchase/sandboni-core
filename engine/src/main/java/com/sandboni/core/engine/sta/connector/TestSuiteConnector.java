@@ -22,7 +22,7 @@ public class TestSuiteConnector implements Connector {
         // connect test suite to relevant test (if applicable):
         tests.forEach(t -> {
             // check if we have a related suite class
-            allTestSuiteVertices.stream().filter(tsv -> tsv instanceof TestSuiteVertex && ((TestSuiteVertex)tsv).getRelatedTestClasses().contains(t.getActor())).forEach(ts -> {
+            allTestSuiteVertices.parallelStream().filter(tsv -> tsv instanceof TestSuiteVertex && ((TestSuiteVertex)tsv).getRelatedTestClasses().contains(t.getActor())).forEach(ts -> {
                 // create a link: testSuite -> testVertex, type:TEST_SUITE
                 context.addLink(LinkFactory.createInstance(context.getApplicationId(), ts, t, LinkType.TEST_SUITE));
             });
