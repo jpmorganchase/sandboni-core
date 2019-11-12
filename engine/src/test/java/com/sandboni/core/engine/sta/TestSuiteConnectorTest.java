@@ -1,5 +1,9 @@
 package com.sandboni.core.engine.sta;
 
+import com.sandboni.core.engine.scenario.SuiteTestClass1;
+import com.sandboni.core.engine.scenario.SuiteTestClass2;
+import com.sandboni.core.engine.scenario.SuiteTestClass3;
+import com.sandboni.core.engine.scenario.TestSuite1;
 import com.sandboni.core.engine.sta.connector.Connector;
 import com.sandboni.core.engine.sta.connector.TestSuiteConnector;
 import com.sandboni.core.engine.sta.graph.Link;
@@ -21,17 +25,17 @@ import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VE
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.TEST_SUITE_VERTEX;
 
 public class TestSuiteConnectorTest {
-    private final String TEST_CLASS_1 = PACKAGE_NAME + ".SuiteTestClass1";
-    private final String TEST_CLASS_2 = PACKAGE_NAME + ".SuiteTestClass2";
-    private final String TEST_CLASS_3 = PACKAGE_NAME + ".SuiteTestClass3";
+    private final String TEST_CLASS_1 = PACKAGE_NAME + "." + SuiteTestClass1.class.getSimpleName();
+    private final String TEST_CLASS_2 = PACKAGE_NAME + "." + SuiteTestClass2.class.getSimpleName();
+    private final String TEST_CLASS_3 = PACKAGE_NAME + "." + SuiteTestClass3.class.getSimpleName();
     private TestVertex tv1 = new TestVertex.Builder(TEST_CLASS_1, "testPrint()", null).build();
     private TestVertex tv2 = new TestVertex.Builder(TEST_CLASS_2, "testPrint()", null).build();
     private TestVertex tv3 = new TestVertex.Builder(TEST_CLASS_3, "testPrint()", null).build();
 
-    private TestVertex tsv = new TestSuiteVertex.Builder(PACKAGE_NAME + ".TestSuiteExample", new HashSet<>(Arrays.asList(TEST_CLASS_1, TEST_CLASS_2, TEST_CLASS_3)), null).build();
+    private TestVertex tsv = new TestSuiteVertex.Builder(PACKAGE_NAME + "." + TestSuite1.class.getSimpleName(), new HashSet<>(Arrays.asList(TEST_CLASS_1, TEST_CLASS_2, TEST_CLASS_3)), null).build();
     private Vertex tsv1 = new Vertex.Builder(TEST_CLASS_1, "").build();
-    private Vertex tsv2 = new Vertex.Builder(PACKAGE_NAME + ".SuiteTestClass2", "").build();
-    private Vertex tsv3 = new Vertex.Builder(PACKAGE_NAME + ".SuiteTestClass3", "").build();
+    private Vertex tsv2 = new Vertex.Builder(PACKAGE_NAME + "." + SuiteTestClass2.class.getSimpleName(), "").build();
+    private Vertex tsv3 = new Vertex.Builder(PACKAGE_NAME + "." + SuiteTestClass3.class.getSimpleName(), "").build();
 
     private Context setupContext() {
         Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());

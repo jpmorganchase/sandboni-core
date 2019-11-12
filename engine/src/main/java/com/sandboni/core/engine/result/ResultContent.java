@@ -4,6 +4,7 @@ public enum ResultContent {
 
     ALL_TESTS,
     RELATED_TESTS,
+    TEST_SUITES,
     DISCONNECTED_TESTS,
     CHANGES,
     UNREACHABLE_CHANGES,

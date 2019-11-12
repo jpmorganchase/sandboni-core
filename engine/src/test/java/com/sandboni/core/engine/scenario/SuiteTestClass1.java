@@ -13,7 +13,7 @@ public class SuiteTestClass1 {
 
     @Test
     public void testPrint(){
-        System.out.println("SuiteTestClass1");
+        System.out.println(this.getClass().getSimpleName());
         c.doStuff();
         assertTrue(true);
     }

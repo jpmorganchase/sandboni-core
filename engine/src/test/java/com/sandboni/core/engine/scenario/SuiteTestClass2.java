@@ -13,8 +13,8 @@ public class SuiteTestClass2 {
 
     @Test
     public void testPrint(){
-        System.out.println("SuiteTestClass2");
-        c.doStuffViaInterface();
+        System.out.println(this.getClass().getSimpleName());
+        c.doStuffDefault();
         assertTrue(true);
     }
 

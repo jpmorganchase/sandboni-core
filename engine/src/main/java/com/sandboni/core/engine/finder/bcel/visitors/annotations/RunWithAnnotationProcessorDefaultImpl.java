@@ -6,12 +6,8 @@ import org.apache.bcel.classfile.JavaClass;
 public class RunWithAnnotationProcessorDefaultImpl implements RunWithAnnotationProcessor {
 
     @Override
-    public void process(JavaClass jc, Context context) {
+    public boolean process(JavaClass jc, Context context) {
         //do nothing
-    }
-
-    @Override
-    public boolean isSuite() {
-        return false;
+        return true;
     }
 }

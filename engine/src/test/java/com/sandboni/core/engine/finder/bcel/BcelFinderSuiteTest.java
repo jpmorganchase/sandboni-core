@@ -3,6 +3,10 @@ package com.sandboni.core.engine.finder.bcel;
 import com.sandboni.core.engine.FinderTestBase;
 import com.sandboni.core.engine.contract.Finder;
 import com.sandboni.core.engine.finder.bcel.visitors.TestClassVisitor;
+import com.sandboni.core.engine.scenario.SuiteTestClass1;
+import com.sandboni.core.engine.scenario.SuiteTestClass2;
+import com.sandboni.core.engine.scenario.SuiteTestClass3;
+import com.sandboni.core.engine.scenario.TestSuite1;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.TestSuiteVertex;
@@ -37,15 +41,15 @@ public class BcelFinderSuiteTest extends FinderTestBase {
 
     @Test
     public void testTestSuiteIsDetected() {
-        String TEST_CLASS_1 = PACKAGE_NAME + ".SuiteTestClass1";
-        String TEST_CLASS_2 = PACKAGE_NAME + ".SuiteTestClass2";
-        String TEST_CLASS_3 = PACKAGE_NAME + ".SuiteTestClass3";
+        String TEST_CLASS_1 = PACKAGE_NAME + "." + SuiteTestClass1.class.getSimpleName();
+        String TEST_CLASS_2 = PACKAGE_NAME + "." + SuiteTestClass2.class.getSimpleName();
+        String TEST_CLASS_3 = PACKAGE_NAME + "." + SuiteTestClass3.class.getSimpleName();
 
         TestVertex tv1 = new TestVertex.Builder(TEST_CLASS_1, "testPrint()", null).build();
         TestVertex tv2 = new TestVertex.Builder(TEST_CLASS_2, "testPrint()", null).build();
         TestVertex tv3 = new TestVertex.Builder(TEST_CLASS_3, "testPrint()", null).build();
-        TestVertex tv4 = new TestVertex.Builder(PACKAGE_NAME + ".TestSuiteExample", "testPrint()", null).build();
-        TestSuiteVertex tsv = new TestSuiteVertex.Builder(PACKAGE_NAME + ".TestSuiteExample", new HashSet<>(Arrays.asList(TEST_CLASS_1, TEST_CLASS_2, TEST_CLASS_3)), null).build();
+        TestVertex tv4 = new TestVertex.Builder(PACKAGE_NAME + "." + TestSuite1.class.getSimpleName(), "testPrint()", null).build();
+        TestSuiteVertex tsv = new TestSuiteVertex.Builder(PACKAGE_NAME + "." + TestSuite1.class.getSimpleName(), new HashSet<>(Arrays.asList(TEST_CLASS_1, TEST_CLASS_2, TEST_CLASS_3)), null).build();
 
         Link expectedLink1 = newLink(START_VERTEX, tv1, LinkType.ENTRY_POINT);
         Link expectedLink2 = newLink(START_VERTEX, tv2, LinkType.ENTRY_POINT);

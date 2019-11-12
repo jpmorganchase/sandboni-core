@@ -18,25 +18,20 @@ import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.TEST_SUI
 
 public class SuiteAnnotationProcessor implements RunWithAnnotationProcessor {
     private static final String VALUE = "value";
-    private boolean isSuite;
 
     @Override
-    public void process(JavaClass jc, Context context) {
+    public boolean process(JavaClass jc, Context context) {
         AnnotationEntry suiteAnnotation = AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.SUITE_CLASSES.getDesc());
         if(suiteAnnotation != null) {
-            isSuite = true;
             String classesList = getAnnotationParameter(suiteAnnotation, VALUE);
             Set<String> testClasses = Arrays.stream(classesList.split(",")).map(s -> s.replace('/','.')).collect(Collectors.toSet());
-            // add a link from TEST_SUITE_VERTEX to TestSuiteVertex, which will hold all test class names
             // note: test suite vertex has to be a TestVertex in order to be able to return it as one for the results for RelatedTestsOperation.execute()..
             TestSuiteVertex sv = new TestSuiteVertex.Builder(jc.getClassName(), testClasses, context.getCurrentLocation()).build();
             context.addLink(LinkFactory.createInstance(context.getApplicationId(), TEST_SUITE_VERTEX, sv, LinkType.TEST_SUITE));
+            return false;
         }
+        return true;
     }
 
-    @Override
-    public boolean isSuite() {
-        return isSuite;
-    }
 }
 

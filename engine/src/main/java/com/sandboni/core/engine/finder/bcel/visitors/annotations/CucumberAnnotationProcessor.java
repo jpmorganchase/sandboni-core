@@ -20,7 +20,7 @@ public class CucumberAnnotationProcessor implements RunWithAnnotationProcessor {
     private static final String FEATURES = "features";
 
     @Override
-    public void process(JavaClass jc, Context context) {
+    public boolean process(JavaClass jc, Context context) {
         TestVertex.Builder runnerBuilder = new TestVertex.Builder(jc.getClassName(), RUN_WITH, context.getCurrentLocation());
         AnnotationEntry cucumberOptionsAnnotation = AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.CUCUMBER_OPTIONS.getDesc());
         if (Objects.nonNull(cucumberOptionsAnnotation)) {
@@ -29,10 +29,6 @@ public class CucumberAnnotationProcessor implements RunWithAnnotationProcessor {
         }
 
         context.addLink(LinkFactory.createInstance(context.getApplicationId(), runnerBuilder.build(), CUCUMBER_RUNNER_VERTEX, LinkType.CUCUMBER_RUNNER));
-    }
-
-    @Override
-    public boolean isSuite() {
-        return false;
+        return true;
     }
 }

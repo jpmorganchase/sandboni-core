@@ -1,7 +1,6 @@
 package com.sandboni.core.engine.finder.bcel.visitors;
 
 import com.sandboni.core.engine.finder.bcel.ClassVisitor;
-import com.sandboni.core.engine.finder.bcel.visitors.annotations.RunWithAnnotationProcessor;
 import com.sandboni.core.engine.finder.bcel.visitors.annotations.RunWithAnnotationProcessorFactory;
 import com.sandboni.core.engine.finder.bcel.visitors.http.JavaxControllerMethodVisitor;
 import com.sandboni.core.engine.finder.bcel.visitors.http.SpringControllerMethodVisitor;
@@ -67,8 +66,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
         this.ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
         AnnotationEntry runWithAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.RUN_WITH.getDesc());
         if (Objects.nonNull(runWithAnnotation)) {
-            visitRunWithAnnotation(runWithAnnotation, jc);
-            if(isSuite) return; // test methods are not executed for a suite class
+            if(!visitRunWithAnnotation(runWithAnnotation, jc)) return;
         }
 
         this.classIncluded = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, context.getIncludeTestAnnotation()));
@@ -86,10 +84,14 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
                 .forEach(l -> context.addLink(l));
     }
 
-    private void visitRunWithAnnotation(AnnotationEntry runWithAnnotation, JavaClass jc) {
+    /**
+     *
+     * @param runWithAnnotation
+     * @param jc
+     * @return a boolean indication wather we should continue processing the class
+     */
+    private boolean visitRunWithAnnotation(AnnotationEntry runWithAnnotation, JavaClass jc) {
         String value = AnnotationUtils.getAnnotationParameter(runWithAnnotation, VALUE);
-        RunWithAnnotationProcessor annotationProcessor = new RunWithAnnotationProcessorFactory().getProcessor(value);
-        annotationProcessor.process(jc, context);
-        isSuite = annotationProcessor.isSuite();
+        return new RunWithAnnotationProcessorFactory().getProcessor(value).process(jc, context);
     }
 }

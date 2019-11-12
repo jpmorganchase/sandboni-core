@@ -5,7 +5,11 @@ import org.apache.bcel.classfile.JavaClass;
 
 public interface RunWithAnnotationProcessor {
 
-    void process(JavaClass jc, Context context);
-
-    boolean isSuite();
+    /**
+     *
+     * @param jc
+     * @param context
+     * @return whether tests should be processed
+     */
+    boolean process(JavaClass jc, Context context);
 }
