@@ -32,7 +32,6 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
 
     private boolean ignore;
     private boolean classIncluded;
-    private boolean isSuite;
 
     public void setUp() {
         ignore = false;
@@ -65,9 +64,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
         setUp();
         this.ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
         AnnotationEntry runWithAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.RUN_WITH.getDesc());
-        if (Objects.nonNull(runWithAnnotation)) {
-            if(!visitRunWithAnnotation(runWithAnnotation, jc)) return;
-        }
+        if (Objects.nonNull(runWithAnnotation) && !visitRunWithAnnotation(runWithAnnotation, jc)) return;
 
         this.classIncluded = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, context.getIncludeTestAnnotation()));
 
