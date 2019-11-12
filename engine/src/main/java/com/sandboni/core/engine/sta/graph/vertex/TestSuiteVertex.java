@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Getter
 public class TestSuiteVertex extends TestVertex {
-    private Set<String> relatedTestClasses;
+    private final Set<String> relatedTestClasses;
 
     @SuppressWarnings("squid:S00107") // private constructor used only in Builder
     private TestSuiteVertex(String actor, String action, boolean isSpecial, String filePath, List<Integer> lineNumbers, String filter, String location, boolean ignore, boolean externalLocation, boolean included, String runWithOptions,  Set<String> relatedTestClasses) {
