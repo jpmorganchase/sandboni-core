@@ -20,6 +20,7 @@ public class GraphOperations {
     private final OperationExecutor operationExecutor;
     private final Context context;
     private final Supplier<Set<TestVertex>> relatedTestsSupplier = new CachingSupplier<>(this::getRelatedTestsImpl);
+    private final Supplier<Set<TestVertex>> testSuitesSupplier = new CachingSupplier<>(this::getTestSuitesImpl);
     private final Supplier<Set<TestVertex>> allTestsSupplier = new CachingSupplier<>(this::getAllTestsImpl);
     private final Supplier<Set<TestVertex>> disconnectedTestsSupplier = new CachingSupplier<>(this::getDisconnectedTestsImpl);
     private final Supplier<Set<TestVertex>> allExternalTestsSupplier = new CachingSupplier<>(this::getAllExternalTestsImpl);
@@ -76,6 +77,13 @@ public class GraphOperations {
     }
     private Set<TestVertex> getRelatedTestsImpl() {
         return operationExecutor.execute(new RelatedTestsOperation(allTestsSupplier.get()));
+    }
+
+    public Set<TestVertex> getTestSuites() {
+        return testSuitesSupplier.get();
+    }
+    private Set<TestVertex> getTestSuitesImpl() {
+        return operationExecutor.execute(new TestSuitesOperation(relatedTestsSupplier.get(), disconnectedTestsSupplier.get()));
     }
 
     public Set<TestVertex> getDisconnectedTests() {
