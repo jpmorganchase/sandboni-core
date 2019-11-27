@@ -15,6 +15,7 @@ import org.apache.bcel.classfile.Method;
 import java.util.*;
 
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotation;
+import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotationParameter;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
 
 /**
@@ -31,7 +32,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     private Map<String, LinkType> initMethods = new HashMap<>();
 
     private boolean ignore;
-    private boolean classIncluded;
+    private boolean alwaysRunClass;
 
     public void setUp() {
         ignore = false;
@@ -45,7 +46,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     public void visitMethod(Method method) {
         boolean testMethod = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
         if (testMethod) {
-            new TestMethodVisitor(method, javaClass, context, ignore, classIncluded).start();
+            new TestMethodVisitor(method, javaClass, context, ignore, alwaysRunClass).start();
             new TestHttpMethodVisitor(method, javaClass, context).start();
             new SpringControllerMethodVisitor(method, javaClass, context, false).start();
             new JavaxControllerMethodVisitor(method, javaClass, context, null, false).start();
@@ -66,7 +67,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
         AnnotationEntry runWithAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.RUN_WITH.getDesc());
         if (Objects.nonNull(runWithAnnotation) && !visitRunWithAnnotation(runWithAnnotation, jc)) return;
 
-        this.classIncluded = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, context.getIncludeTestAnnotation()));
+        this.alwaysRunClass = isAlwaysRunAnnotation(jc);
 
         super.visitJavaClass(jc);
 
@@ -79,6 +80,21 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
                 .map(pl -> LinkFactory.createInstance(context.getApplicationId(), new TestVertex.Builder(jc.getClassName(), pl.testMethod, context.getCurrentLocation()).build(),
                         new Vertex.Builder(jc.getClassName(), pl.initMethod,context.getCurrentLocation()).build(), pl.linkType))
                 .forEach(l -> context.addLink(l));
+    }
+
+    private boolean isAlwaysRunAnnotation(JavaClass jc) {
+        boolean alwaysRunAnnotation = Objects.nonNull(getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, context.getAlwaysRunAnnotation()));
+        if (alwaysRunAnnotation) {
+            return true;
+        }
+
+        AnnotationEntry categoryAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.CATEGORY.getDesc());
+        if (Objects.nonNull(categoryAnnotation)) {
+            String categoryAnnotationValue = getAnnotationParameter(categoryAnnotation, "value");
+            return Objects.nonNull(categoryAnnotationValue) && categoryAnnotationValue.endsWith(context.getAlwaysRunAnnotation());
+        }
+
+        return false;
     }
 
     /**

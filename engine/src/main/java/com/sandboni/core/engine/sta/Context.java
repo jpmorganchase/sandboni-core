@@ -20,7 +20,7 @@ public class Context {
     private static final Logger log = LoggerFactory.getLogger(Context.class);
     private static final String CLASSPATH_PROPERTY_NAME = "java.class.path";
     private static final String DEFAULT_APPLICATION_ID = "sandboni.default.AppId";
-    private static final String INCLUDE_ANNOTATION = "IncludeTest";
+    private static final String ALWAYS_RUN_ANNOTATION = "AlwaysRun";
 
     private final String filter;
     private Set<Link> links = new HashSet<>();
@@ -30,7 +30,7 @@ public class Context {
     private Collection<String> testLocations;
     private String classPath;
     private String applicationId;
-    private String includeTestAnnotation;
+    private String alwaysRunAnnotation;
 
     private Set<LinkType> adoptedLinkTypes;
 
@@ -70,7 +70,7 @@ public class Context {
         this.changeScope = changes;
         this.adoptedLinkTypes = new HashSet<>();
         this.currentLocation = currentLocation;
-        this.includeTestAnnotation = StringUtil.isEmptyOrNull(includeTestAnnotation) ? INCLUDE_ANNOTATION : includeTestAnnotation;
+        this.alwaysRunAnnotation = StringUtil.isEmptyOrNull(includeTestAnnotation) ? ALWAYS_RUN_ANNOTATION : includeTestAnnotation;
     }
 
     private Collection<String> getCollection(String[] array) {
@@ -102,7 +102,7 @@ public class Context {
         this.changeScope = source.changeScope;
         this.currentLocation = source.currentLocation;
         this.adoptedLinkTypes = new HashSet<>();
-        this.includeTestAnnotation = source.includeTestAnnotation;
+        this.alwaysRunAnnotation = source.alwaysRunAnnotation;
     }
 
     public Context getLocalContext() {
@@ -170,7 +170,7 @@ public class Context {
         return applicationId;
     }
 
-    public String getIncludeTestAnnotation() {
-        return includeTestAnnotation;
+    public String getAlwaysRunAnnotation() {
+        return alwaysRunAnnotation;
     }
 }

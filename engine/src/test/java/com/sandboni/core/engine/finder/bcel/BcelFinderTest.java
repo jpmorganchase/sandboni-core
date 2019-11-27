@@ -624,14 +624,16 @@ public class BcelFinderTest extends FinderTestBase {
     }
 
     @Test
-    public void testTestIncludedTest() {
-        Link expectedLink1 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".MustRunClassTest", "testOne()",null).withIncluded(true).build(), LinkType.ENTRY_POINT);
-        Link expectedLink2 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".MustRunClassTest", "testTwo()",null).withIncluded(true).build(), LinkType.ENTRY_POINT);
+    public void testTestAlwaysRunTest() {
+        Link expectedLink1 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".AlwaysRunClassTest", "testOne()",null).withAlwaysRun(true).build(), LinkType.ENTRY_POINT);
+        Link expectedLink2 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".AlwaysRunClassTest", "testTwo()",null).withAlwaysRun(true).build(), LinkType.ENTRY_POINT);
 
-        Link expectedLink3 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".MustRunMethodTest", "testOne()",null).withIncluded(false).build(), LinkType.ENTRY_POINT);
-        Link expectedLink4 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".MustRunMethodTest", "testTwo()",null).withIncluded(true).build(), LinkType.ENTRY_POINT);
+        Link expectedLink3 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".AlwaysRunMethodTest", "testOne()",null).withAlwaysRun(false).build(), LinkType.ENTRY_POINT);
+        Link expectedLink4 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".AlwaysRunMethodTest", "testTwo()",null).withAlwaysRun(true).build(), LinkType.ENTRY_POINT);
 
-        testTestClassVisitor(expectedLink1, expectedLink2, expectedLink3, expectedLink4);
+        Link expectedLink5 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".AlwaysRunCategoryClassTest", "testOne()",null).withAlwaysRun(true).build(), LinkType.ENTRY_POINT);
+
+        testTestClassVisitor(expectedLink1, expectedLink2, expectedLink3, expectedLink4, expectedLink5);
     }
 
     @Test

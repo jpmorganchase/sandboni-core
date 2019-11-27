@@ -31,7 +31,7 @@ public class TestSuiteVertex extends TestVertex {
         @Override
         public TestSuiteVertex build(){
             return new TestSuiteVertex(this.actor, this.action, true, this.filePath, this.lineNumbers,
-                    this.filter, this.location, this.ignore, this.externalLocation, this.included, this.runWithOptions, this.relatedTestClasses);
+                    this.filter, this.location, this.ignore, this.externalLocation, this.alwaysRun, this.runWithOptions, this.relatedTestClasses);
         }
     }
 
