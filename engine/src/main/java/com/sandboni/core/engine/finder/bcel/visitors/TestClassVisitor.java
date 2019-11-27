@@ -90,7 +90,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
 
         AnnotationEntry categoryAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.CATEGORY.getDesc());
         if (Objects.nonNull(categoryAnnotation)) {
-            String categoryAnnotationValue = getAnnotationParameter(categoryAnnotation, "value");
+            String categoryAnnotationValue = getAnnotationParameter(categoryAnnotation, VALUE);
             return Objects.nonNull(categoryAnnotationValue) && categoryAnnotationValue.endsWith(context.getAlwaysRunAnnotation());
         }
 
