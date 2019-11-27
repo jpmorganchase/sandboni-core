@@ -49,4 +49,11 @@ public abstract class FinderTestBase {
             Assert.assertTrue("Missing expected link: " + expectedLink.toString(), result.isPresent());
         });
     }
+
+    protected void assertLinksNotExist(Link... notExpectedLinks) {
+        Arrays.stream(notExpectedLinks).forEach(notExpectedLink -> {
+            boolean linkFound = context.getLinks().anyMatch(l -> l.equals(notExpectedLink));
+            Assert.assertFalse(String.format("Non-expected link found: %s", notExpectedLink), linkFound);
+        });
+    }
 }

@@ -113,6 +113,8 @@ public class ResultGenerator {
             case RELATED_TESTS:
             case RELATED_TEST_TO_FILE:
                 return graphOperations.getRelatedTests();
+            case TEST_SUITES:
+                return graphOperations.getTestSuites();
             case UNREACHABLE_CHANGES:
                 return graphOperations.getUnreachableChanges();
             case JIRA_TRACKING:
