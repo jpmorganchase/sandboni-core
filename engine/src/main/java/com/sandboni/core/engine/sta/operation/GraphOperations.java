@@ -173,7 +173,7 @@ public class GraphOperations {
     }
 
     public Set<TestVertex> getIncludedByAnnotationTest() {
-        return operationExecutor.execute(new IncludedTestOperation(allTestsSupplier.get()));
+        return operationExecutor.execute(new AlwaysRunTestOperation(allTestsSupplier.get()));
     }
 
     public Set<TestVertex> getCucumberRunners() {

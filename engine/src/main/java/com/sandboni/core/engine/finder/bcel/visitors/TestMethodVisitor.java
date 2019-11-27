@@ -19,20 +19,20 @@ public class TestMethodVisitor extends MethodVisitorBase {
     final boolean testMethod;
 
     private boolean ignore;
-    private boolean isIncluded;
+    private boolean isAlwaysRun;
 
     TestMethodVisitor(Method m, JavaClass jc, Context c) {
         super(m, jc, c);
         testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
     }
 
-    TestMethodVisitor(Method m, JavaClass jc, Context c, boolean ignore, boolean isClassIncluded) {
+    TestMethodVisitor(Method m, JavaClass jc, Context c, boolean ignore, boolean isAlwaysRunClass) {
         super(m, jc, c);
         this.testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
         this.ignore = testMethod &&
                 (ignore || Objects.nonNull(getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc())));
-        this.isIncluded = testMethod &&
-                (isClassIncluded || getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, context.getIncludeTestAnnotation()) != null);
+        this.isAlwaysRun = testMethod &&
+                (isAlwaysRunClass || getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, context.getAlwaysRunAnnotation()) != null);
     }
 
     public void start() {
@@ -40,7 +40,7 @@ public class TestMethodVisitor extends MethodVisitorBase {
             String methodName = formatMethod(method);
             TestVertex tv = new TestVertex.Builder(javaClass.getClassName(), methodName, context.getCurrentLocation())
                     .withIgnore(ignore)
-                    .withIncluded(isIncluded)
+                    .withAlwaysRun(isAlwaysRun)
                     .build();
             context.addLink(LinkFactory.createInstance(context.getApplicationId(), START_VERTEX, tv, LinkType.ENTRY_POINT));
         }

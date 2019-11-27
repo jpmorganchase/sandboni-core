@@ -28,7 +28,7 @@ public abstract class GraphOperationsTest {
     protected final Vertex testLocation;
     protected final CucumberVertex cucumberTest;
     protected final CucumberVertex affectedCucumberTest;
-    protected final Vertex includeTest;
+    protected final Vertex alwaysRunTest;
     protected final TestVertex runnerTest;
 
     protected GraphOperations graphOperations;
@@ -51,7 +51,7 @@ public abstract class GraphOperationsTest {
         cucumberTest = new CucumberVertex.Builder("featureFile", "scenario1").build();
         affectedCucumberTest = new CucumberVertex.Builder("featureFile", "scenario2").markAffected(true).build();
 
-        includeTest = new TestVertex.Builder("MustRunMethodTest", "testTwo()").withIncluded(true).build();
+        alwaysRunTest = new TestVertex.Builder("AlwaysRunMethodTest", "testTwo()").withAlwaysRun(true).build();
 
         runnerTest = new TestVertex.Builder("com.sandboni.core.engine.scenario.CucumberRunner", "runWith", context.getCurrentLocation()).withRunWithOptions("src/test/resources/features/").build();
     }
@@ -67,7 +67,7 @@ public abstract class GraphOperationsTest {
         context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, cucumberTest, ENTRY_POINT));
         context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, affectedCucumberTest, ENTRY_POINT));
         context.addLink(LinkFactory.createInstance(APP_ID, affectedCucumberTest, modified, LinkType.CUCUMBER_TEST));
-        context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, includeTest, ENTRY_POINT));
+        context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, alwaysRunTest, ENTRY_POINT));
         context.addLink(LinkFactory.createInstance(APP_ID, runnerTest, CUCUMBER_RUNNER_VERTEX, LinkType.CUCUMBER_RUNNER));
 
         builder = new Builder(context);

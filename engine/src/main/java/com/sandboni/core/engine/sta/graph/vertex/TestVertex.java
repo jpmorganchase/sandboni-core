@@ -14,18 +14,18 @@ public class TestVertex extends Vertex {
 
     private final boolean ignore;
     private boolean externalLocation;
-    private boolean included;
+    private boolean alwaysRun;
     private String runWithOptions;
 
     @SuppressWarnings("squid:S00107") // private constructor used only in Builder
     protected TestVertex(String actor, String action, boolean isSpecial, String filePath,
                        List<Integer> lineNumbers, String filter,
                        String location, boolean ignore,
-                       boolean externalLocation, boolean included, String runWithOptions) {
+                       boolean externalLocation, boolean alwaysRun, String runWithOptions) {
         super(actor, action, isSpecial, filePath, lineNumbers, filter, location);
         this.ignore = ignore;
         this.externalLocation = externalLocation;
-        this.included = included;
+        this.alwaysRun = alwaysRun;
         this.runWithOptions = runWithOptions;
     }
 
@@ -33,7 +33,7 @@ public class TestVertex extends Vertex {
 
         protected boolean ignore;
         boolean externalLocation;
-        boolean included;
+        boolean alwaysRun;
         String runWithOptions;
 
         public AbstractTestVertexBuilder(String actor, String action, String location) {
@@ -49,8 +49,8 @@ public class TestVertex extends Vertex {
             return getThis();
         }
 
-        public T withIncluded(boolean included) {
-            this.included = included;
+        public T withAlwaysRun(boolean alwaysRun) {
+            this.alwaysRun = alwaysRun;
             return getThis();
         }
 
@@ -67,7 +67,7 @@ public class TestVertex extends Vertex {
         @Override
         public TestVertex build() {
             return new TestVertex(this.actor, this.action, this.isSpecial, this.filePath, this.lineNumbers,
-                    this.filter, this.location, this.ignore, this.externalLocation, this.included, this.runWithOptions);
+                    this.filter, this.location, this.ignore, this.externalLocation, this.alwaysRun, this.runWithOptions);
         }
 
         protected abstract T getThis();
