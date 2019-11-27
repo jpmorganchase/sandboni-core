@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.jpmorganchase.sandboni</groupId>
     <artifactId>sandboni-core</artifactId>
-    <version>1.1.14-SNAPSHOT</version>
+    <version>1.1.15-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -77,8 +77,6 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
-
-        <!-- Dependency Check -->
         <owasp.suppressionFile>suppressed.xml</owasp.suppressionFile>
     </properties>
 

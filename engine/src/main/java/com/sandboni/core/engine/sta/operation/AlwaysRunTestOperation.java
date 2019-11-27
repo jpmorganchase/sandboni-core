@@ -19,7 +19,7 @@ public class AlwaysRunTestOperation extends AbstractGraphOperation<SetResult<Tes
 
     @Override
     public SetResult<TestVertex> execute(Graph<Vertex, Edge> graph) {
-        Set<TestVertex> includedTests = allTests.stream().filter(TestVertex::isAlwaysRun).collect(Collectors.toSet());
-        return new SetResult<>(includedTests);
+        Set<TestVertex> tests = allTests.stream().filter(TestVertex::isAlwaysRun).collect(Collectors.toSet());
+        return new SetResult<>(tests);
     }
 }
