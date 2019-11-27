@@ -54,7 +54,7 @@ public class Application {
                 .testLocation(getValue(SystemProperties.TEST_LOCATION).split(","))
                 .dependencies(getValue(SystemProperties.DEPENDENCIES).split(","))
                 .outputFormat(getValue(SystemProperties.OUTPUT_FORMAT))
-                .alwaysRunAnnotation(getValue(SystemProperties.INCLUDE_ANNOTATION))
+                .alwaysRunAnnotation(getValue(SystemProperties.ALWAYS_RUN_ANNOTATION))
                 .build();
 
         log.debug("[arguments collected] {}", arguments);
