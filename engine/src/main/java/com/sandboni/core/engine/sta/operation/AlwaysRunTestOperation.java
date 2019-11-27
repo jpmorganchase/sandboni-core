@@ -9,17 +9,17 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class IncludedTestOperation extends AbstractGraphOperation<SetResult<TestVertex>> {
+public class AlwaysRunTestOperation extends AbstractGraphOperation<SetResult<TestVertex>> {
     private final Set<TestVertex> allTests;
 
-    public IncludedTestOperation(Set<TestVertex> allTests) {
+    public AlwaysRunTestOperation(Set<TestVertex> allTests) {
         Objects.requireNonNull(allTests, INVALID_ARGUMENT);
         this.allTests = allTests;
     }
 
     @Override
     public SetResult<TestVertex> execute(Graph<Vertex, Edge> graph) {
-        Set<TestVertex> includedTests = allTests.stream().filter(TestVertex::isIncluded).collect(Collectors.toSet());
+        Set<TestVertex> includedTests = allTests.stream().filter(TestVertex::isAlwaysRun).collect(Collectors.toSet());
         return new SetResult<>(includedTests);
     }
 }

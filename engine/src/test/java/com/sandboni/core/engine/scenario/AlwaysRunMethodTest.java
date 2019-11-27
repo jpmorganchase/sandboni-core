@@ -4,14 +4,14 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-@IncludeTest
-public class MustRunClassTest {
+public class AlwaysRunMethodTest {
     @Test
     public void testOne() {
         assertTrue(true);
     }
 
     @Test
+    @AlwaysRun
     public void testTwo() {
         assertTrue(true);
     }

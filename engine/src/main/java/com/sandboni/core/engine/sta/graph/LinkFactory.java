@@ -31,8 +31,8 @@ public class LinkFactory {
     }
 
     private static void mergeTestVertex(Vertex oldVertex, Vertex newVertex) {
-        if (newVertex instanceof TestVertex && oldVertex instanceof TestVertex && ((TestVertex) newVertex).isIncluded()) {
-            ((TestVertex) oldVertex).setIncluded(Boolean.TRUE);
+        if (newVertex instanceof TestVertex && oldVertex instanceof TestVertex && ((TestVertex) newVertex).isAlwaysRun()) {
+            ((TestVertex) oldVertex).setAlwaysRun(Boolean.TRUE);
         }
     }
 

@@ -8,8 +8,8 @@ import static org.junit.Assert.*;
 public class UnitTestsOperationTest extends GraphOperationsTest  {
     @Test
     public void testExecute() {
-        UnitTestsOperation includedTestOperation = new UnitTestsOperation(graphOperations.getAllTests());
-        SetResult<TestVertex> result = includedTestOperation.execute(builder.getGraph());
+        UnitTestsOperation operation = new UnitTestsOperation(graphOperations.getAllTests());
+        SetResult<TestVertex> result = operation.execute(builder.getGraph());
 
         assertNotNull(result);
         assertEquals(3, result.get().size());
@@ -17,8 +17,8 @@ public class UnitTestsOperationTest extends GraphOperationsTest  {
 
     @Test
     public void testExecuteWithExternal() {
-        UnitTestsOperation includedTestOperation = new UnitTestsOperation(graphOperations.getAllTests(), true);
-        SetResult<TestVertex> result = includedTestOperation.execute(builder.getGraph());
+        UnitTestsOperation operation = new UnitTestsOperation(graphOperations.getAllTests(), true);
+        SetResult<TestVertex> result = operation.execute(builder.getGraph());
 
         assertNotNull(result);
         assertEquals(0, result.get().size());
