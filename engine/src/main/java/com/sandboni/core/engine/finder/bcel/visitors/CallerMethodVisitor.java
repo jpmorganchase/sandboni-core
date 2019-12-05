@@ -78,7 +78,20 @@ public class CallerMethodVisitor extends CallerFieldOrMethodVisitor {
 
         Optional<BootstrapMethods> bootstrapMethods = Arrays.stream(this.javaClass.getAttributes()).flatMap(ofType(BootstrapMethods.class)).findFirst();
         if (bootstrapMethods.isPresent()) {
-            int[] bootstrapMethodArguments = bootstrapMethods.get().getBootstrapMethods()[constantInvokeDynamic.getBootstrapMethodAttrIndex()].getBootstrapArguments();
+
+            BootstrapMethod bootstrapMethod = bootstrapMethods.get().getBootstrapMethods()[constantInvokeDynamic.getBootstrapMethodAttrIndex()];
+            String interfaceClassName = null;
+            String interfaceMethodName = null;
+            if (context.isEnableExperimental() && cp.getConstant(((ConstantMethodHandle) cp.getConstant(bootstrapMethod.getBootstrapMethodRef())).getReferenceKind()) instanceof ConstantInterfaceMethodref) {
+                // get the original name of the interface and method to be implemented by lambda
+                ConstantInterfaceMethodref interfaceMethodRef = (ConstantInterfaceMethodref) cp.getConstant(((ConstantMethodHandle) cp.getConstant(bootstrapMethod.getBootstrapMethodRef())).getReferenceKind());
+                interfaceClassName = ((ConstantUtf8) cp.getConstant(((ConstantClass) cp.getConstant(interfaceMethodRef.getClassIndex())).getNameIndex()))
+                        .getBytes().replace('/', '.');
+                ConstantNameAndType methodNameType = (ConstantNameAndType) cp.getConstant(interfaceMethodRef.getNameAndTypeIndex());
+                interfaceMethodName = formatMethodName(getMethodNameAndType(methodNameType));
+            }
+
+            int[] bootstrapMethodArguments = bootstrapMethod.getBootstrapArguments();
             for (int a : bootstrapMethodArguments) {
                 if (cp.getConstant(a) instanceof ConstantMethodHandle) {
                     ConstantMethodHandle cmh = (ConstantMethodHandle) cp.getConstant(a);
@@ -87,17 +100,34 @@ public class CallerMethodVisitor extends CallerFieldOrMethodVisitor {
                     String typeName = ccp.getClass(cp.getConstantPool());
 
                     ConstantNameAndType cnt = (ConstantNameAndType) cp.getConstant(ccp.getNameAndTypeIndex());
-                    String methodName = Utility.methodSignatureToString(cnt.getSignature(cp.getConstantPool()), cnt.getName(cp.getConstantPool()), "", false, new LocalVariableTable(0, 0, new LocalVariable[]{}, cp.getConstantPool()));
+                    String methodName = getMethodNameAndType(cnt);
 
                     // trimming return type and remove space
-                    methodName = methodName.substring(methodName.indexOf(' ') + 1).replace(" ", "");
+                    methodName = formatMethodName(methodName);
                     addLink(LinkFactory.createInstance(
                             context.getApplicationId(), currentMethodVertex,
                             new Vertex.Builder(typeName, methodName).build(),
                             LinkType.DYNAMIC_CALL));
+
+                    if (context.isEnableExperimental() && interfaceClassName != null && interfaceMethodName != null) {
+                        addLink(LinkFactory.createInstance(
+                                context.getApplicationId(),
+                                new Vertex.Builder(interfaceClassName, interfaceMethodName).build(),
+                                new Vertex.Builder(typeName, methodName).build(),
+                                LinkType.DYNAMIC_CALL));
+                    }
                 }
             }
         }
+    }
+
+    private String getMethodNameAndType(ConstantNameAndType methodNameType) {
+        return Utility.methodSignatureToString(methodNameType.getSignature(cp.getConstantPool()), methodNameType.getName(cp.getConstantPool()),
+                "", false, new LocalVariableTable(0, 0, new LocalVariable[]{}, cp.getConstantPool()));
+    }
+
+    private String formatMethodName(String methodName) {
+        return methodName.substring(methodName.indexOf(' ') + 1).replace(" ", "");
     }
 
     private boolean isInvokerInterfaceController(String className) {

@@ -28,10 +28,12 @@ public class Context {
     private ChangeScope<Change> changeScope;
     private Collection<String> srcLocations;
     private Collection<String> testLocations;
+    private Collection<String> dependencyJars;
     private String classPath;
     private String applicationId;
     private String alwaysRunAnnotation;
     private String seloniFilepath;
+    private boolean enableExperimental;
 
     private Set<LinkType> adoptedLinkTypes;
 
@@ -49,31 +51,26 @@ public class Context {
 
     // Visible for testing only
     public Context(String[] srcLocation, String[] testLocation, String filter, ChangeScope<Change> changes, String seloniFilepath) {
-        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[0], filter, changes, null, null, seloniFilepath);
+        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[0], filter, changes, null, seloniFilepath, false);
     }
 
     @SuppressWarnings("squid:S00107")
     public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
-                   String filter, ChangeScope<Change> changes, String includeTestAnnotation, String seloniFilepath) {
-        this(applicationId == null ? DEFAULT_APPLICATION_ID : applicationId,
-                srcLocation, testLocation, dependencies, filter, changes, null, includeTestAnnotation, seloniFilepath);
-    }
-
-    @SuppressWarnings("squid:S00107")
-    public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
-                   String filter, ChangeScope<Change> changes, String currentLocation, String includeTestAnnotation, String seloniFilepath) {
-        this.applicationId = applicationId;
+                   String filter, ChangeScope<Change> changes, String includeTestAnnotation, String seloniFilepath,
+                   boolean enableExperimental) {
+        this.applicationId = applicationId == null ? DEFAULT_APPLICATION_ID : applicationId;
         this.srcLocations = getCollection(srcLocation);
         this.testLocations = getCollection(testLocation);
+        this.dependencyJars = getCollection(dependencies);
 
         this.classPath = getExecutionClasspath(srcLocations, testLocations, getCollection(dependencies));
 
         this.filter = filter;
         this.changeScope = changes;
         this.adoptedLinkTypes = new HashSet<>();
-        this.currentLocation = currentLocation;
         this.alwaysRunAnnotation = StringUtil.isEmptyOrNull(includeTestAnnotation) ? ALWAYS_RUN_ANNOTATION : includeTestAnnotation;
         this.seloniFilepath = seloniFilepath;
+        this.enableExperimental = enableExperimental;
     }
 
     private Collection<String> getCollection(String[] array) {
@@ -107,6 +104,7 @@ public class Context {
         this.adoptedLinkTypes = new HashSet<>();
         this.alwaysRunAnnotation = source.alwaysRunAnnotation;
         this.seloniFilepath = source.seloniFilepath;
+        this.enableExperimental = source.enableExperimental;
     }
 
     public Context getLocalContext() {
@@ -156,6 +154,13 @@ public class Context {
             currentLocation = s;
             consumer.accept(currentLocation);
         });
+
+        if (isEnableExperimental()) {
+            dependencyJars.forEach(s -> {
+                currentLocation = s;
+                consumer.accept(currentLocation);
+            });
+        }
     }
 
     public boolean isAdoptedLinkType(LinkType...linkTypes){
@@ -180,5 +185,9 @@ public class Context {
 
     public String getSeloniFilepath() {
         return seloniFilepath;
+    }
+
+    public boolean isEnableExperimental() {
+        return enableExperimental;
     }
 }

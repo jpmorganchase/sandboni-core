@@ -27,8 +27,8 @@ import static org.junit.Assert.*;
 
 public class BcelFinderConcurrentTest extends FinderTestBase {
 
-    private static final String TEST_LOCATION = "./target/test-classes/com/sandboni/core/scenario/concurrent";
-    private static final String TEST_PACKAGE = "com.sandboni.core.scenario.concurrent";
+    private static final String TEST_LOCATION = "./target/test-classes/com/sandboni/core/engine/scenario/concurrent";
+    private static final String TEST_PACKAGE = "com.sandboni.core.engine.scenario.concurrent";
     private static final int THREADS = 200;
 
     private ClassVisitor affectedClassVisitor;
