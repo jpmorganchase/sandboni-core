@@ -115,8 +115,12 @@ public class ResultGenerator {
                 return graphOperations.getRelatedTests();
             case UNREACHABLE_CHANGES:
                 return graphOperations.getUnreachableChanges();
+            case ALL_REACHABLE_EDGES:
+                return graphOperations.getAllReachableEdges();
             case JIRA_TRACKING:
                 return graphOperations.getJiraTracking();
+            case JIRA_RELATED_TESTS:
+                return graphOperations.getJiraRelatedTests();
             case CHANGE_STATS:
                 return graphOperations.getChangeStats();
             case FORMATTED_CHANGE_STATS:
