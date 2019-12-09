@@ -8,6 +8,10 @@ public class JsonEntry {
     private String className;
     private String testName;
     private String date;
+    private String type;
+    private String status;
+    private String lineNumber;
+    private String filepath;
 
     public List<String> getUrls() {
         return Collections.unmodifiableList(urls);
@@ -20,6 +24,23 @@ public class JsonEntry {
     public String getTestName() {
         return testName;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getLineNumber() {
+        return lineNumber;
+    }
+
+    public String getFilepath() {
+        return filepath;
+    }
+
 
     public String getDate() {
         return date;

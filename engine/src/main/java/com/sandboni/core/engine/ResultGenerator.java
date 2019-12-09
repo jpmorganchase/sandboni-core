@@ -22,8 +22,8 @@ public class ResultGenerator {
     private static final Logger log = LoggerFactory.getLogger(ResultGenerator.class);
 
     public static final String TESTS_OUTPUT = "%s/sandboni-tests.%s";
-    public static final String CHANGE_STATS_OUTPUT = "%s/sandboni-change-stats.%s";
-    public static final String JIRA_TRACKING_FILE_NAME = "sandboni-jira-connect.csv";
+    private static final String CHANGE_STATS_OUTPUT = "%s/sandboni-change-stats.%s";
+    private static final String JIRA_TRACKING_FILE_NAME = "sandboni-jira-connect.csv";
 
     private final Result result;
     private final Arguments arguments;
@@ -106,6 +106,8 @@ public class ResultGenerator {
         switch (rc) {
             case ALL_TESTS:
                 return graphOperations.getAllTests();
+            case ALL_EXTERNAL_TESTS:
+                return graphOperations.getAllExternalTests();
             case DISCONNECTED_TESTS:
                 return graphOperations.getDisconnectedTests();
             case CHANGES:

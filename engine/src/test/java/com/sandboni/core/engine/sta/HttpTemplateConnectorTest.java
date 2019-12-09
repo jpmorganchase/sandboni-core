@@ -77,7 +77,7 @@ public class HttpTemplateConnectorTest {
     @Test
     public void testIsMatchTrivialCase() {
         HttpTemplateConnector connector = new HttpTemplateConnector();
-        Assert.assertFalse(connector.isMatch("/action", "/action"));
+        Assert.assertTrue(connector.isMatch("/action", "/action"));
     }
 
     @Test

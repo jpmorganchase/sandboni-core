@@ -3,6 +3,7 @@ package com.sandboni.core.engine.result;
 public enum ResultContent {
 
     ALL_TESTS,
+    ALL_EXTERNAL_TESTS,
     RELATED_TESTS,
     TEST_SUITES,
     DISCONNECTED_TESTS,

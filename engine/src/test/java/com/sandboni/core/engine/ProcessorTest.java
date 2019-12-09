@@ -134,6 +134,12 @@ public class ProcessorTest {
     }
 
     @Test
+    public void testGetAllExternalTests() {
+        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_TESTS).get();
+        assertEquals("Should contain no external tests", 0, result.size());
+    }
+
+    @Test
     public void testJavaClassPathIsNotModified() {
         String currentJavaClasspath = System.getProperty(JAVA_CLASS_PATH, "");
         processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);

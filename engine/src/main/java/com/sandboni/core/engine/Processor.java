@@ -9,6 +9,7 @@ import com.sandboni.core.engine.sta.Builder;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.connector.Connector;
 import com.sandboni.core.engine.sta.operation.GraphOperations;
+import com.sandboni.core.engine.utils.StringUtil;
 import com.sandboni.core.scm.GitInterface;
 import com.sandboni.core.scm.exception.SourceControlException;
 import com.sandboni.core.scm.proxy.filter.FileExtensions;
@@ -127,17 +128,25 @@ public class Processor {
             log.info("There are no changes in this project");
             return new Builder(context, FilterIndicator.NONE);
         } else if (proceed(context.getChangeScope())) {
-            context.getChangeScope().include(FileExtensions.JAVA, FileExtensions.FEATURE);
             log.info("Found changes: {}", context.getChangeScope());
+            log.info("Sandboni will include only {} and {} files for filtering", FileExtensions.JAVA.extension(), FileExtensions.FEATURE.extension());
+
+            context.getChangeScope().include(FileExtensions.JAVA, FileExtensions.FEATURE);
 
             Instant start = Instant.now();
             finders.parallelStream().forEach(f -> f.findSafe(context));
             Instant finish = Instant.now();
             log.debug("....Finders execution total time: {}", Duration.between(start, finish).toMillis());
+
             start = Instant.now();
             connectors.parallelStream().filter(c -> c.proceed(context)).forEach(c -> c.connect(context));
             finish = Instant.now();
+
             log.debug("....Connectors execution total time: {}", Duration.between(start, finish).toMillis());
+
+            if (!StringUtil.isEmptyOrNull(System.getProperty(SystemProperties.SELONI_FILEPATH.getName()))){
+                return new Builder(context, FilterIndicator.SELECTIVE_EXTERNAL);
+            }
         } else if (isRunAllExternalTests() && isIntegrationStage()) {
             log.info("Running All External Tests");
             finders.parallelStream().forEach(f -> f.findSafe(context));
