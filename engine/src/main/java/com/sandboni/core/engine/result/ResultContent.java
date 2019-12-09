@@ -4,6 +4,7 @@ public enum ResultContent {
 
     ALL_TESTS,
     RELATED_TESTS,
+    TEST_SUITES,
     DISCONNECTED_TESTS,
     CHANGES,
     UNREACHABLE_CHANGES,
@@ -22,7 +23,8 @@ public enum ResultContent {
     RELATED_EXTERNAL_CUCUMBER,
     ALL_EXTERNAL_UNIT,
     ALL_EXTERNAL_CUCUMBER,
-    INCLUDED_BY_ANNOTATION;
+    INCLUDED_BY_ANNOTATION,
+    CUCUMBER_RUNNERS;
 
     private boolean outputToFile;
 

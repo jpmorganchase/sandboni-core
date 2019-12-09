@@ -30,9 +30,11 @@ public class Application {
 
         Set<TestVertex> relatedTests = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS).get();
         Set<TestVertex> disconnectedTests = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_TESTS).get();
+        Set<TestVertex> testSuites = processor.getResultGenerator().generate(ResultContent.TEST_SUITES).get();
 
         log.info("Related tests to execute: {}", relatedTests);
         log.info("Disconnected tests to execute: {}", disconnectedTests);
+        log.info("Related test suites: {}", testSuites);
     }
 
     //synchronized was added because of SonarQube demand
@@ -52,7 +54,7 @@ public class Application {
                 .testLocation(getValue(SystemProperties.TEST_LOCATION).split(","))
                 .dependencies(getValue(SystemProperties.DEPENDENCIES).split(","))
                 .outputFormat(getValue(SystemProperties.OUTPUT_FORMAT))
-                .includeAnnotation(getValue(SystemProperties.INCLUDE_ANNOTATION))
+                .alwaysRunAnnotation(getValue(SystemProperties.ALWAYS_RUN_ANNOTATION))
                 .build();
 
         log.debug("[arguments collected] {}", arguments);

@@ -10,11 +10,8 @@ import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import com.sandboni.core.scm.scope.ChangeScopeImpl;
 import org.junit.Before;
 
-import java.util.Collections;
-
 import static com.sandboni.core.engine.sta.graph.LinkType.ENTRY_POINT;
-import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.END_VERTEX;
-import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.*;
 
 
 public abstract class GraphOperationsTest {
@@ -31,7 +28,8 @@ public abstract class GraphOperationsTest {
     protected final Vertex testLocation;
     protected final CucumberVertex cucumberTest;
     protected final CucumberVertex affectedCucumberTest;
-    protected final Vertex includeTest;
+    protected final Vertex alwaysRunTest;
+    protected final TestVertex runnerTest;
 
     protected GraphOperations graphOperations;
     protected Builder builder;
@@ -53,12 +51,13 @@ public abstract class GraphOperationsTest {
         cucumberTest = new CucumberVertex.Builder("featureFile", "scenario1").build();
         affectedCucumberTest = new CucumberVertex.Builder("featureFile", "scenario2").markAffected(true).build();
 
-        includeTest = new TestVertex.Builder("MustRunMethodTest", "testTwo()").withIncluded(true).build();
+        alwaysRunTest = new TestVertex.Builder("AlwaysRunMethodTest", "testTwo()").withAlwaysRun(true).build();
+
+        runnerTest = new TestVertex.Builder("com.sandboni.core.engine.scenario.CucumberRunner", "runWith", context.getCurrentLocation()).withRunWithOptions("src/test/resources/features/").build();
     }
 
     @Before
     public void setUp() {
-
         context.addLink(LinkFactory.createInstance(APP_ID, caller, modified, LinkType.METHOD_CALL));
         context.addLink(LinkFactory.createInstance(APP_ID, callerTest, caller, LinkType.METHOD_CALL));
         context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, callerTest, ENTRY_POINT));
@@ -68,7 +67,8 @@ public abstract class GraphOperationsTest {
         context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, cucumberTest, ENTRY_POINT));
         context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, affectedCucumberTest, ENTRY_POINT));
         context.addLink(LinkFactory.createInstance(APP_ID, affectedCucumberTest, modified, LinkType.CUCUMBER_TEST));
-        context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, includeTest, ENTRY_POINT));
+        context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, alwaysRunTest, ENTRY_POINT));
+        context.addLink(LinkFactory.createInstance(APP_ID, runnerTest, CUCUMBER_RUNNER_VERTEX, LinkType.CUCUMBER_RUNNER));
 
         builder = new Builder(context);
 

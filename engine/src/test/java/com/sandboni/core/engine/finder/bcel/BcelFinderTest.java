@@ -21,12 +21,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashSet;
-
 import static com.sandboni.core.engine.MockChangeDetector.PACKAGE_NAME;
-import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.END_VERTEX;
-import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
+import static com.sandboni.core.engine.MockChangeDetector.TEST_LOCATION;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.*;
 
 public class BcelFinderTest extends FinderTestBase {
     private static final String CALLER_ACTOR_VERTEX = PACKAGE_NAME + ".Caller";
@@ -627,13 +624,23 @@ public class BcelFinderTest extends FinderTestBase {
     }
 
     @Test
-    public void testTestIncludedTest() {
-        Link expectedLink1 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".MustRunClassTest", "testOne()",null).withIncluded(true).build(), LinkType.ENTRY_POINT);
-        Link expectedLink2 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".MustRunClassTest", "testTwo()",null).withIncluded(true).build(), LinkType.ENTRY_POINT);
+    public void testTestAlwaysRunTest() {
+        Link expectedLink1 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".AlwaysRunClassTest", "testOne()",null).withAlwaysRun(true).build(), LinkType.ENTRY_POINT);
+        Link expectedLink2 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".AlwaysRunClassTest", "testTwo()",null).withAlwaysRun(true).build(), LinkType.ENTRY_POINT);
 
-        Link expectedLink3 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".MustRunMethodTest", "testOne()",null).withIncluded(false).build(), LinkType.ENTRY_POINT);
-        Link expectedLink4 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".MustRunMethodTest", "testTwo()",null).withIncluded(true).build(), LinkType.ENTRY_POINT);
+        Link expectedLink3 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".AlwaysRunMethodTest", "testOne()",null).withAlwaysRun(false).build(), LinkType.ENTRY_POINT);
+        Link expectedLink4 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".AlwaysRunMethodTest", "testTwo()",null).withAlwaysRun(true).build(), LinkType.ENTRY_POINT);
 
-        testTestClassVisitor(expectedLink1, expectedLink2, expectedLink3, expectedLink4);
+        Link expectedLink5 = newLink(START_VERTEX, new TestVertex.Builder(PACKAGE_NAME + ".AlwaysRunCategoryClassTest", "testOne()",null).withAlwaysRun(true).build(), LinkType.ENTRY_POINT);
+
+        testTestClassVisitor(expectedLink1, expectedLink2, expectedLink3, expectedLink4, expectedLink5);
+    }
+
+    @Test
+    public void testCucumberRunnerDetection() {
+        Link expectedLink = newLink(new TestVertex.Builder(PACKAGE_NAME + ".CucumberRunner", "runWith", TEST_LOCATION).build(),
+                CUCUMBER_RUNNER_VERTEX,
+                LinkType.CUCUMBER_RUNNER);
+        testTestClassVisitor(expectedLink);
     }
 }

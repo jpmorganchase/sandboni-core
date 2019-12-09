@@ -6,7 +6,12 @@ public enum Annotations {
         IGNORE("org/junit/Ignore"),
         BEFORE("Before"),
         AFTER("After"),
-        TEST("Test");
+        TEST("Test"),
+        CUCUMBER_OPTIONS("cucumber/api/CucumberOptions"),
+        RUN_WITH("org/junit/runner/RunWith"),
+        RUN_WITH_VALUE_SUITE("org/junit/runners/Suite"),
+        SUITE_CLASSES("Suite$SuiteClasses"),
+        CATEGORY("categories/Category");
 
         private String desc;
 

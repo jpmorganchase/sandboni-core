@@ -35,7 +35,7 @@ The code is in a [multi-module](https://maven.apache.org/guides/mini/guide-multi
 ## Documentation
 
 * [Quickstart](https://github.com/jpmorganchase/sandboni-core/wiki/Quickstart)
-* [Design](https://github.com/jpmorganchase/sandboni-core/wiki/Sandboni-Design)
+* [Design](https://github.com/jpmorganchase/sandboni-core/wiki/Design)
 * [Contributing](https://github.com/jpmorganchase/sandboni-core/wiki/Contributing)
 
 ## Contributing

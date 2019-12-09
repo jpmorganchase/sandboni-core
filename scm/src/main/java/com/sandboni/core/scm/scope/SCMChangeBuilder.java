@@ -57,7 +57,9 @@ public class SCMChangeBuilder{
     public Change build() {
         final Change change;
 
-        if (isPropertyFile.apply(path)){
+        if (changeType == ChangeType.DELETE) {
+            change = new SCMChange(path, changedLines, changeType);
+        } else if (isPropertyFile.apply(path)){
             Set<String> keys = RawUtil.grepKeys(fileContent, changedLines);
             change = new SCMChangeInProperties(path, changedLines, keys, changeType);
         } else if (isBuildFile.apply(path)) {
@@ -70,7 +72,7 @@ public class SCMChangeBuilder{
             }
 
             change = new SCMChangeInBuildFile(path, changedLines, changeType, fileContent, model);
-        }else{
+        } else{
             change = new SCMChange(path, changedLines, changeType);
         }
         return change;

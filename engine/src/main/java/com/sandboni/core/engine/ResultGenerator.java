@@ -113,6 +113,8 @@ public class ResultGenerator {
             case RELATED_TESTS:
             case RELATED_TEST_TO_FILE:
                 return graphOperations.getRelatedTests();
+            case TEST_SUITES:
+                return graphOperations.getTestSuites();
             case UNREACHABLE_CHANGES:
                 return graphOperations.getUnreachableChanges();
             case ALL_REACHABLE_EDGES:
@@ -143,6 +145,8 @@ public class ResultGenerator {
                 return graphOperations.getAllExternalCucumberTests();
             case INCLUDED_BY_ANNOTATION:
                 return graphOperations.getIncludedByAnnotationTest();
+            case CUCUMBER_RUNNERS:
+                return graphOperations.getCucumberRunners();
             default:
                  return null;
         }

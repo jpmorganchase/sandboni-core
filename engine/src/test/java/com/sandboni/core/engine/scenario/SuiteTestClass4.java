@@ -4,15 +4,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-@IncludeTest
-public class MustRunClassTest {
+public class SuiteTestClass4 {
+
     @Test
-    public void testOne() {
+    public void testPrint(){
+        System.out.println(this.getClass().getSimpleName());
+        Callee.doStuffStatic();
         assertTrue(true);
     }
 
-    @Test
-    public void testTwo() {
-        assertTrue(true);
-    }
 }
