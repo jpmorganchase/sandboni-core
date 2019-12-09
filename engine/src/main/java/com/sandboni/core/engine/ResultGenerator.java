@@ -111,7 +111,6 @@ public class ResultGenerator {
             case CHANGES:
                 return graphOperations.getChangesMap();
             case RELATED_TESTS:
-                return graphOperations.getRelatedTests();
             case RELATED_TEST_TO_FILE:
                 return graphOperations.getRelatedTests();
             case TEST_SUITES:
