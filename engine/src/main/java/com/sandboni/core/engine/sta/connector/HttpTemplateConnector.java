@@ -1,7 +1,6 @@
 package com.sandboni.core.engine.sta.connector;
 
 import com.google.gson.Gson;
-import com.sandboni.core.engine.SystemProperties;
 import com.sandboni.core.engine.contract.JsonEntry;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.Link;
@@ -45,7 +44,7 @@ public class HttpTemplateConnector implements Connector {
         );
 
         //handling Seloni json entries
-        JsonEntry[] seloniEntries = getEntriesFromSeloniFile();
+        JsonEntry[] seloniEntries = getEntriesFromSeloniFile(context);
 
         Arrays.stream(seloniEntries).forEach(entry -> {
             Vertex vertex = createVertex(entry);
@@ -54,7 +53,7 @@ public class HttpTemplateConnector implements Connector {
                 httpHandlers.stream()
                         .filter(l -> isMatch(url, l.getCaller().getAction())).forEach(link -> {
                     context.addLink(LinkFactory.createInstance(context.getApplicationId(), vertex, link.getCaller(), LinkType.HTTP_MAP_SELONI));
-                    log.debug("[external link] `{}`: {} -> {}  :: {} -> {}", url, link.getCaller().getActor(), link.getCaller().getAction(), link.getCallee().getActor(), link.getCallee().getAction());
+                    log.debug("external link: `{}`: {} -> {}  :: {} -> {}", url, link.getCaller().getActor(), link.getCaller().getAction(), link.getCallee().getActor(), link.getCallee().getAction());
                 })
             );
         });
@@ -111,15 +110,11 @@ public class HttpTemplateConnector implements Connector {
         }
     }
 
-    private JsonEntry[] getEntriesFromSeloniFile() {
-        String filePath = System.getProperty(SystemProperties.SELONI_FILEPATH.getName());
+    private JsonEntry[] getEntriesFromSeloniFile(Context context) {
+        String filePath = context.getSeloniFilepath();
         if (!Objects.isNull(filePath)){
             log.info("'seloni.filepath' set to '{}'", filePath);
-            File file = new File(filePath);
-            if (file.exists()){
-                return parseFile(file);
-            }
-            log.warn("No Seloni file was found in: {} ", filePath);
+            return parseFile(new File(filePath));
         }
         return new JsonEntry[0];
     }

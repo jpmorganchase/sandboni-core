@@ -16,18 +16,16 @@ public class AllExternalTestsOperationTest extends GraphOperationsTest {
     public void getAllExternalUnitTests() {
         Set<TestVertex> allExternalTests = graphOperations.getAllExternalUnitTests();
         assertNotNull(allExternalTests);
-        assertEquals(3, allExternalTests.size());
-        assertTrue(allExternalTests.stream().anyMatch(c -> c.getActor().equals("ClassBTest") && c.getAction().equals("testCallerMethod()")));
-        assertTrue(allExternalTests.stream().anyMatch(c -> c.getActor().equals("ClassBTest") && c.getAction().equals("testDisconnectedFromCallerMethod()")));
+        assertEquals(1, allExternalTests.size());
+        assertTrue(allExternalTests.stream().anyMatch(c -> c.getActor().equals("ClassBTest123") && c.getAction().equals("testCallerMethod123()")));
     }
 
     @Test
     public void getAllExternalCucumberTests() {
         Set<CucumberVertex> allExternalTests = graphOperations.getAllExternalCucumberTests();
         assertNotNull(allExternalTests);
-        assertEquals(2, allExternalTests.size());
-        assertTrue(allExternalTests.stream().anyMatch(c -> c.getActor().equals("featureFile") && c.getAction().equals("scenario2")));
-        assertTrue(allExternalTests.stream().anyMatch(c -> c.getActor().equals("featureFile") && c.getAction().equals("scenario1")));
+        assertEquals(1, allExternalTests.size());
+        assertTrue(allExternalTests.stream().anyMatch(c -> c.getActor().equals("featureFile123") && c.getAction().equals("scenario123")));
     }
 
     @Test
@@ -37,7 +35,7 @@ public class AllExternalTestsOperationTest extends GraphOperationsTest {
         Map<String, Set<String>> allExternalTests = allExternalTestsResult.get();
 
         assertNotNull(allExternalTests);
-        assertEquals(3, allExternalTests.size());
+        assertEquals(5, allExternalTests.size());
         Set<String> classBTest = allExternalTests.get("ClassBTest");
         assertNotNull(classBTest);
         assertEquals(2, classBTest.size());

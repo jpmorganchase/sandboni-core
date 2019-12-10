@@ -14,7 +14,6 @@ import org.jgrapht.Graph;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class GraphOperations {
 
@@ -46,18 +45,15 @@ public class GraphOperations {
         return allTestsSupplier.get();
     }
 
-    public Set<TestVertex> getAllExternalTests(){
-        return getAllTests().stream().filter(TestVertex::isExternalLocation).collect(Collectors.toSet());
-    }
     private Set<TestVertex> getAllTestsImpl() {
         return operationExecutor.execute(new AllTestsOperation());
     }
 
     public Set<TestVertex> getAllExternalUnitTests() {
-        return operationExecutor.execute(new UnitTestsOperation(allExternalTestsSupplier.get()));
+        return operationExecutor.execute(new UnitTestsOperation(allExternalTestsSupplier.get(), true));
     }
     public Set<CucumberVertex> getAllExternalCucumberTests() {
-        return operationExecutor.execute(new CucumberTestsOperation(allExternalTestsSupplier.get()));
+        return operationExecutor.execute(new CucumberTestsOperation(allExternalTestsSupplier.get(), true));
     }
     private Set<TestVertex> getAllExternalTestsImpl() {
         return allTestsSupplier.get();

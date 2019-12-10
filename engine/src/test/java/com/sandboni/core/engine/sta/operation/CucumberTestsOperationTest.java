@@ -23,6 +23,6 @@ public class CucumberTestsOperationTest extends GraphOperationsTest {
         SetResult<CucumberVertex> result = operation.execute(builder.getGraph());
 
         assertNotNull(result);
-        assertEquals(0, result.get().size());
+        assertEquals(1, result.get().size());
     }
 }

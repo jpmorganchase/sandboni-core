@@ -1,6 +1,5 @@
 package com.sandboni.core.engine.sta;
 
-import com.sandboni.core.engine.SystemProperties;
 import com.sandboni.core.engine.contract.HttpConsts;
 import com.sandboni.core.engine.sta.connector.Connector;
 import com.sandboni.core.engine.sta.connector.HttpTemplateConnector;
@@ -27,7 +26,7 @@ public class SeloniJsonConnectorTest {
     private Connector httpTemplateConnector;
 
     private Context setupContext(String calleeAction) {
-        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
+        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl(), "./src/test/resources/Seloni.json");
 
         if (Objects.nonNull(calleeAction)) {
             context.addLink(LinkFactory.createInstance(
@@ -43,7 +42,6 @@ public class SeloniJsonConnectorTest {
 
     @Before
     public void setup(){
-        System.setProperty(SystemProperties.SELONI_FILEPATH.getName(), "./src/test/resources/Seloni.json" );
         httpTemplateConnector = new HttpTemplateConnector();
     }
 

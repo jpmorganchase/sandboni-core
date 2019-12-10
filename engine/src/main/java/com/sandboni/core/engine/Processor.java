@@ -119,7 +119,7 @@ public class Processor {
 
     private Context createContext() {
         return new Context(arguments.getApplicationId(), arguments.getSrcLocation(), arguments.getTestLocation(),
-                arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get(), arguments.getAlwaysRunAnnotation());
+                arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get(), arguments.getAlwaysRunAnnotation(), arguments.getSeloniFilePath());
     }
 
     private Builder getBuilder(Context context) {
@@ -144,7 +144,7 @@ public class Processor {
 
             log.debug("....Connectors execution total time: {}", Duration.between(start, finish).toMillis());
 
-            if (!StringUtil.isEmptyOrNull(System.getProperty(SystemProperties.SELONI_FILEPATH.getName()))){
+            if (!StringUtil.isEmptyOrNull(arguments.getSeloniFilePath())){
                 return new Builder(context, FilterIndicator.SELECTIVE_EXTERNAL);
             }
         } else if (isRunAllExternalTests() && isIntegrationStage()) {

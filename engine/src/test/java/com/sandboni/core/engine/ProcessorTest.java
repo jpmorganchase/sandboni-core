@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 
 public class ProcessorTest {
 
-    public static final String JAVA_CLASS_PATH = "java.class.path";
+    private static final String JAVA_CLASS_PATH = "java.class.path";
     private Processor processor;
 
     public ProcessorTest() {
@@ -135,8 +135,9 @@ public class ProcessorTest {
 
     @Test
     public void testGetAllExternalTests() {
-        Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_TESTS).get();
-        assertEquals("Should contain no external tests", 0, result.size());
+        Set<TestVertex> cukes = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_CUCUMBER).get();
+        Set<TestVertex> ut = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_UNIT).get();
+        assertEquals("Should contain no external tests", 0, cukes.size() + ut.size());
     }
 
     @Test

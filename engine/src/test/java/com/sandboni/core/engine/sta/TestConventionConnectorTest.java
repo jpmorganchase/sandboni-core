@@ -22,7 +22,7 @@ public class TestConventionConnectorTest {
     private Vertex code2 = new Vertex.Builder("package.SomeClass", "someOtherMethod(int, int, int)").build();
 
     private Context setupContext() {
-        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
+        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl(), null);
 
         Link link1 = LinkFactory.createInstance(context.getApplicationId(), START_VERTEX, test, LinkType.ENTRY_POINT);
         Link link2 = LinkFactory.createInstance(context.getApplicationId(), code, code2, LinkType.METHOD_CALL);

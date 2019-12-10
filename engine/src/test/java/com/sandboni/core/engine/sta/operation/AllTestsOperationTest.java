@@ -15,7 +15,7 @@ public class AllTestsOperationTest extends GraphOperationsTest {
     public void getAllTests() {
         Set<TestVertex> allTests = graphOperations.getAllTests();
         assertNotNull(allTests);
-        assertEquals(5, allTests.size());
+        assertEquals(7, allTests.size());
         assertTrue(allTests.contains(callerTest));
         assertTrue(allTests.contains(disconnectedCallerTest));
         assertTrue(allTests.contains(cucumberTest));
@@ -36,7 +36,7 @@ public class AllTestsOperationTest extends GraphOperationsTest {
         SetResult<TestVertex> result = allTestsOperation.execute(builder.getGraph());
         Set<TestVertex> allTests = result.get();
         assertNotNull(allTests);
-        assertEquals(5, allTests.size());
+        assertEquals(7, allTests.size());
         assertTrue(allTests.contains(new TestVertex.Builder("ClassBTest", "testCallerMethod()").build()));
         assertTrue(allTests.contains(new TestVertex.Builder("ClassBTest", "testDisconnectedFromCallerMethod()").build()));
         assertTrue(allTests.contains(new CucumberVertex.Builder("featureFile", "scenario1").build()));

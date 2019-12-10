@@ -23,8 +23,8 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
 
     public Arguments arguments;
     public GitInterface gitDetector;
-    Finder[] finders;
-    Connector[] connectors;
+    public Finder[] finders;
+    public Connector[] connectors;
 
     @Override
     public ProcessorBuilder with(

@@ -31,6 +31,7 @@ public class Context {
     private String classPath;
     private String applicationId;
     private String alwaysRunAnnotation;
+    private String seloniFilepath;
 
     private Set<LinkType> adoptedLinkTypes;
 
@@ -47,19 +48,19 @@ public class Context {
     }
 
     // Visible for testing only
-    public Context(String[] srcLocation, String[] testLocation, String filter, ChangeScope<Change> changes) {
-        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[0], filter, changes, null, null);
+    public Context(String[] srcLocation, String[] testLocation, String filter, ChangeScope<Change> changes, String seloniFilepath) {
+        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[0], filter, changes, null, null, seloniFilepath);
     }
 
     public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
-                   String filter, ChangeScope<Change> changes, String includeTestAnnotation) {
+                   String filter, ChangeScope<Change> changes, String includeTestAnnotation, String seloniFilepath) {
         this(applicationId == null ? DEFAULT_APPLICATION_ID : applicationId,
-                srcLocation, testLocation, dependencies, filter, changes, null, includeTestAnnotation);
+                srcLocation, testLocation, dependencies, filter, changes, null, includeTestAnnotation, seloniFilepath);
     }
 
     @SuppressWarnings("squid:S00107")
     public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
-                   String filter, ChangeScope<Change> changes, String currentLocation, String includeTestAnnotation) {
+                   String filter, ChangeScope<Change> changes, String currentLocation, String includeTestAnnotation, String seloniFilepath) {
         this.applicationId = applicationId;
         this.srcLocations = getCollection(srcLocation);
         this.testLocations = getCollection(testLocation);
@@ -71,6 +72,7 @@ public class Context {
         this.adoptedLinkTypes = new HashSet<>();
         this.currentLocation = currentLocation;
         this.alwaysRunAnnotation = StringUtil.isEmptyOrNull(includeTestAnnotation) ? ALWAYS_RUN_ANNOTATION : includeTestAnnotation;
+        this.seloniFilepath = seloniFilepath;
     }
 
     private Collection<String> getCollection(String[] array) {
@@ -103,6 +105,7 @@ public class Context {
         this.currentLocation = source.currentLocation;
         this.adoptedLinkTypes = new HashSet<>();
         this.alwaysRunAnnotation = source.alwaysRunAnnotation;
+        this.seloniFilepath = source.seloniFilepath;
     }
 
     public Context getLocalContext() {
@@ -172,5 +175,9 @@ public class Context {
 
     public String getAlwaysRunAnnotation() {
         return alwaysRunAnnotation;
+    }
+
+    public String getSeloniFilepath() {
+        return seloniFilepath;
     }
 }

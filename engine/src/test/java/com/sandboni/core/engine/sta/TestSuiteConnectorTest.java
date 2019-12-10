@@ -11,7 +11,6 @@ import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.TestSuiteVertex;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
-import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import com.sandboni.core.scm.scope.ChangeScopeImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,12 +32,9 @@ public class TestSuiteConnectorTest {
     private TestVertex tv3 = new TestVertex.Builder(TEST_CLASS_3, "testPrint()", null).build();
 
     private TestVertex tsv = new TestSuiteVertex.Builder(PACKAGE_NAME + "." + TestSuite1.class.getSimpleName(), new HashSet<>(Arrays.asList(TEST_CLASS_1, TEST_CLASS_2, TEST_CLASS_3)), null).build();
-    private Vertex tsv1 = new Vertex.Builder(TEST_CLASS_1, "").build();
-    private Vertex tsv2 = new Vertex.Builder(PACKAGE_NAME + "." + SuiteTestClass2.class.getSimpleName(), "").build();
-    private Vertex tsv3 = new Vertex.Builder(PACKAGE_NAME + "." + SuiteTestClass3.class.getSimpleName(), "").build();
 
     private Context setupContext() {
-        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
+        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl(), null);
 
         Link link1 = LinkFactory.createInstance(context.getApplicationId(), START_VERTEX, tv1, LinkType.ENTRY_POINT);
         Link link2 = LinkFactory.createInstance(context.getApplicationId(), START_VERTEX, tv2, LinkType.ENTRY_POINT);

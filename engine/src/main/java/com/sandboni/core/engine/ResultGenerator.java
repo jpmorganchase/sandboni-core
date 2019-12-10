@@ -106,8 +106,6 @@ public class ResultGenerator {
         switch (rc) {
             case ALL_TESTS:
                 return graphOperations.getAllTests();
-            case ALL_EXTERNAL_TESTS:
-                return graphOperations.getAllExternalTests();
             case DISCONNECTED_TESTS:
                 return graphOperations.getDisconnectedTests();
             case CHANGES:

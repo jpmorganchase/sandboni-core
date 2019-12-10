@@ -3,10 +3,6 @@ package com.sandboni.core.engine;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-
 public class ArgumentBuilderTest {
 
     @Test
@@ -28,6 +24,7 @@ public class ArgumentBuilderTest {
         Assert.assertNull(args.getTrackingSort());
         Assert.assertFalse(args.isRunSelectiveMode());
         Assert.assertEquals(".", args.getReportDir());
+        Assert.assertNull(args.getSeloniFilePath());
     }
 
     @Test
@@ -40,6 +37,18 @@ public class ArgumentBuilderTest {
                 .build();
 
         Assert.assertTrue(args.isRunSelectiveMode());
+    }
+
+    @Test
+    public void testSeloniFilepathBuilder() {
+        Arguments args = Arguments.builder()
+                .fromChangeId("1")
+                .toChangeId("2")
+                .repository(".")
+                .seloniFilePath("seloni/file/path")
+                .build();
+
+        Assert.assertEquals("seloni/file/path", args.getSeloniFilePath());
     }
 
     @Test
