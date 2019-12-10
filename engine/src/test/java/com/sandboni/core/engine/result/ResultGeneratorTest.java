@@ -190,4 +190,18 @@ public class ResultGeneratorTest {
         FilterIndicator indicator = processor.getResultGenerator().getFilterIndicator();
         Assert.assertEquals(FilterIndicator.SELECTIVE, indicator);
     }
+
+    @Test
+    public void testResultAllReachableEdges () {
+        Processor processor = getProcessor("2", true, false, Stage.BUILD);
+        Result res = processor.getResultGenerator().generate(ResultContent.ALL_REACHABLE_EDGES);
+        Assert.assertTrue(res.isSuccess());
+    }
+
+    @Test
+    public void testResultJiraRelatedTests () {
+        Processor processor = getProcessor("2", true, false, Stage.BUILD);
+        Result res = processor.getResultGenerator().generate(ResultContent.JIRA_RELATED_TESTS);
+        Assert.assertTrue(res.isSuccess());
+    }
 }
