@@ -2,6 +2,7 @@ package com.sandboni.core.engine.sta.connector;
 
 import com.google.gson.Gson;
 import com.sandboni.core.engine.contract.JsonEntry;
+import com.sandboni.core.engine.exception.ParseRuntimeException;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkFactory;
@@ -126,7 +127,7 @@ public class HttpTemplateConnector implements Connector {
             return gson.fromJson(reader, JsonEntry[].class);
         } catch (IOException e) {
             log.error("Error during deserialize file", e);
+            throw new ParseRuntimeException(e);
         }
-        return new JsonEntry[0];
     }
 }

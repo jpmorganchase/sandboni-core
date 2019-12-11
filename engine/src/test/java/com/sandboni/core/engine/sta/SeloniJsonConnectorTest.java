@@ -25,17 +25,20 @@ public class SeloniJsonConnectorTest {
 
     private Connector httpTemplateConnector;
 
-    private Context setupContext(String calleeAction) {
+    private Context setupContext(String ... calleeActions) {
         Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl(), "./src/test/resources/Seloni.json");
 
-        if (Objects.nonNull(calleeAction)) {
-            context.addLink(LinkFactory.createInstance(
-                    context.getApplicationId(),
-                    new Vertex.Builder(sampleVerb + " " + HttpConsts.HTTP_LOCALHOST, calleeAction)
-                            .markSpecial()
-                            .build(),
-                    new Vertex.Builder("callee", "action").build() ,
-                    LinkType.HTTP_HANLDER));
+        if (Objects.nonNull(calleeActions)) {
+
+            for (String calleeAction : calleeActions) {
+                context.addLink(LinkFactory.createInstance(
+                        context.getApplicationId(),
+                        new Vertex.Builder(sampleVerb + " " + HttpConsts.HTTP_LOCALHOST, calleeAction)
+                                .markSpecial()
+                                .build(),
+                        new Vertex.Builder("callee", "action").build(),
+                        LinkType.HTTP_HANLDER));
+            }
         }
         return context;
     }
@@ -44,6 +47,32 @@ public class SeloniJsonConnectorTest {
     public void setup(){
         httpTemplateConnector = new HttpTemplateConnector();
     }
+
+
+    @Test
+    public void testNoMatchedUrls(){
+        Context context = setupContext("/no/url/should/match");
+        httpTemplateConnector.connect(context);
+
+        assertEquals(5, context.getLinks().count());
+    }
+
+
+
+    @Test
+    public void testMultipleMatchedUrlsInOneEntry(){
+        Context context = setupContext("/rest/unprocess/count/DND", "/rest/unprocess/count/DND1");
+        httpTemplateConnector.connect(context);
+
+        assertEquals(8, context.getLinks().count());
+
+        Optional<Link> result = context.getLinks().filter(l -> l.getCaller().getAction().equals("test-name") && l.getCallee().getAction().equals("/rest/unprocess/count/DND") && l.getLinkType() == LinkType.HTTP_MAP_SELONI).findFirst();
+        Assert.assertTrue(result.isPresent());
+
+        result = context.getLinks().filter(l -> l.getCaller().getAction().equals("test-name") && l.getCallee().getAction().equals("/rest/unprocess/count/DND1") && l.getLinkType() == LinkType.HTTP_MAP_SELONI).findFirst();
+        Assert.assertTrue(result.isPresent());
+    }
+
 
     @Test
     public void testMultipleLinksCucumber(){
@@ -75,6 +104,22 @@ public class SeloniJsonConnectorTest {
         assertTrue(((CucumberVertex)link.getCaller()).isExternalLocation());
     }
 
+    @Test
+    public void testAllFieldPopulated() {
+        Context context = setupContext("/rest/unprocess/count/ABC");
+        httpTemplateConnector.connect(context);
+
+        Optional<Link> result = context.getLinks().filter(l -> l.getCaller().getAction().equals("test-name3") && l.getCallee().getAction().equals("/rest/unprocess/count/ABC") && l.getLinkType() == LinkType.HTTP_MAP_SELONI).findFirst();
+        Assert.assertTrue(result.isPresent());
+
+        Vertex v = result.get().getCaller();
+        assertTrue(v instanceof CucumberVertex);
+        assertEquals("test-name3", v.getAction());
+        assertEquals("className2", v.getActor());
+        assertEquals("I:\\code\\seloni-demo-test\\className2.class", ((CucumberVertex)v).getFeaturePath());
+        assertEquals(9, ((CucumberVertex)v).getScenarioLine());
+    }
+
 
     @Test
     public void testLinkJunit(){
@@ -98,9 +143,6 @@ public class SeloniJsonConnectorTest {
         httpTemplateConnector.connect(context);
 
         assertEquals(5, context.getLinks().count());
-
     }
-
-
 
 }

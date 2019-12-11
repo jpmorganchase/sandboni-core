@@ -3,7 +3,8 @@
     "urls": [
       "/rest/unprocess/count/NEW",
       "/rest/unprocess/count/I",
-      "/rest/unprocess/count/DND"
+      "/rest/unprocess/count/DND",
+      "/rest/unprocess/count/DND1"
     ],
     "className": "className",
     "filepath": "I:\\code\\seloni-demo-test\\className.class",
