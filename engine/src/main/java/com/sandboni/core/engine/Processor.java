@@ -129,7 +129,7 @@ public class Processor {
             return new Builder(context, FilterIndicator.NONE);
         } else if (proceed(context.getChangeScope())) {
             log.info("Found changes: {}", context.getChangeScope());
-            log.info("Sandboni will include only {} and {} files for filtering", FileExtensions.JAVA.extension(), FileExtensions.FEATURE.extension());
+            log.info("Sandboni will include only '.java' and '.feature' files for filtering");
 
             context.getChangeScope().include(FileExtensions.JAVA, FileExtensions.FEATURE);
 

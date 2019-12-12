@@ -126,7 +126,6 @@ public class HttpTemplateConnector implements Connector {
                 new InputStreamReader(new FileInputStream(file), Charset.defaultCharset()))) {
             return gson.fromJson(reader, JsonEntry[].class);
         } catch (IOException e) {
-            log.error("Error during deserialize file", e);
             throw new ParseRuntimeException(e);
         }
     }

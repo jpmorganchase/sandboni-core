@@ -52,6 +52,7 @@ public class Context {
         this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[0], filter, changes, null, null, seloniFilepath);
     }
 
+    @SuppressWarnings("squid:S00107")
     public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
                    String filter, ChangeScope<Change> changes, String includeTestAnnotation, String seloniFilepath) {
         this(applicationId == null ? DEFAULT_APPLICATION_ID : applicationId,
