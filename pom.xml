@@ -323,18 +323,7 @@
         <url>https://github.com/jpmorganchase/sandboni-core/issues</url>
     </issueManagement>
 
-    <repositories>
-        <repository>
-            <id>spring-release</id>
-            <url>http://repo.spring.io/libs-release</url>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-        <repository>
-            <id>spring-snapshot</id>
-            <url>http://repo.spring.io/libs-snapshot</url>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-    </repositories>
+
 
     <developers>
         <developer>
@@ -356,6 +345,10 @@
         <developer>
             <name>Zhi Zhang</name>
             <email>zhister@gmail.com</email>
+        </developer>
+        <developer>
+            <name>Ayelet Levron</name>
+            <email>Ayelet.Levron@jpmchase.com</email>
         </developer>
     </developers>
 </project>
