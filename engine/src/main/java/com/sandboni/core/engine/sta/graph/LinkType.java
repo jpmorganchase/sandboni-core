@@ -54,6 +54,8 @@ public enum LinkType {
     // invoke my pattern matching
     HTTP_MAP("HTTP Pattern", false),
 
+    HTTP_MAP_SELONI("HTTP Pattern Seloni", false),
+
     // manual mapping
     MANUAL("Manually mapped", false),
 

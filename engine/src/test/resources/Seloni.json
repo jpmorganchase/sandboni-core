@@ -3,24 +3,47 @@
     "urls": [
       "/rest/unprocess/count/NEW",
       "/rest/unprocess/count/I",
-      "/rest/unprocess/count/DND"
+      "/rest/unprocess/count/DND",
+      "/rest/unprocess/count/DND1"
     ],
     "className": "className",
+    "filepath": "I:\\code\\seloni-demo-test\\className.class",
     "testName": "test-name",
+    "type": "CUCUMBER",
+    "lineNumber": 7,
     "date": "17:43:19.770"
-  }, {
+  },
+  {
     "urls": [
       "/rest/unprocess/count/NEW"
     ],
     "className": "className",
     "testName": "test-name2",
+    "filepath": "I:\\code\\seloni-demo-test\\className.class",
+    "type": "CUCUMBER",
+    "lineNumber": 8,
     "date": "17:43:19.770"
-  }, {
+  },
+  {
     "urls": [
       "/rest/unprocess/count/ABC"
     ],
     "className": "className2",
     "testName": "test-name3",
+    "type": "CUCUMBER",
+    "filepath": "I:\\code\\seloni-demo-test\\className2.class",
+    "lineNumber": 9,
+    "date": "17:43:19.770"
+  },
+  {
+    "urls": [
+      "/rest/unprocess/count/junit/1"
+    ],
+    "className": "className3",
+    "testName": "test-name4",
+    "type": "JUNIT",
+    "filepath": "I:\\code\\seloni-demo-test\\className3.class",
+    "lineNumber": 0,
     "date": "17:43:19.770"
   }
 ]

@@ -9,6 +9,7 @@ import com.sandboni.core.engine.sta.Builder;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.connector.Connector;
 import com.sandboni.core.engine.sta.operation.GraphOperations;
+import com.sandboni.core.engine.utils.StringUtil;
 import com.sandboni.core.scm.GitInterface;
 import com.sandboni.core.scm.exception.SourceControlException;
 import com.sandboni.core.scm.proxy.filter.FileExtensions;
@@ -118,7 +119,7 @@ public class Processor {
 
     private Context createContext() {
         return new Context(arguments.getApplicationId(), arguments.getSrcLocation(), arguments.getTestLocation(),
-                arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get(), arguments.getAlwaysRunAnnotation());
+                arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get(), arguments.getAlwaysRunAnnotation(), arguments.getSeloniFilePath());
     }
 
     private Builder getBuilder(Context context) {
@@ -127,24 +128,32 @@ public class Processor {
             log.info("There are no changes in this project");
             return new Builder(context, FilterIndicator.NONE);
         } else if (proceed(context.getChangeScope())) {
-            context.getChangeScope().include(FileExtensions.JAVA, FileExtensions.FEATURE);
             log.info("Found changes: {}", context.getChangeScope());
+            log.info("Sandboni will include only '.java' and '.feature' files for filtering");
+
+            context.getChangeScope().include(FileExtensions.JAVA, FileExtensions.FEATURE);
 
             Instant start = Instant.now();
             finders.parallelStream().forEach(f -> f.findSafe(context));
             Instant finish = Instant.now();
             log.debug("....Finders execution total time: {}", Duration.between(start, finish).toMillis());
+
             start = Instant.now();
             connectors.parallelStream().filter(c -> c.proceed(context)).forEach(c -> c.connect(context));
             finish = Instant.now();
+
             log.debug("....Connectors execution total time: {}", Duration.between(start, finish).toMillis());
+
+            if (!StringUtil.isEmptyOrNull(arguments.getSeloniFilePath())){
+                return new Builder(context, FilterIndicator.SELECTIVE_EXTERNAL);
+            }
         } else if (isRunAllExternalTests() && isIntegrationStage()) {
             log.info("Running All External Tests");
             finders.parallelStream().forEach(f -> f.findSafe(context));
             return new Builder(context, FilterIndicator.ALL_EXTERNAL);
         } else { //only cnfg files
             log.info("Found changes: {}", context.getChangeScope());
-            log.info(" ** configuration files or files outside of Sandboni scope were changed; All tests will be executed ** ");
+            log.info(" ** Configuration files or files outside Sandboni's scope were changed; All tests will be executed ** ");
             return new Builder(context, FilterIndicator.ALL);
         }
         return new Builder(context);

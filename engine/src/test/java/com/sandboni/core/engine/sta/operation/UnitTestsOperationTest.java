@@ -21,6 +21,6 @@ public class UnitTestsOperationTest extends GraphOperationsTest  {
         SetResult<TestVertex> result = operation.execute(builder.getGraph());
 
         assertNotNull(result);
-        assertEquals(0, result.get().size());
+        assertEquals(1, result.get().size());
     }
 }

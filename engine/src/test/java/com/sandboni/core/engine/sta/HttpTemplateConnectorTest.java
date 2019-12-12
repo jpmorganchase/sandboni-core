@@ -19,7 +19,7 @@ public class HttpTemplateConnectorTest {
     private String sampleVerb =  HttpConsts.getHttpVerb().stream().findFirst().get();
 
     private Context setupContext(String callerActon, String calleeAction) {
-        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
+        Context context = new Context(new String[0], new String[0], "", new ChangeScopeImpl(), null);
 
         if (Objects.nonNull(callerActon)) {
             context.addLink(LinkFactory.createInstance(
@@ -77,7 +77,7 @@ public class HttpTemplateConnectorTest {
     @Test
     public void testIsMatchTrivialCase() {
         HttpTemplateConnector connector = new HttpTemplateConnector();
-        Assert.assertFalse(connector.isMatch("/action", "/action"));
+        Assert.assertTrue(connector.isMatch("/action", "/action"));
     }
 
     @Test
