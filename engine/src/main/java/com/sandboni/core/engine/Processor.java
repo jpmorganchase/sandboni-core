@@ -153,7 +153,7 @@ public class Processor {
             return new Builder(context, FilterIndicator.ALL_EXTERNAL);
         } else { //only cnfg files
             log.info("Found changes: {}", context.getChangeScope());
-            log.info(" ** configuration files or files outside of Sandboni scope were changed; All tests will be executed ** ");
+            log.info(" ** Configuration files or files outside Sandboni's scope were changed; All tests will be executed ** ");
             return new Builder(context, FilterIndicator.ALL);
         }
         return new Builder(context);
