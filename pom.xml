@@ -346,5 +346,9 @@
             <name>Zhi Zhang</name>
             <email>zhister@gmail.com</email>
         </developer>
+        <developer>
+            <name>Ayelet Levron</name>
+            <email>Ayelet.Levron@jpmchase.com</email>
+        </developer>
     </developers>
 </project>
