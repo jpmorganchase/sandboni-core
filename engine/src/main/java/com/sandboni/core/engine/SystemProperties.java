@@ -17,7 +17,8 @@ public enum SystemProperties {
     GIT_CACHE("sandboni.gitCache", "Caches changes found in Git repository", false, Boolean.FALSE.toString()),
     CORE_CACHE("sandboni.coreCache", "Caches core internal data", false, Boolean.FALSE.toString()),
     FILTER("sandboni.filter", "Filter elements pattern", false),
-    ALWAYS_RUN_ANNOTATION("sandboni.alwaysRunAnnotation", "Always run annotation", false);
+    ALWAYS_RUN_ANNOTATION("sandboni.alwaysRunAnnotation", "Always run annotation", false),
+    SELONI_FILEPATH("seloni.filepath", "Seloni json file path", false);
 
     SystemProperties(String name, String description , boolean required) {
         this.name = name;

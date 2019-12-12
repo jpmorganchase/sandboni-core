@@ -44,15 +44,16 @@ public class GraphOperations {
     public Set<TestVertex> getAllTests() {
         return allTestsSupplier.get();
     }
+
     private Set<TestVertex> getAllTestsImpl() {
         return operationExecutor.execute(new AllTestsOperation());
     }
 
     public Set<TestVertex> getAllExternalUnitTests() {
-        return operationExecutor.execute(new UnitTestsOperation(allExternalTestsSupplier.get()));
+        return operationExecutor.execute(new UnitTestsOperation(allExternalTestsSupplier.get(), true));
     }
     public Set<CucumberVertex> getAllExternalCucumberTests() {
-        return operationExecutor.execute(new CucumberTestsOperation(allExternalTestsSupplier.get()));
+        return operationExecutor.execute(new CucumberTestsOperation(allExternalTestsSupplier.get(), true));
     }
     private Set<TestVertex> getAllExternalTestsImpl() {
         return allTestsSupplier.get();

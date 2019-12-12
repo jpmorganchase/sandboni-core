@@ -20,7 +20,7 @@ public class ContextTest {
     public void setUp() {
         sourceLocations = new String[]{"./target/classes"};
         testLocations = new String[]{"./target/test-classes"};
-        context = new Context(sourceLocations, testLocations, null, null);
+        context = new Context(sourceLocations, testLocations, null, null, null);
     }
 
     @Test

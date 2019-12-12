@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 
 public class ProcessorTest {
 
-    public static final String JAVA_CLASS_PATH = "java.class.path";
+    private static final String JAVA_CLASS_PATH = "java.class.path";
     private Processor processor;
 
     public ProcessorTest() {
@@ -131,6 +131,13 @@ public class ProcessorTest {
     public void testGetAllTests() {
         Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.ALL_TESTS).get();
         assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void testGetAllExternalTests() {
+        Set<TestVertex> cukes = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_CUCUMBER).get();
+        Set<TestVertex> ut = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_UNIT).get();
+        assertEquals("Should contain no external tests", 0, cukes.size() + ut.size());
     }
 
     @Test

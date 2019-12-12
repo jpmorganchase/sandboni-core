@@ -14,7 +14,7 @@ public class DisconnectedTestsOperationTest extends GraphOperationsTest {
     @Test
     public void getDisconnectedTests() {
         Set<? extends Vertex> result = graphOperations.getDisconnectedTests();
-        assertEquals(3, result.size());
+        assertEquals(5, result.size());
         assertTrue(result.contains(disconnectedCallerTest));
         assertTrue(result.contains(cucumberTest));
     }
@@ -26,7 +26,7 @@ public class DisconnectedTestsOperationTest extends GraphOperationsTest {
         SetResult<TestVertex> result = disconnectedTestsOperation.execute(builder.getGraph());
         Set<TestVertex> disconnectedTests = result.get();
         assertNotNull(disconnectedTests);
-        assertEquals(3, disconnectedTests.size());
+        assertEquals(5, disconnectedTests.size());
         assertTrue(disconnectedTests.contains(new TestVertex.Builder("ClassBTest", "testDisconnectedFromCallerMethod()").build()));
         assertTrue(disconnectedTests.contains(new CucumberVertex.Builder("featureFile", "scenario1").build()));
     }

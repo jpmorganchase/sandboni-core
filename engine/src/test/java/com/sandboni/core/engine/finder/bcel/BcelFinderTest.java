@@ -544,7 +544,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test(expected = ParseRuntimeException.class)
     public void testInvalidContextLocation() {
 
-        Context context = new Context(new String[]{"non-existing-location"}, new String[]{"non-existing-location"}, "com.sandboni", new ChangeScopeImpl());
+        Context context = new Context(new String[]{"non-existing-location"}, new String[]{"non-existing-location"}, "com.sandboni", new ChangeScopeImpl(), null);
         Finder f = new BcelFinder(new ClassVisitor[]{new CallerClassVisitor()});
         f.findSafe(context);
     }

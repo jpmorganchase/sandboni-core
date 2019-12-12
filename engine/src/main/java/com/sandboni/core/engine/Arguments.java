@@ -25,4 +25,5 @@ public class Arguments {
     private String stage;
     private String reportDir;
     private String alwaysRunAnnotation;
+    private String seloniFilePath;
 }
