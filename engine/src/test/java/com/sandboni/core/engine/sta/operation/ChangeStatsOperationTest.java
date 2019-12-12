@@ -12,7 +12,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.END_VERTEX;
@@ -44,7 +43,7 @@ public class ChangeStatsOperationTest {
     private GraphOperations graphOperations;
 
     public ChangeStatsOperationTest() {
-        context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
+        context = new Context(new String[0], new String[0], "", new ChangeScopeImpl(), null);
 
         modified = new Vertex.Builder("ModifiedClass", "modifiedMethod()").build();
         modifiedUncovered = new Vertex.Builder("ModifiedClass", "modifiedUncoveredMethod()").build();

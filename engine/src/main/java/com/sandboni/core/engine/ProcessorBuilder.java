@@ -10,11 +10,8 @@ import com.sandboni.core.engine.finder.bcel.visitors.http.JavaxControllerClassVi
 import com.sandboni.core.engine.finder.bcel.visitors.http.SpringControllerClassVisitor;
 import com.sandboni.core.engine.finder.cucumber.CucumberFeatureFinder;
 import com.sandboni.core.engine.finder.explicit.ExplicitFinder;
-import com.sandboni.core.engine.sta.connector.TestSuiteConnector;
+import com.sandboni.core.engine.sta.connector.*;
 import com.sandboni.core.engine.sta.graph.LinkFactory;
-import com.sandboni.core.engine.sta.connector.Connector;
-import com.sandboni.core.engine.sta.connector.CucumberJavaConnector;
-import com.sandboni.core.engine.sta.connector.HttpTemplateConnector;
 import com.sandboni.core.scm.CachedRepository;
 import com.sandboni.core.scm.GitInterface;
 import com.sandboni.core.scm.GitRepository;

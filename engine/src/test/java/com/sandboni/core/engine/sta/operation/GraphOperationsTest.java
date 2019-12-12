@@ -27,15 +27,17 @@ public abstract class GraphOperationsTest {
     protected final Vertex appLocation;
     protected final Vertex testLocation;
     protected final CucumberVertex cucumberTest;
+    protected final CucumberVertex externalCucumberTest;
     protected final CucumberVertex affectedCucumberTest;
     protected final Vertex alwaysRunTest;
     protected final TestVertex runnerTest;
+    protected final TestVertex externalUnitTest;
 
     protected GraphOperations graphOperations;
     protected Builder builder;
 
     public GraphOperationsTest() {
-        context = new Context(new String[0], new String[0], "", new ChangeScopeImpl());
+        context = new Context(new String[0], new String[0], "", new ChangeScopeImpl(), null);
 
         modified = new Vertex.Builder("ClassA", "coveredMethod()").build();
         modifiedUncovered = new Vertex.Builder("ClassA", "uncoveredMethod()").build();
@@ -43,12 +45,15 @@ public abstract class GraphOperationsTest {
         caller = new Vertex.Builder("ClassB", "callerMethod()").build();
 
         callerTest = new TestVertex.Builder("ClassBTest", "testCallerMethod()").build();
+        externalUnitTest = new TestVertex.Builder("ClassBTest123", "testCallerMethod123()").markAsExternalLocation().build();
         disconnectedCallerTest = new TestVertex.Builder("ClassBTest", "testDisconnectedFromCallerMethod()").build();
 
         appLocation = new Vertex.Builder("applicationModule", "contain").markSpecial().build();
         testLocation = new Vertex.Builder("testModule", "contain").markSpecial().build();
 
         cucumberTest = new CucumberVertex.Builder("featureFile", "scenario1").build();
+
+        externalCucumberTest = new CucumberVertex.Builder("featureFile123", "scenario123").markAsExternalLocation().build();
         affectedCucumberTest = new CucumberVertex.Builder("featureFile", "scenario2").markAffected(true).build();
 
         alwaysRunTest = new TestVertex.Builder("AlwaysRunMethodTest", "testTwo()").withAlwaysRun(true).build();
@@ -65,6 +70,8 @@ public abstract class GraphOperationsTest {
         context.addLink(LinkFactory.createInstance(APP_ID, modified, END_VERTEX, LinkType.EXIT_POINT));
         context.addLink(LinkFactory.createInstance(APP_ID, modifiedUncovered, END_VERTEX, LinkType.EXIT_POINT));
         context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, cucumberTest, ENTRY_POINT));
+        context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, externalUnitTest, ENTRY_POINT));
+        context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, externalCucumberTest, ENTRY_POINT));
         context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, affectedCucumberTest, ENTRY_POINT));
         context.addLink(LinkFactory.createInstance(APP_ID, affectedCucumberTest, modified, LinkType.CUCUMBER_TEST));
         context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, alwaysRunTest, ENTRY_POINT));
