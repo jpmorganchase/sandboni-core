@@ -642,17 +642,4 @@ public class BcelFinderTest extends FinderTestBase {
                 LinkType.CUCUMBER_RUNNER);
         testTestClassVisitor(expectedLink);
     }
-
-    @Ignore // this feature is only available when enableExperimental = true
-    @Test
-    public void testInterfaceWithLambdas() {
-        Link interfaceToCalledMethod = newLink(new Vertex.Builder("java.util.function.Supplier", "get()").build(),
-                new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".Client", "getValueImpl()").build(),
-                LinkType.DYNAMIC_CALL);
-
-        Link classToCalledMethod = newLink(new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".Client", "<init>()").build(),
-                new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".Client", "getValueImpl()").build(),
-                LinkType.DYNAMIC_CALL);
-        testCallerVisitor(interfaceToCalledMethod, classToCalledMethod);
-    }
 }
