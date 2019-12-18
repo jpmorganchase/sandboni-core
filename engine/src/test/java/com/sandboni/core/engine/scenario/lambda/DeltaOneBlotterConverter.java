@@ -11,8 +11,7 @@ public class DeltaOneBlotterConverter implements SpecificsConverter<DeltaOneBlot
     }
 
     @Override
-    public DeltaOneBlotterRecord apply(String blotterInput) {
-        int i = 0;
+    public DeltaOneBlotterRecord apply(BlotterInput blotterInput) {
         System.out.println("Calling the apply method in Function impl");
         return new DeltaOneBlotterRecord();
     }

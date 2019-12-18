@@ -21,8 +21,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static com.sandboni.core.engine.MockChangeDetector.PACKAGE_NAME;
-import static com.sandboni.core.engine.MockChangeDetector.TEST_LOCATION;
+import static com.sandboni.core.engine.MockChangeDetector.*;
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.*;
 
 public class BcelFinderTest extends FinderTestBase {
@@ -137,8 +136,8 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testFieldImplPut() {
-        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Callee", "value").build(),
-                new Vertex.Builder(PACKAGE_NAME + ".Caller", "instanceFieldReferencePut()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "instanceFieldReferencePut()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "value").build(),
                 LinkType.FIELD_PUT);
         testCallerVisitor(expectedLink);
     }
@@ -153,8 +152,8 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testStaticImplPut() {
-        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Callee", "valueStatic").build(),
-                new Vertex.Builder(PACKAGE_NAME + ".Caller", "staticFieldReferencePut()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "staticFieldReferencePut()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "valueStatic").build(),
                 LinkType.STATIC_PUT);
         testCallerVisitor(expectedLink);
     }
@@ -642,5 +641,18 @@ public class BcelFinderTest extends FinderTestBase {
                 CUCUMBER_RUNNER_VERTEX,
                 LinkType.CUCUMBER_RUNNER);
         testTestClassVisitor(expectedLink);
+    }
+
+    @Ignore
+    @Test
+    public void testInterfaceWithLambdas() {
+        Link interfaceToCalledMethod = newLink(new Vertex.Builder("java.util.function.Supplier", "get()").build(),
+                new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".Client", "getValueImpl()").build(),
+                LinkType.DYNAMIC_CALL);
+
+        Link classToCalledMethod = newLink(new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".Client", "<init>()").build(),
+                new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".Client", "getValueImpl()").build(),
+                LinkType.DYNAMIC_CALL);
+        testCallerVisitor(interfaceToCalledMethod, classToCalledMethod);
     }
 }

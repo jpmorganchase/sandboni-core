@@ -18,7 +18,8 @@ public enum SystemProperties {
     CORE_CACHE("sandboni.coreCache", "Caches core internal data", false, Boolean.FALSE.toString()),
     FILTER("sandboni.filter", "Filter elements pattern", false),
     ALWAYS_RUN_ANNOTATION("sandboni.alwaysRunAnnotation", "Always run annotation", false),
-    SELONI_FILEPATH("seloni.filepath", "Seloni json file path", false);
+    SELONI_FILEPATH("seloni.filepath", "Seloni json file path", false),
+    ENABLE_PREVIEW("sandboni.enable.preview", "Enable preview of new features", false);
 
     SystemProperties(String name, String description , boolean required) {
         this.name = name;

@@ -104,8 +104,8 @@ public class CachedBcelFinderTest extends FinderTestBase {
 
     @Test
     public void testFieldImplPut() {
-        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Callee", "value").build(),
-                new Vertex.Builder(PACKAGE_NAME + ".Caller", "instanceFieldReferencePut()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "instanceFieldReferencePut()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "value").build(),
                 LinkType.FIELD_PUT);
         testCallerVisitor(expectedLink);
     }
@@ -120,8 +120,8 @@ public class CachedBcelFinderTest extends FinderTestBase {
 
     @Test
     public void testStaticImplPut() {
-        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Callee", "valueStatic").build(),
-                new Vertex.Builder(PACKAGE_NAME + ".Caller", "staticFieldReferencePut()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "staticFieldReferencePut()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "valueStatic").build(),
                 LinkType.STATIC_PUT);
         testCallerVisitor(expectedLink);
     }

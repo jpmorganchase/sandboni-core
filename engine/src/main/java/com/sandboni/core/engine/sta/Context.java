@@ -52,7 +52,7 @@ public class Context {
 
     // Visible for testing only
     public Context(String[] srcLocation, String[] testLocation, String filter, ChangeScope<Change> changes, String seloniFilepath) {
-        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[0], filter, changes, null, seloniFilepath, false);
+        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[0], filter, changes, null, seloniFilepath, true);
     }
 
     @SuppressWarnings("squid:S00107")
