@@ -31,6 +31,9 @@ public enum LinkType {
     // for interface implementations
     INTERFACE_IMPL("Interface implementation", true),
 
+    // for bridge methods invoked virtually
+    INVOKE_VIRTUAL("Invoke virtual", true),
+
     //forwards implementation to parent
     FORWARD_TO("Inherited implementation", true),
 

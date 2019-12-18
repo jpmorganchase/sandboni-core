@@ -19,11 +19,6 @@ public class Link {
         this.linkType = linkType;
     }
 
-    public void setFilter(String filter) {
-        caller.setFilter(filter);
-        callee.setFilter(filter);
-    }
-
     public Vertex getCaller() {
         return caller;
     }

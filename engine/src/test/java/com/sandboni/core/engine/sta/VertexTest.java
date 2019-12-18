@@ -17,7 +17,6 @@ public class VertexTest {
     @Before
     public void setUp() {
         vertex = new Vertex.Builder("com.actor", "action").markSpecial().build();
-        vertex.setFilter("com");
     }
 
     @Test
@@ -33,7 +32,6 @@ public class VertexTest {
     @Test
     public void testEquals() {
         Vertex vertex2 = new Vertex.Builder("com.actor", "action").markSpecial().build();
-        vertex2.setFilter("com");
         assertEquals(vertex2, vertex);
     }
 
@@ -47,7 +45,6 @@ public class VertexTest {
     @Test
     public void testEqualsFilter() {
         Vertex vertex2 = new Vertex.Builder("com.actor", "action").markSpecial().build();
-        vertex2.setFilter("com.something");
         assertEquals(vertex2, vertex);
     }
 
@@ -58,7 +55,7 @@ public class VertexTest {
 
     @Test
     public void testToString() {
-        assertEquals("*.actor/action", vertex.toString());
+        assertEquals("com.actor/action", vertex.toString());
     }
 
     @Test
@@ -86,7 +83,6 @@ public class VertexTest {
         assertEquals(3, v.getScenarioLine());
         assertEquals("file/path", v.getFeaturePath());
         assertNull(v.getFilePath());
-        assertNull(v.getFilter());
     }
 
     @Test
@@ -113,7 +109,6 @@ public class VertexTest {
         Vertex v = new Vertex.Builder("actor", "action").build();
         assertEquals("name", v.shortenName("name"));
 
-        v.setFilter("filter");
         assertEquals("null", v.shortenName(null));
     }
 }

@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class RecordConverter<A extends ActivityBlotterRecord> implements Function<Integer, String> {
+public final class RecordConverter<A extends ActivityBlotterRecord> implements Function<BlotterInput, String> {
 
     private final SpecificsConverter<A> specifics;
 
@@ -13,11 +13,11 @@ public final class RecordConverter<A extends ActivityBlotterRecord> implements F
     }
 
     @Override
-    public String apply(Integer integer) {
+    public String apply(BlotterInput blotterInput) {
         populateField(Object::toString, () -> {
-            return (ActivityBlotterRecord)this.specifics.apply("input");
+            return (ActivityBlotterRecord)this.specifics.apply(blotterInput);
         });
-        return integer.toString();
+        return blotterInput.toString();
     }
 
     private static <T> void populateField(Consumer<? super T> fieldConsumer, Supplier<? extends T> valueSupplier) {
