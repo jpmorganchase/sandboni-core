@@ -21,8 +21,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static com.sandboni.core.engine.MockChangeDetector.PACKAGE_NAME;
-import static com.sandboni.core.engine.MockChangeDetector.TEST_LOCATION;
+import static com.sandboni.core.engine.MockChangeDetector.*;
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.*;
 
 public class BcelFinderTest extends FinderTestBase {

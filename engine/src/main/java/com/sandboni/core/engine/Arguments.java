@@ -26,4 +26,5 @@ public class Arguments {
     private String reportDir;
     private String alwaysRunAnnotation;
     private String seloniFilePath;
+    private boolean enablePreview;
 }

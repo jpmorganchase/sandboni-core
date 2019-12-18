@@ -29,13 +29,13 @@ public enum LinkType {
     STATIC_PUT("Write static field", true),
 
     // for interface implementations
-    INTERFACE_IMPL("Intefrace implementation", true),
+    INTERFACE_IMPL("Interface implementation", true),
 
     //forwards implementation to parent
     FORWARD_TO("Inherited implementation", true),
 
     //override implementation to parent
-    OVERRIDDEN("Overridden implementaion", true),
+    OVERRIDDEN("Overridden implementation", true),
 
     IMPLICIT("Implicit call", false),
 

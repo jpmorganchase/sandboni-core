@@ -41,7 +41,7 @@
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <cucumber.version>1.2.5</cucumber.version>
         <org.jacoco.version>0.8.3</org.jacoco.version>
-        <bcel.version>6.2</bcel.version>
+        <bcel.version>6.4.1</bcel.version>
         <slf4j.version>1.7.25</slf4j.version>
         <org.jgrapht.version>1.0.1</org.jgrapht.version>
         <commons-io.version>2.5</commons-io.version>
@@ -323,18 +323,7 @@
         <url>https://github.com/jpmorganchase/sandboni-core/issues</url>
     </issueManagement>
 
-    <repositories>
-        <repository>
-            <id>spring-release</id>
-            <url>http://repo.spring.io/libs-release</url>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-        <repository>
-            <id>spring-snapshot</id>
-            <url>http://repo.spring.io/libs-snapshot</url>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-    </repositories>
+
 
     <developers>
         <developer>
@@ -356,6 +345,10 @@
         <developer>
             <name>Zhi Zhang</name>
             <email>zhister@gmail.com</email>
+        </developer>
+        <developer>
+            <name>Ayelet Levron</name>
+            <email>Ayelet.Levron@jpmchase.com</email>
         </developer>
     </developers>
 </project>

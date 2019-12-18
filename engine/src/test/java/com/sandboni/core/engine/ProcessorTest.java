@@ -135,8 +135,9 @@ public class ProcessorTest {
 
     @Test
     public void testGetAllExternalTests() {
-        Set<TestVertex> cukes = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_CUCUMBER).get();
-        Set<TestVertex> ut = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_UNIT).get();
+        Result result = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_CUCUMBER, ResultContent.ALL_EXTERNAL_UNIT);
+        Set<TestVertex> cukes = result.get(ResultContent.ALL_EXTERNAL_CUCUMBER);
+        Set<TestVertex> ut = result.get(ResultContent.ALL_EXTERNAL_UNIT);
         assertEquals("Should contain no external tests", 0, cukes.size() + ut.size());
     }
 
