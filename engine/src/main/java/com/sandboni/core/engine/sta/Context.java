@@ -33,7 +33,7 @@ public class Context {
     private String applicationId;
     private String alwaysRunAnnotation;
     private String seloniFilepath;
-    private boolean enableExperimental;
+    private boolean enablePreview;
 
     private Set<LinkType> adoptedLinkTypes;
 
@@ -57,7 +57,7 @@ public class Context {
     @SuppressWarnings("squid:S00107")
     public Context(String applicationId, String[] srcLocation, String[] testLocation, String[] dependencies,
                    String filter, ChangeScope<Change> changes, String includeTestAnnotation, String seloniFilepath,
-                   boolean enableExperimental) {
+                   boolean enablePreview) {
         this.applicationId = applicationId == null ? DEFAULT_APPLICATION_ID : applicationId;
         this.srcLocations = getCollection(srcLocation);
         this.testLocations = getCollection(testLocation);
@@ -70,7 +70,7 @@ public class Context {
         this.adoptedLinkTypes = new HashSet<>();
         this.alwaysRunAnnotation = StringUtil.isEmptyOrNull(includeTestAnnotation) ? ALWAYS_RUN_ANNOTATION : includeTestAnnotation;
         this.seloniFilepath = seloniFilepath;
-        this.enableExperimental = enableExperimental;
+        this.enablePreview = enablePreview;
     }
 
     private Collection<String> getCollection(String[] array) {
@@ -104,7 +104,7 @@ public class Context {
         this.adoptedLinkTypes = new HashSet<>();
         this.alwaysRunAnnotation = source.alwaysRunAnnotation;
         this.seloniFilepath = source.seloniFilepath;
-        this.enableExperimental = source.enableExperimental;
+        this.enablePreview = source.enablePreview;
     }
 
     public Context getLocalContext() {
@@ -155,7 +155,7 @@ public class Context {
             consumer.accept(currentLocation);
         });
 
-        if (isEnableExperimental()) {
+        if (isEnablePreview()) {
             dependencyJars.forEach(s -> {
                 currentLocation = s;
                 consumer.accept(currentLocation);
@@ -187,7 +187,7 @@ public class Context {
         return seloniFilepath;
     }
 
-    public boolean isEnableExperimental() {
-        return enableExperimental;
+    public boolean isEnablePreview() {
+        return enablePreview;
     }
 }

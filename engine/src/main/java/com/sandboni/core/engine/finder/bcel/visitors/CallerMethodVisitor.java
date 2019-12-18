@@ -82,7 +82,7 @@ public class CallerMethodVisitor extends CallerFieldOrMethodVisitor {
             BootstrapMethod bootstrapMethod = bootstrapMethods.get().getBootstrapMethods()[constantInvokeDynamic.getBootstrapMethodAttrIndex()];
             String interfaceClassName = null;
             String interfaceMethodName = null;
-            if (context.isEnableExperimental() && cp.getConstant(((ConstantMethodHandle) cp.getConstant(bootstrapMethod.getBootstrapMethodRef())).getReferenceKind()) instanceof ConstantInterfaceMethodref) {
+            if (context.isEnablePreview() && cp.getConstant(((ConstantMethodHandle) cp.getConstant(bootstrapMethod.getBootstrapMethodRef())).getReferenceKind()) instanceof ConstantInterfaceMethodref) {
                 // get the original name of the interface and method to be implemented by lambda
                 ConstantInterfaceMethodref interfaceMethodRef = (ConstantInterfaceMethodref) cp.getConstant(((ConstantMethodHandle) cp.getConstant(bootstrapMethod.getBootstrapMethodRef())).getReferenceKind());
                 interfaceClassName = ((ConstantUtf8) cp.getConstant(((ConstantClass) cp.getConstant(interfaceMethodRef.getClassIndex())).getNameIndex()))
@@ -109,7 +109,7 @@ public class CallerMethodVisitor extends CallerFieldOrMethodVisitor {
                             new Vertex.Builder(typeName, methodName).build(),
                             LinkType.DYNAMIC_CALL));
 
-                    if (context.isEnableExperimental() && interfaceClassName != null && interfaceMethodName != null) {
+                    if (context.isEnablePreview() && interfaceClassName != null && interfaceMethodName != null) {
                         addLink(LinkFactory.createInstance(
                                 context.getApplicationId(),
                                 new Vertex.Builder(interfaceClassName, interfaceMethodName).build(),

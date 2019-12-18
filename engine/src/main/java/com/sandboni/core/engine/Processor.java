@@ -125,7 +125,7 @@ public class Processor {
     private Context createContext() {
         return new Context(arguments.getApplicationId(), arguments.getSrcLocation(), arguments.getTestLocation(),
                 arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get(), arguments.getAlwaysRunAnnotation(),
-                arguments.getSeloniFilePath(), arguments.isEnableExperimental());
+                arguments.getSeloniFilePath(), arguments.isEnablePreview());
     }
 
     private Builder getBuilder(Context context) {
