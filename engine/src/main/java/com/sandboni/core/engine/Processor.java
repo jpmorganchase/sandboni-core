@@ -36,6 +36,7 @@ public class Processor {
     private final Supplier<Context> contextSupplier = new CachingSupplier<>(this::getContext);
     private final Supplier<ChangeScope<Change>> changeScopeSupplier = new CachingSupplier<>(this::getScope);
     private final Supplier<Builder> builderSupplier = new CachingSupplier<>(this::getBuilder);
+    private final Supplier<ResultGenerator> resultGeneratorSupplier = new CachingSupplier<>(this::getResultGeneratorImpl);
 
     Processor(Arguments arguments, GitInterface changeDetector, Finder[] finders, Connector[] connectors) {
         this.arguments = arguments;
@@ -64,6 +65,10 @@ public class Processor {
     }
 
     public ResultGenerator getResultGenerator() {
+        return resultGeneratorSupplier.get();
+    }
+
+    private ResultGenerator getResultGeneratorImpl() {
         return new ResultGenerator(new GraphOperations(builderSupplier.get().getGraph(), contextSupplier.get()), arguments, builderSupplier.get().getFilterIndicator());
     }
 
@@ -119,7 +124,8 @@ public class Processor {
 
     private Context createContext() {
         return new Context(arguments.getApplicationId(), arguments.getSrcLocation(), arguments.getTestLocation(),
-                arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get(), arguments.getAlwaysRunAnnotation(), arguments.getSeloniFilePath());
+                arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get(), arguments.getAlwaysRunAnnotation(),
+                arguments.getSeloniFilePath(), arguments.isEnablePreview());
     }
 
     private Builder getBuilder(Context context) {

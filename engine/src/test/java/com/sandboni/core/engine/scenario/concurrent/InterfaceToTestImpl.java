@@ -1,4 +1,4 @@
-package com.sandboni.core.scenario.concurrent;
+package com.sandboni.core.engine.scenario.concurrent;
 
 public class InterfaceToTestImpl implements InterfaceToTest {
 
