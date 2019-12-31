@@ -1,6 +1,7 @@
 package com.sandboni.core.engine.sta;
 
 import com.sandboni.core.engine.contract.HttpConsts;
+import com.sandboni.core.engine.contract.JsonEntry;
 import com.sandboni.core.engine.sta.connector.Connector;
 import com.sandboni.core.engine.sta.connector.HttpTemplateConnector;
 import com.sandboni.core.engine.sta.graph.Link;
@@ -13,6 +14,8 @@ import org.junit.Test;
 
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.junit.Assert.*;
 
 public class HttpTemplateConnectorTest {
 
@@ -104,5 +107,21 @@ public class HttpTemplateConnectorTest {
         Assert.assertFalse(connector.proceed(setupContext(null, null)));
     }
 
+    @Test
+    public void test() {
+        Context c = new Context("appId", new String[0], new String[0], new String[0],
+                "filter", new ChangeScopeImpl(), null, "src/test/resources/Seloni.json", true);
+        JsonEntry[] tests = HttpTemplateConnector.getEntriesFromSeloniFile(c);
 
+        assertEquals(4, tests.length);
+
+        JsonEntry test1 = tests[0];
+        assertEquals("className", test1.getClassName());
+        assertEquals("I:\\code\\seloni-demo-test\\className.class", test1.getFilepath());
+        assertEquals("test-name", test1.getTestName());
+        assertEquals("CUCUMBER", test1.getType());
+        assertEquals("17:43:19.770", test1.getDate());
+        assertNull(test1.getStatus());
+        assertFalse(test1.getUrls().isEmpty());
+    }
 }

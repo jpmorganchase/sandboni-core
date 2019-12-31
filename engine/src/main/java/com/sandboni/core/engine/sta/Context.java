@@ -7,6 +7,7 @@ import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import com.sandboni.core.engine.utils.StringUtil;
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeScope;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +16,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Getter
 public class Context {
-
     private static final Logger log = LoggerFactory.getLogger(Context.class);
     private static final String CLASSPATH_PROPERTY_NAME = "java.class.path";
     private static final String DEFAULT_APPLICATION_ID = "sandboni.default.AppId";
@@ -165,29 +166,5 @@ public class Context {
 
     public boolean isAdoptedLinkType(LinkType...linkTypes){
         return Arrays.stream(linkTypes).allMatch(t -> adoptedLinkTypes.contains(t));
-    }
-
-    public Collection<String> getSrcLocations() {
-        return srcLocations;
-    }
-
-    public Collection<String> getTestLocations() {
-        return testLocations;
-    }
-
-    public String getApplicationId() {
-        return applicationId;
-    }
-
-    public String getAlwaysRunAnnotation() {
-        return alwaysRunAnnotation;
-    }
-
-    public String getSeloniFilepath() {
-        return seloniFilepath;
-    }
-
-    public boolean isEnablePreview() {
-        return enablePreview;
     }
 }

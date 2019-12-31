@@ -144,5 +144,4 @@ public class SeloniJsonConnectorTest {
 
         assertEquals(5, context.getLinks().count());
     }
-
 }
