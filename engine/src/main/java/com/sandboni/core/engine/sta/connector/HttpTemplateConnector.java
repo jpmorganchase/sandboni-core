@@ -111,7 +111,7 @@ public class HttpTemplateConnector implements Connector {
         }
     }
 
-    private JsonEntry[] getEntriesFromSeloniFile(Context context) {
+    public static JsonEntry[] getEntriesFromSeloniFile(Context context) {
         String filePath = context.getSeloniFilepath();
         if (!Objects.isNull(filePath)){
             log.info("'seloni.filepath' set to '{}'", filePath);
@@ -120,7 +120,7 @@ public class HttpTemplateConnector implements Connector {
         return new JsonEntry[0];
     }
 
-    private JsonEntry[] parseFile(File file) {
+    private static JsonEntry[] parseFile(File file) {
         Gson gson = new Gson();
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(file), Charset.defaultCharset()))) {
