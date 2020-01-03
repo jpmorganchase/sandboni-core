@@ -36,6 +36,7 @@ public class Builder {
     }
 
     private DirectedGraph<Vertex, Edge> buildGraph() {
+        log.info("Building Graph");
         Instant start = Instant.now();
         DirectedGraph<Vertex, Edge> graph = new DefaultDirectedGraph<>(Edge.class);
         //reversing direction
