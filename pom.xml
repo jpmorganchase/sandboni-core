@@ -71,7 +71,7 @@
         <!-- SonarCloud -->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>sandboni</sonar.organization>
-        <sonar.login>${SONAR_TOKEN}</sonar.login>
+        <sonar.login>cfac76c8796bc06a2cd33b7b8bc57787ffa6a053</sonar.login>
         <sonar.language>java</sonar.language>
         <sonar.scm.provider>git</sonar.scm.provider>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
