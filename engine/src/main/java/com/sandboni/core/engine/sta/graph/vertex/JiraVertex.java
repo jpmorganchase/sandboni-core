@@ -13,8 +13,8 @@ public class JiraVertex extends Vertex {
 
     @SuppressWarnings("squid:S00107") // private constructor used only in Builder
     private JiraVertex(String actor, String action, boolean isSpecial, String filePath, List<Integer> lineNumbers,
-                       String filter, String location, Date date, String revisionId) {
-        super(actor, action, isSpecial, filePath, lineNumbers, filter, location);
+                       String location, Date date, String revisionId) {
+        super(actor, action, isSpecial, filePath, lineNumbers, location);
         this.date = date;
         this.revisionId = revisionId;
     }
@@ -46,7 +46,7 @@ public class JiraVertex extends Vertex {
         @Override
         public JiraVertex build(){
             return new JiraVertex(this.actor, this.action, true, this.filePath, this.lineNumbers,
-                    this.filter, null, this.date, this.revisionId);
+                    null, this.date, this.revisionId);
         }
     }
 

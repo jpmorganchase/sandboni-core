@@ -22,7 +22,6 @@ public class VertexBuilderTest {
         Vertex v = new Vertex.Builder(ACTOR, ACTION, LOCATION)
                 .withFilePath("filePath")
                 .withLineNumbers(new ArrayList<>())
-                .withFilter("filter")
                 .build();
 
 
@@ -30,7 +29,6 @@ public class VertexBuilderTest {
         Assert.assertEquals(ACTION, v.getAction());
         Assert.assertEquals(LOCATION, v.getLocation());
         Assert.assertEquals("filePath", v.getFilePath());
-        Assert.assertEquals("filter", v.getFilter());
         Assert.assertTrue(v.isLineNumbersEmpty());
         Assert.assertFalse(v.isSpecial());
     }

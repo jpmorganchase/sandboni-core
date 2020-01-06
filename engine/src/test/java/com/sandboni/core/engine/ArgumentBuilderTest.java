@@ -20,11 +20,21 @@ public class ArgumentBuilderTest {
         Assert.assertEquals(".", args.getRepository());
         Assert.assertNull(args.getSrcLocation());
         Assert.assertNull(args.getTestLocation());
+        Assert.assertNull(args.getDependencies());
         Assert.assertNull(args.getFilter());
         Assert.assertNull(args.getTrackingSort());
         Assert.assertFalse(args.isRunSelectiveMode());
         Assert.assertEquals(".", args.getReportDir());
         Assert.assertNull(args.getSeloniFilePath());
+        Assert.assertFalse(args.isEnablePreview());
+        Assert.assertNull(args.getApplicationId());
+        Assert.assertNull(args.getOutputFormat());
+        Assert.assertFalse(args.isRunAllExternalTests());
+        Assert.assertFalse(args.isGitCache());
+        Assert.assertFalse(args.isCoreCache());
+        Assert.assertNull(args.getStage());
+        Assert.assertNull(args.getAlwaysRunAnnotation());
+
     }
 
     @Test
@@ -116,5 +126,17 @@ public class ArgumentBuilderTest {
                 .build();
 
         Assert.assertEquals("csv", args.getOutputFormat());
+    }
+
+    @Test
+    public void testEnablePreviewBuilder() {
+        Arguments args = Arguments.builder()
+                .fromChangeId("1")
+                .toChangeId("2")
+                .repository(".")
+                .enablePreview(true)
+                .build();
+
+        Assert.assertTrue(args.isEnablePreview());
     }
 }

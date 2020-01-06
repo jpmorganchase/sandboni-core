@@ -3,7 +3,6 @@ package com.sandboni.core.engine.sta;
 import com.sandboni.core.engine.contract.ThrowingConsumer;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
-import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import com.sandboni.core.engine.utils.StringUtil;
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeScope;
@@ -23,7 +22,7 @@ public class Context {
     private static final String DEFAULT_APPLICATION_ID = "sandboni.default.AppId";
     private static final String ALWAYS_RUN_ANNOTATION = "AlwaysRun";
 
-    private final String filter;
+    private final Set<String> filters;
     private Set<Link> links = new HashSet<>();
     private String currentLocation;
     private ChangeScope<Change> changeScope;
@@ -38,12 +37,8 @@ public class Context {
 
     private Set<LinkType> adoptedLinkTypes;
 
-    private boolean inScope(String actor) {
-        return filter == null || (actor != null && actor.startsWith(filter));
-    }
-
-    private boolean inScope(Vertex vertex) {
-        return inScope(vertex.getActor());
+    public boolean inScope(String actor) {
+        return filters.isEmpty() || (actor != null && filters.stream().anyMatch(actor::startsWith));
     }
 
     public ChangeScope<Change> getChangeScope() {
@@ -52,7 +47,7 @@ public class Context {
 
     // Visible for testing only
     public Context(String[] srcLocation, String[] testLocation, String filter, ChangeScope<Change> changes, String seloniFilepath) {
-        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[0], filter, changes, null, seloniFilepath, false);
+        this(DEFAULT_APPLICATION_ID, srcLocation, testLocation, new String[0], filter, changes, null, seloniFilepath, true);
     }
 
     @SuppressWarnings("squid:S00107")
@@ -66,7 +61,7 @@ public class Context {
 
         this.classPath = getExecutionClasspath(srcLocations, testLocations, getCollection(dependencies));
 
-        this.filter = filter;
+        this.filters = filter == null ? Collections.emptySet() : new HashSet<>(Arrays.asList(filter.split(",")));
         this.changeScope = changes;
         this.adoptedLinkTypes = new HashSet<>();
         this.alwaysRunAnnotation = StringUtil.isEmptyOrNull(includeTestAnnotation) ? ALWAYS_RUN_ANNOTATION : includeTestAnnotation;
@@ -99,7 +94,7 @@ public class Context {
         this.srcLocations = Collections.unmodifiableCollection(source.srcLocations);
         this.testLocations = Collections.unmodifiableCollection(source.testLocations);
         this.classPath = source.classPath;
-        this.filter = source.filter;
+        this.filters = new HashSet<>(source.filters);
         this.changeScope = source.changeScope;
         this.currentLocation = source.currentLocation;
         this.adoptedLinkTypes = new HashSet<>();
@@ -121,16 +116,12 @@ public class Context {
     }
 
     private int adoptLink(Link link) {
-        link.setFilter(filter);
         adoptedLinkTypes.add(link.getLinkType());
         return links.add(link) ? 1 : 0;
     }
 
     public synchronized int addLink(Link link) {
-        if (inScope(link.getCaller()) || inScope(link.getCallee()) || (link.getCaller().isSpecial() && link.getCallee().isSpecial())) {
-            return adoptLink(link);
-        }
-        return 0;
+        return adoptLink(link);
     }
 
     public synchronized String getCurrentLocation() {

@@ -1,5 +1,6 @@
 package com.sandboni.core.engine.scenario.tests;
 
+import com.sandboni.core.engine.scenario.lambda.BlotterInput;
 import com.sandboni.core.engine.scenario.lambda.DeltaOneBlotterConverter;
 import com.sandboni.core.engine.scenario.lambda.DeltaOneBlotterRecord;
 import com.sandboni.core.engine.scenario.lambda.RecordConverter;
@@ -21,7 +22,7 @@ public class DeltaOneBlotterConverterTest {
 
     @Test
     public void applyTests() {
-        Assert.assertNotNull(converter.apply(100));
+        Assert.assertNotNull(converter.apply(new BlotterInput()));
     }
 
 }

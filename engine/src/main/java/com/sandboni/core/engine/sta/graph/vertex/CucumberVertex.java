@@ -12,9 +12,9 @@ public class CucumberVertex extends TestVertex {
     private boolean affected;
 
     @SuppressWarnings("squid:S00107") // private constructor used only in Builder
-    private CucumberVertex(String actor, String action, boolean isSpecial, String filePath, List<Integer> lineNumbers, String filter,
+    private CucumberVertex(String actor, String action, boolean isSpecial, String filePath, List<Integer> lineNumbers,
                           String location, boolean ignore, boolean externalLocation, String featurePath, int scenarioLine, boolean affected) {
-        super(actor, action, isSpecial, filePath, lineNumbers, filter, location, ignore, externalLocation, false, null);
+        super(actor, action, isSpecial, filePath, lineNumbers, location, ignore, externalLocation, false, null);
         this.featurePath = featurePath;
         this.scenarioLine = scenarioLine;
         this.affected = affected;
@@ -53,7 +53,7 @@ public class CucumberVertex extends TestVertex {
         @Override
         public CucumberVertex build(){
             return new CucumberVertex(this.actor, this.action, true, this.filePath, this.lineNumbers,
-                    this.filter, this.location, this.ignore, this.externalLocation, this.featurePath, this.scenarioLine, this.affected);
+                    this.location, this.ignore, this.externalLocation, this.featurePath, this.scenarioLine, this.affected);
         }
     }
 

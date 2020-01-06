@@ -43,8 +43,10 @@ public class JarFinder extends FileTreeFinder {
                             } else if (e.getName().endsWith(ExtensionType.CLASS.type())) {
                                 ClassParser classParser = new ClassParser(file.getAbsolutePath(), e.getName());
                                 JavaClass jc = parse.apply(classParser);
-                                Link[] links = startVisitors(jc, context);
-                                context.addLinks(links);
+                                if (context.inScope(jc.getClassName())) {
+                                    Link[] links = startVisitors(jc, context);
+                                    context.addLinks(links);
+                                }
                             }
                         });
             }

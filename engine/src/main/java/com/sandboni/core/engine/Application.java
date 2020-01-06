@@ -28,9 +28,9 @@ public class Application {
                 .with(pb -> pb.arguments = arguments)
                 .build();
 
-        Set<TestVertex> relatedTests = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS).get();
-        Set<TestVertex> disconnectedTests = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_TESTS).get();
-        Set<TestVertex> testSuites = processor.getResultGenerator().generate(ResultContent.TEST_SUITES).get();
+        Set<TestVertex> relatedTests = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS).get(ResultContent.RELATED_TESTS);
+        Set<TestVertex> disconnectedTests = processor.getResultGenerator().generate(ResultContent.DISCONNECTED_TESTS).get(ResultContent.DISCONNECTED_TESTS);
+        Set<TestVertex> testSuites = processor.getResultGenerator().generate(ResultContent.TEST_SUITES).get(ResultContent.TEST_SUITES);
 
         log.info("Related tests to execute: {}", relatedTests);
         log.info("Disconnected tests to execute: {}", disconnectedTests);
@@ -55,6 +55,7 @@ public class Application {
                 .dependencies(getValue(SystemProperties.DEPENDENCIES).split(","))
                 .outputFormat(getValue(SystemProperties.OUTPUT_FORMAT))
                 .alwaysRunAnnotation(getValue(SystemProperties.ALWAYS_RUN_ANNOTATION))
+                .enablePreview(Boolean.parseBoolean(getValue(SystemProperties.ENABLE_PREVIEW)))
                 .build();
 
         log.debug("[arguments collected] {}", arguments);

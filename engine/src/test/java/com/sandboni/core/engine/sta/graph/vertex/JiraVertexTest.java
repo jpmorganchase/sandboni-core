@@ -71,17 +71,7 @@ public class JiraVertexTest {
         assertEquals(testVertex1, testVertex2);
         assertEquals(testVertex2, testVertex1);
 
-        // after update
-        testVertex1.setFilter("Some filter");
-        testVertex2.setFilter("Some other filter");
-        assertEquals(testVertex1, testVertex2);
-        assertEquals(testVertex2, testVertex1);
-
         JiraVertex testVertexNotEqual = new JiraVertex.Builder("com.actor.2", "action.2").withRevisionId("revisionId").markSpecial().build();
-        assertNotEquals(testVertex1, testVertexNotEqual);
-        assertNotEquals(testVertexNotEqual, testVertex1);
-
-        testVertexNotEqual.setFilter("Some filter");
         assertNotEquals(testVertex1, testVertexNotEqual);
         assertNotEquals(testVertexNotEqual, testVertex1);
     }
@@ -94,17 +84,7 @@ public class JiraVertexTest {
         assertNotEquals(vertex1, testVertex2);
         assertNotEquals(testVertex2, vertex1);
 
-        // after update
-        vertex1.setFilter("Some filter");
-        testVertex2.setFilter("Some other filter");
-        assertNotEquals(vertex1, testVertex2);
-        assertNotEquals(testVertex2, vertex1);
-
         JiraVertex testVertexNotEqual = new JiraVertex.Builder("com.actor.2", "action.2").withRevisionId("revisionId").markSpecial().build();
-        assertNotEquals(vertex1, testVertexNotEqual);
-        assertNotEquals(testVertexNotEqual, vertex1);
-
-        testVertexNotEqual.setFilter("Some filter");
         assertNotEquals(vertex1, testVertexNotEqual);
         assertNotEquals(testVertexNotEqual, vertex1);
     }
@@ -119,10 +99,6 @@ public class JiraVertexTest {
         assertEquals(testVertex1, testVertex2);
         assertEquals(vertex1HashCode, vertex2HashCode);
 
-        // after update, hash code should remain the same
-        testVertex1.setFilter("Some filter");
-        testVertex2.setFilter("Some other filter");
-        assertEquals(testVertex1, testVertex2);
         assertEquals(vertex1HashCode, testVertex1.hashCode());
         assertEquals(vertex2HashCode, testVertex2.hashCode());
     }
@@ -137,10 +113,6 @@ public class JiraVertexTest {
         assertNotEquals(vertex1, testVertex2);
         assertNotEquals(vertex1HashCode, vertex2HashCode);
 
-        // after update, hash code should remain the same
-        vertex1.setFilter("Some filter");
-        testVertex2.setFilter("Some other filter");
-        assertNotEquals(vertex1, testVertex2);
         assertEquals(vertex1HashCode, vertex1.hashCode());
         assertEquals(vertex2HashCode, testVertex2.hashCode());
     }

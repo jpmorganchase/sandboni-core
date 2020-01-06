@@ -29,10 +29,7 @@ public class AnonymousClassMethodVisitor extends CallerFieldOrMethodVisitor {
         if (!this.javaClass.getClassName().equals(referencedClass) && referencedClass.indexOf('$') >= 0) {
             JavaClass nestedClass;
             try {
-                SyntheticRepository repository;
-                synchronized (SyntheticRepository.class) {
-                    repository = SyntheticRepository.getInstance(ClassUtils.getClassPathObject(context.getClassPath()));
-                }
+                SyntheticRepository repository = ClassUtils.getRepository(context.getClassPath());
                 nestedClass = repository.loadClass(referencedClass);
             } catch (ClassNotFoundException e) {
                 return;

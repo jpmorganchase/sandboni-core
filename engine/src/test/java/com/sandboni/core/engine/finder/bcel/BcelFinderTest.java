@@ -21,8 +21,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static com.sandboni.core.engine.MockChangeDetector.PACKAGE_NAME;
-import static com.sandboni.core.engine.MockChangeDetector.TEST_LOCATION;
+import static com.sandboni.core.engine.MockChangeDetector.*;
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.*;
 
 public class BcelFinderTest extends FinderTestBase {
@@ -137,8 +136,8 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testFieldImplPut() {
-        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Callee", "value").build(),
-                new Vertex.Builder(PACKAGE_NAME + ".Caller", "instanceFieldReferencePut()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "instanceFieldReferencePut()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "value").build(),
                 LinkType.FIELD_PUT);
         testCallerVisitor(expectedLink);
     }
@@ -153,8 +152,8 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testStaticImplPut() {
-        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Callee", "valueStatic").build(),
-                new Vertex.Builder(PACKAGE_NAME + ".Caller", "staticFieldReferencePut()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "staticFieldReferencePut()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "valueStatic").build(),
                 LinkType.STATIC_PUT);
         testCallerVisitor(expectedLink);
     }
@@ -643,4 +642,45 @@ public class BcelFinderTest extends FinderTestBase {
                 LinkType.CUCUMBER_RUNNER);
         testTestClassVisitor(expectedLink);
     }
+
+    @Test
+    public void testInterfaceWithLambdas() {
+        Link interfaceToImplementingClass = newLink(new Vertex.Builder("java.util.function.Function", String.format("apply(%s.BlotterInput)", LAMBDA_PACKAGE_NAME)).build(),
+                new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".DeltaOneBlotterConverter", String.format("apply(%s.BlotterInput)", LAMBDA_PACKAGE_NAME)).build(),
+                LinkType.INVOKE_VIRTUAL);
+
+        Link interfaceGenericToSpecificMethod = newLink(new Vertex.Builder("java.util.function.Function", "apply(java.lang.Object)").build(),
+                new Vertex.Builder("java.util.function.Function", String.format("apply(%s.BlotterInput)", LAMBDA_PACKAGE_NAME)).build(),
+                LinkType.INVOKE_VIRTUAL);
+        testImplementingVisitor(interfaceToImplementingClass, interfaceGenericToSpecificMethod);
+    }
+
+    @Test
+    public void testFoundUsingFunctionalInterfaceFramework() {
+        Link interfaceToImplementingClass = newLink(new Vertex.Builder("java.util.function.Function", String.format("apply(%s.BlotterInput)", LAMBDA_PACKAGE_NAME)).build(),
+                new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".DeltaOneBlotterConverter", String.format("apply(%s.BlotterInput)", LAMBDA_PACKAGE_NAME)).build(),
+                LinkType.INVOKE_VIRTUAL);
+
+        Link interfaceGenericToSpecificMethod = newLink(new Vertex.Builder("java.util.function.Function", "apply(java.lang.Object)").build(),
+                new Vertex.Builder("java.util.function.Function", String.format("apply(%s.BlotterInput)", LAMBDA_PACKAGE_NAME)).build(),
+                LinkType.INVOKE_VIRTUAL);
+        testImplementingVisitor(interfaceToImplementingClass, interfaceGenericToSpecificMethod);
+
+        Link specificsInterfaceToFunction = newLink(new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".SpecificsConverter", "apply(java.lang.Object)").build(),
+                new Vertex.Builder("java.util.function.Function", "apply(java.lang.Object)").build(),
+                LinkType.FORWARD_TO);
+        testInheritanceVisitor(specificsInterfaceToFunction);
+
+        Link lambdaToInterface = newLink(new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".RecordConverter", String.format("lambda$apply$0(%s.BlotterInput)", LAMBDA_PACKAGE_NAME)).build(),
+                new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".SpecificsConverter", "apply(java.lang.Object)").build(),
+                LinkType.INTERFACE_CALL);
+        Link interfaceToLambda = newLink(new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".RecordConverter", String.format("apply(%s.BlotterInput)", LAMBDA_PACKAGE_NAME)).build(),
+                new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".RecordConverter", String.format("lambda$apply$0(%s.BlotterInput)", LAMBDA_PACKAGE_NAME)).build(),
+                LinkType.DYNAMIC_CALL);
+        Link testToInterfaceCall = newLink(new TestVertex.Builder(LAMBDA_PACKAGE_TEST_NAME + ".DeltaOneBlotterConverterTest", "applyTests()").build(),
+                new Vertex.Builder(LAMBDA_PACKAGE_NAME + ".RecordConverter", String.format("apply(%s.BlotterInput)", LAMBDA_PACKAGE_NAME)).build(),
+                LinkType.METHOD_CALL);
+        testCallerVisitor(lambdaToInterface, interfaceToLambda, testToInterfaceCall);
+    }
+
 }
