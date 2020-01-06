@@ -1,8 +1,7 @@
 package com.sandboni.core.engine.finder.bcel.visitors;
 
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.LineNumber;
-import org.apache.bcel.classfile.Method;
+import org.apache.bcel.classfile.*;
+import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.Type;
 
 import java.util.ArrayList;
@@ -45,5 +44,18 @@ public class MethodUtils {
         return Arrays.stream(arguments)
                 .map(Type::toString)
                 .collect(Collectors.joining(","));
+    }
+
+    public static String getMethodNameAndType(ConstantPoolGen cp, ConstantNameAndType methodNameType) {
+        return getMethodNameAndType(cp.getConstantPool(), methodNameType);
+    }
+
+    public static String getMethodNameAndType(ConstantPool cp, ConstantNameAndType methodNameType) {
+        return Utility.methodSignatureToString(methodNameType.getSignature(cp), methodNameType.getName(cp),
+                "", false, new LocalVariableTable(0, 0, new LocalVariable[]{}, cp));
+    }
+
+    public static String formatMethodName(String methodName) {
+        return methodName.substring(methodName.indexOf(' ') + 1).replace(" ", "");
     }
 }

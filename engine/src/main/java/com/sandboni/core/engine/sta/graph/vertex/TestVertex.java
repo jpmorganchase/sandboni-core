@@ -19,10 +19,10 @@ public class TestVertex extends Vertex {
 
     @SuppressWarnings("squid:S00107") // private constructor used only in Builder
     protected TestVertex(String actor, String action, boolean isSpecial, String filePath,
-                       List<Integer> lineNumbers, String filter,
+                       List<Integer> lineNumbers,
                        String location, boolean ignore,
                        boolean externalLocation, boolean alwaysRun, String runWithOptions) {
-        super(actor, action, isSpecial, filePath, lineNumbers, filter, location);
+        super(actor, action, isSpecial, filePath, lineNumbers, location);
         this.ignore = ignore;
         this.externalLocation = externalLocation;
         this.alwaysRun = alwaysRun;
@@ -67,7 +67,7 @@ public class TestVertex extends Vertex {
         @Override
         public TestVertex build() {
             return new TestVertex(this.actor, this.action, this.isSpecial, this.filePath, this.lineNumbers,
-                    this.filter, this.location, this.ignore, this.externalLocation, this.alwaysRun, this.runWithOptions);
+                    this.location, this.ignore, this.externalLocation, this.alwaysRun, this.runWithOptions);
         }
 
         protected abstract T getThis();

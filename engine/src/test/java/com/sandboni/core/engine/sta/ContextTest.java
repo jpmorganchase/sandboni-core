@@ -21,7 +21,7 @@ public class ContextTest {
     public void setUp() {
         sourceLocations = new String[]{"./target/classes"};
         testLocations = new String[]{"./target/test-classes"};
-        context = new Context(sourceLocations, testLocations, null, null, null);
+        context = new Context(sourceLocations, testLocations, "com,org", null, null);
     }
 
     @Test
@@ -53,5 +53,20 @@ public class ContextTest {
         return Arrays.stream(sourceLocations)
                 .map(l -> new File(l).getAbsolutePath())
                 .collect(Collectors.toList());
+    }
+
+    @Test
+    public void enablePreview() {
+        assertTrue(context.isEnablePreview());
+        assertTrue(context.getLocalContext().isEnablePreview());
+    }
+
+    @Test
+    public void filterValue() {
+        assertTrue(context.getFilters().contains("com"));
+        assertTrue(context.getFilters().contains("org"));
+
+        assertTrue(context.getLocalContext().getFilters().contains("com"));
+        assertTrue(context.getLocalContext().getFilters().contains("org"));
     }
 }

@@ -10,8 +10,8 @@ public class TestSuiteVertex extends TestVertex {
     private final Set<String> relatedTestClasses;
 
     @SuppressWarnings("squid:S00107") // private constructor used only in Builder
-    private TestSuiteVertex(String actor, String action, boolean isSpecial, String filePath, List<Integer> lineNumbers, String filter, String location, boolean ignore, boolean externalLocation, boolean included, String runWithOptions,  Set<String> relatedTestClasses) {
-        super(actor, action, isSpecial, filePath, lineNumbers, filter, location, ignore, externalLocation, included, runWithOptions);
+    private TestSuiteVertex(String actor, String action, boolean isSpecial, String filePath, List<Integer> lineNumbers, String location, boolean ignore, boolean externalLocation, boolean included, String runWithOptions,  Set<String> relatedTestClasses) {
+        super(actor, action, isSpecial, filePath, lineNumbers, location, ignore, externalLocation, included, runWithOptions);
         this.relatedTestClasses = relatedTestClasses;
     }
 
@@ -31,7 +31,7 @@ public class TestSuiteVertex extends TestVertex {
         @Override
         public TestSuiteVertex build(){
             return new TestSuiteVertex(this.actor, this.action, true, this.filePath, this.lineNumbers,
-                    this.filter, this.location, this.ignore, this.externalLocation, this.alwaysRun, this.runWithOptions, this.relatedTestClasses);
+                    this.location, this.ignore, this.externalLocation, this.alwaysRun, this.runWithOptions, this.relatedTestClasses);
         }
     }
 

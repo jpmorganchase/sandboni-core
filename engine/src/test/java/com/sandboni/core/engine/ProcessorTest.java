@@ -38,6 +38,7 @@ public class ProcessorTest {
                 .stage(Stage.BUILD.name())
                 .coreCache(true)
                 .gitCache(true)
+                .enablePreview(true)
                 .build();
     }
 
@@ -207,5 +208,15 @@ public class ProcessorTest {
     public void testGetCucumberRunnersTests() {
         Set<TestVertex> result = processor.getResultGenerator().generate(ResultContent.CUCUMBER_RUNNERS).get();
         assertEquals("Should contain no exit points", 0, result.size());
+    }
+
+    @Test
+    public void enablePreview() {
+        assertTrue(processor.getArguments().isEnablePreview());
+    }
+
+    @Test
+    public void filter() {
+        assertEquals("com", processor.getArguments().getFilter());
     }
 }

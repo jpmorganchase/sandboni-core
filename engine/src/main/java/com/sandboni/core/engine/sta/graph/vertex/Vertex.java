@@ -1,8 +1,8 @@
 package com.sandboni.core.engine.sta.graph.vertex;
 
-
 import java.io.Serializable;
 import java.util.*;
+
 public class Vertex implements Serializable {
 
     private static final long serialVersionUID = 63271547337417074L;
@@ -12,16 +12,14 @@ public class Vertex implements Serializable {
     private String location;
     private String filePath;
     private transient List<Integer> lineNumbers;
-    private String filter;
 
     protected Vertex(String actor, String action, boolean isSpecial, String filePath,
-                     List<Integer> lineNumbers, String filter, String location) {
+                     List<Integer> lineNumbers, String location) {
         this.actor = actor;
         this.action = action;
         this.isSpecial = isSpecial;
         this.filePath = filePath;
         this.lineNumbers = lineNumbers;
-        this.filter = filter;
         this.location = location;
     }
 
@@ -31,7 +29,6 @@ public class Vertex implements Serializable {
         protected boolean isSpecial;
         String filePath;
         List<Integer> lineNumbers;
-        protected String filter;
         protected String location;
 
         public AbstractVertexBuilder(String actor, String action, String location){
@@ -60,16 +57,11 @@ public class Vertex implements Serializable {
             return getThis();
         }
 
-        public T withFilter(String filter){
-            this.filter = filter;
-            return getThis();
-        }
-
         protected abstract T getThis();
 
         public Vertex build() {
             return new Vertex(this.actor, this.action, this.isSpecial, this.filePath, this.lineNumbers,
-                    this.filter, this.location);
+                    this.location);
         }
     }
 
@@ -103,14 +95,6 @@ public class Vertex implements Serializable {
     }
 
 
-    public String getFilter() {
-        return this.filter;
-    }
-
-    public void setFilter(String filter) {
-        this.filter = filter;
-    }
-
     public boolean isSpecial() {
         return isSpecial;
     }
@@ -132,15 +116,10 @@ public class Vertex implements Serializable {
     }
 
     public String shortenName(String name) {
-        if (filter == null || "".equals(filter)) {
-            return name;
-        }
-
         if (name == null) {
             return "null";
         }
-
-        return name.replace(filter, "*");
+        return name;
     }
 
     @Override
