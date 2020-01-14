@@ -3,6 +3,7 @@ package com.sandboni.core.engine.sta;
 import com.sandboni.core.engine.common.CachingSupplier;
 import com.sandboni.core.engine.result.FilterIndicator;
 import com.sandboni.core.engine.sta.graph.Edge;
+import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import org.jgrapht.DirectedGraph;
@@ -42,7 +43,10 @@ public class Builder {
         context.getLinks().sequential().forEach(l -> add(graph, l.getCallee(), l.getCaller(), l.getLinkType()));
         Instant finish = Instant.now();
 
-        log.debug("....Build Graph execution total time: {}", Duration.between(start, finish).toMillis());
+        log.info("Build Graph execution total time: {}", Duration.between(start, finish).toMillis());
+
+        // Cleaning cache of not longer needed Vertex
+        LinkFactory.clear(context.getApplicationId());
         return graph;
     }
 

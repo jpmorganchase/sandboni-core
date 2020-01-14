@@ -46,7 +46,7 @@ public class ContextTest {
         String[] tests = new String[] {"test1", "test2"};
         String[] jars = new String[] {"jar1", "jar2"};
         Context c = new Context("appId", new String[0], tests, jars, "filter", new ChangeScopeImpl(), null, null, true);
-        c.forEachLocation(path -> assertTrue(Arrays.stream(jars).anyMatch(path::contains) || Arrays.stream(tests).anyMatch(path::contains)));
+        c.forEachLocation(path -> assertTrue(Arrays.stream(jars).anyMatch(path::contains) || Arrays.stream(tests).anyMatch(path::contains)), true);
     }
 
     private List<String> getPathItems(String[] sourceLocations) {

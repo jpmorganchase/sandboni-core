@@ -8,6 +8,7 @@ import com.sandboni.core.engine.result.FilterIndicator;
 import com.sandboni.core.engine.sta.Builder;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.connector.Connector;
+import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.operation.GraphOperations;
 import com.sandboni.core.engine.utils.StringUtil;
 import com.sandboni.core.scm.GitInterface;
@@ -24,6 +25,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static com.sandboni.core.engine.utils.TimeUtils.elapsedTime;
 
 public class Processor {
 
@@ -72,23 +75,19 @@ public class Processor {
         return new ResultGenerator(new GraphOperations(builderSupplier.get().getGraph(), contextSupplier.get()), arguments, builderSupplier.get().getFilterIndicator());
     }
 
-    public Builder getGraphBuilder() {
-        return getBuilder();
-    }
-
-    private synchronized Context getContext() {
+    private Context getContext() {
         try {
             Instant start = Instant.now();
             Context context = createContext();
             Instant finish = Instant.now();
-            log.debug("....Context creation execution total time: {}", Duration.between(start, finish).toMillis());
+            log.debug("Context creation execution total time: {}", Duration.between(start, finish).toMillis());
             return context;
         } catch (Exception e) {
             throw new ParseRuntimeException(e);
         }
     }
 
-    private synchronized Builder getBuilder() {
+    private Builder getBuilder() {
         return getBuilder(contextSupplier.get());
     }
 
@@ -115,8 +114,12 @@ public class Processor {
     }
 
     public ChangeScope<Change> getScope() {
+        log.info("[{}] Getting change scope", Thread.currentThread().getName());
+        long start = System.nanoTime();
         try {
-            return changeDetector.getChanges(arguments.getFromChangeId(), arguments.getToChangeId());
+            ChangeScope<Change> changes = changeDetector.getChanges(arguments.getFromChangeId(), arguments.getToChangeId());
+            log.info("[{}] Change scope retrieved in {} milliseconds", Thread.currentThread().getName(), elapsedTime(start));
+            return changes;
         } catch (SourceControlException e) {
             throw new ParseRuntimeException(e);
         }
@@ -140,7 +143,7 @@ public class Processor {
             context.getChangeScope().include(FileExtensions.JAVA, FileExtensions.FEATURE);
 
             Instant start = Instant.now();
-            finders.parallelStream().forEach(f -> f.findSafe(context));
+            executeFinders(context);
             Instant finish = Instant.now();
             log.debug("....Finders execution total time: {}", Duration.between(start, finish).toMillis());
 
@@ -155,7 +158,7 @@ public class Processor {
             }
         } else if (isRunAllExternalTests() && isIntegrationStage()) {
             log.info("Running All External Tests");
-            finders.parallelStream().forEach(f -> f.findSafe(context));
+            executeFinders(context);
             return new Builder(context, FilterIndicator.ALL_EXTERNAL);
         } else { //only cnfg files
             log.info("Found changes: {}", context.getChangeScope());
@@ -163,6 +166,14 @@ public class Processor {
             return new Builder(context, FilterIndicator.ALL);
         }
         return new Builder(context);
+    }
+
+    private void executeFinders(Context context) {
+        finders.parallelStream().forEach(f -> {
+            Context localContext = context.getLocalContext();
+            f.findSafe(localContext);
+            context.addLinks(localContext.getLinks().toArray(Link[]::new));
+        });
     }
 
     private static String[] getBuildFiles() {
