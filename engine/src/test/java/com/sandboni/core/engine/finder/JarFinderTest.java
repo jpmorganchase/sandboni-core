@@ -19,7 +19,7 @@ public class JarFinderTest extends FinderTestBase {
     }
 
     private void testVisitor(Link[] expectedLinks, ClassVisitor... visitors) {
-        Finder f = new JarFinder(visitors);
+        Finder f = new JarFinder();
         f.findSafe(context);
 
         assertLinksExist(expectedLinks);
