@@ -50,12 +50,6 @@ public class ProcessorTest {
     }
 
     @Test
-    public void getGraphBuilder() {
-        Builder builder  = processor.getGraphBuilder();
-        assertNotNull("Builder is not null", builder);
-    }
-
-    @Test
     public void testGetRelatedTests() {
         Set<Vertex> result = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS).get();
         assertEquals("No Related tests found", 0, result.size());

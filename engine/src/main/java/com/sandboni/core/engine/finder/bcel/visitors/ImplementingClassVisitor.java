@@ -47,7 +47,7 @@ public class ImplementingClassVisitor extends ClassVisitorBase implements ClassV
             if (implementingClassMethods.contains(method)) {
                 int methodIndex = implementingClassMethods.indexOf(method);
                 Method methodImplementor = implementingClassMethods.get(methodIndex);
-                if (context.isEnablePreview() && (methodImplementor.getAccessFlags() & Const.ACC_BRIDGE) != 0 && methodImplementor.isSynthetic()) {
+                if ((methodImplementor.getAccessFlags() & Const.ACC_BRIDGE) != 0 && methodImplementor.isSynthetic()) {
                     BridgeMethodVisitor bridgeMethodVisitor = new BridgeMethodVisitor(methodImplementor, javaClass, implementingClass, context);
                     bridgeMethodVisitor.start();
                 } else {

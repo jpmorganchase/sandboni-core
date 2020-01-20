@@ -47,7 +47,7 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
                         new Finder[]{new ExplicitFinder(),
                                 bcelFinder,
                                 new CucumberFeatureFinder(),
-                                new JarFinder(getVisitors())},
+                                new JarFinder()},
                 Objects.nonNull(this.connectors) ? this.connectors : getConnectors());
     }
 
@@ -55,7 +55,7 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
         return new Connector[]{new HttpTemplateConnector(), new CucumberJavaConnector(), new TestSuiteConnector()};
     }
 
-    private ClassVisitor[] getVisitors() {
+    public static ClassVisitor[] getVisitors() {
         return new ClassVisitor[]{
                 new AffectedClassVisitor(),
                 new CallerClassVisitor(),
