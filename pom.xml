@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.jpmorganchase.sandboni</groupId>
     <artifactId>sandboni-core</artifactId>
-    <version>1.1.21-SNAPSHOT</version>
+    <version>1.1.22-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -301,7 +301,7 @@
         <url>https://github.com/jpmorganchase/sandboni-core</url>
         <connection>scm:git:https://github.com/jpmorganchase/sandboni-core.git</connection>
         <developerConnection>scm:git:https://github.com/jpmorganchase/sandboni-core.git</developerConnection>
-        <tag>release-1.1.21-SNAPSHOT</tag>
+        <tag>HEAD</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>
