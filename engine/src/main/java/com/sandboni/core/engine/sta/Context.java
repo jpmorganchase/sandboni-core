@@ -42,7 +42,7 @@ public class Context {
     private final ConcurrentHashMap<LinkType, Boolean> adoptedLinkTypes;
 
     public boolean inScope(String actor) {
-        return filters.isEmpty() || (actor != null && filters.stream().anyMatch(actor::startsWith));
+        return filters.isEmpty() || (actor != null && filters.stream().anyMatch(actor::contains));
     }
 
     public ChangeScope<Change> getChangeScope() {
@@ -67,12 +67,21 @@ public class Context {
 
         this.classPath = getExecutionClasspath(srcLocations, testLocations, getCollection(dependencies));
 
-        this.filters = filter == null ? Collections.emptySet()
-                : Collections.unmodifiableSet(Stream.of(filter.split(",")).map(s -> s.replace(".","/").trim()).collect(Collectors.toSet()));
+        this.filters = getFilters(filter);
         this.changeScope = changes;
         this.alwaysRunAnnotation = StringUtil.isEmptyOrNull(includeTestAnnotation) ? ALWAYS_RUN_ANNOTATION : includeTestAnnotation;
         this.seloniFilepath = seloniFilepath;
         this.enablePreview = enablePreview;
+    }
+
+    private Set<String> getFilters(String filter) {
+        if (filter == null) {
+            return Collections.emptySet();
+        }
+        List<String> tokens = Arrays.asList(filter.split(","));
+        Set<String> result = new HashSet<>(tokens);
+        result.addAll(tokens.stream().map(s -> s.replace(".", File.separator).trim()).collect(Collectors.toSet()));
+        return result;
     }
 
     private Collection<String> getCollection(String[] array) {

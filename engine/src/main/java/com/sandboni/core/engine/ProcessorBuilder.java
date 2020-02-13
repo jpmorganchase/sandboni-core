@@ -1,6 +1,8 @@
 package com.sandboni.core.engine;
 
 import com.sandboni.core.engine.contract.Finder;
+import com.sandboni.core.engine.filter.ChangeScopeFilter;
+import com.sandboni.core.engine.filter.ScopeFilter;
 import com.sandboni.core.engine.finder.JarFinder;
 import com.sandboni.core.engine.finder.bcel.BcelFinder;
 import com.sandboni.core.engine.finder.bcel.CachedBcelFinder;
@@ -15,8 +17,12 @@ import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.scm.CachedRepository;
 import com.sandboni.core.scm.GitInterface;
 import com.sandboni.core.scm.GitRepository;
+import com.sandboni.core.scm.scope.Change;
+import com.sandboni.core.scm.scope.ChangeScope;
 
+import java.io.File;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuilder>{
@@ -25,6 +31,7 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
     public GitInterface gitDetector;
     public Finder[] finders;
     public Connector[] connectors;
+    public ScopeFilter<ChangeScope<Change>, Set<File>> scopeFilter;
 
     @Override
     public ProcessorBuilder with(
@@ -48,7 +55,12 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
                                 bcelFinder,
                                 new CucumberFeatureFinder(),
                                 new JarFinder()},
-                Objects.nonNull(this.connectors) ? this.connectors : getConnectors());
+                Objects.nonNull(this.connectors) ? this.connectors : getConnectors(),
+                getScopeFilter());
+    }
+
+    private ScopeFilter<ChangeScope<Change>, Set<File>> getScopeFilter() {
+        return this.scopeFilter == null ? new ChangeScopeFilter() : this.scopeFilter;
     }
 
     private static Connector[] getConnectors() {
