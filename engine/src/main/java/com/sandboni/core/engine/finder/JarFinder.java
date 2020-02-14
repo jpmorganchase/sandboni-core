@@ -29,6 +29,10 @@ public class JarFinder extends FileTreeFinder {
         ThrowingFunction<ClassParser, JavaClass> parse = ClassParser::parse;
         HashMap<String, ThrowingBiConsumer<File, Context>> map = new HashMap<>();
         map.put(ExtensionType.JAR.type(), (file, context) -> {
+            if (!context.inScope(file.getAbsolutePath())) {
+                log.info("[{}] Skipping Jar scanning for {}", Thread.currentThread().getName(), file.getAbsolutePath());
+                return;
+            }
             log.info("[{}] Jar scanning starts for {}", Thread.currentThread().getName(), file);
             long start = System.nanoTime();
             try (JarFile jar = new JarFile(file)) {
@@ -38,7 +42,7 @@ public class JarFinder extends FileTreeFinder {
                             if (e.getName().endsWith(ExtensionType.FEATURE.type())) {
                                 List<Link> links = CucumberFeatureFinder.toLinks(context, new File(file.getAbsolutePath() + File.separator + e.getName()), getFileContent(jar, e));
                                 context.addLinks(links.toArray(new Link[0]));
-                            } else if (e.getName().endsWith(ExtensionType.CLASS.type()) && context.inScope(e.getName())) {
+                            } else if (e.getName().endsWith(ExtensionType.CLASS.type())) {
                                 ClassParser classParser = new ClassParser(file.getAbsolutePath(), e.getName());
                                 JavaClass jc = parse.apply(classParser);
                                 Link[] links = startVisitors(jc, context);

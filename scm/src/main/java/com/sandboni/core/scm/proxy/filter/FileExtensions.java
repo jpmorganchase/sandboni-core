@@ -3,7 +3,7 @@ package com.sandboni.core.scm.proxy.filter;
 import java.util.Arrays;
 
 public enum FileExtensions {
-    JAVA(".java"), FEATURE(".feature"), XML(".xml"), YML(".yml"), PROPERTIES(".properties"), GRADLE(".gradle"), PROPS(".props");
+    JAVA(".java"), FEATURE(".feature"), XML(".xml"), YML(".yml"), PROPERTIES(".properties"), GRADLE(".gradle"), PROPS(".props"), CLASS(".class");
 
     public String extension() {
         return ext;

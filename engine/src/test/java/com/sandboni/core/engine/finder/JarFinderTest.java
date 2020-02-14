@@ -15,7 +15,7 @@ import java.io.FileNotFoundException;
 
 public class JarFinderTest extends FinderTestBase {
     public JarFinderTest() throws FileNotFoundException {
-        super(ResourceUtils.getFile("./target/test-classes/jar-finder-1.0.jar").getAbsolutePath(), "com");
+        super(ResourceUtils.getFile("./target/test-classes/jar-finder-1.0.jar").getAbsolutePath(), "sandboni-core");
     }
 
     private void testVisitor(Link[] expectedLinks, ClassVisitor... visitors) {
