@@ -1,6 +1,7 @@
 package com.sandboni.core.engine.result;
 
 import com.sandboni.core.engine.*;
+import com.sandboni.core.engine.filter.MockChangeScopeFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -8,6 +9,7 @@ public class ResultGeneratorTest {
 
     private Arguments getArguments(String fromChangeId, boolean selectiveMode, boolean runAllExternalTests, Stage stage) {
         return Arguments.builder()
+            .srcLocation(new String[]{"."})
             .fromChangeId(fromChangeId)
             .toChangeId("999eee")
             .repository(".")
@@ -20,6 +22,7 @@ public class ResultGeneratorTest {
         return new ProcessorBuilder().with(procBuilder->{
                 procBuilder.arguments = getArguments(fromChangeId, runSelective, runAllExternal, stage);
                 procBuilder.gitDetector = new ChangeDetectorResultMock();
+                procBuilder.scopeFilter = new MockChangeScopeFilter();
             }).build();
     }
 

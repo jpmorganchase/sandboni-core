@@ -1,9 +1,9 @@
 package com.sandboni.core.engine;
 
 import com.sandboni.core.engine.contract.Finder;
+import com.sandboni.core.engine.filter.MockChangeScopeFilter;
 import com.sandboni.core.engine.result.Result;
 import com.sandboni.core.engine.result.ResultContent;
-import com.sandboni.core.engine.sta.Builder;
 import com.sandboni.core.engine.sta.connector.Connector;
 import com.sandboni.core.engine.sta.graph.vertex.CucumberVertex;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
@@ -25,11 +25,12 @@ public class ProcessorTest {
 
     public ProcessorTest() {
         Arguments args = getArguments();
-        processor = new Processor(args, new PoCDiffChangeDetector(), new Finder[]{}, new Connector[]{});
+        processor = new Processor(args, new PoCDiffChangeDetector(), new Finder[]{}, new Connector[]{}, new MockChangeScopeFilter());
     }
 
     private Arguments getArguments() {
         return Arguments.builder()
+                .srcLocation(new String[]{"."})
                 .applicationId("sandboni.default")
                 .fromChangeId("1")
                 .toChangeId("2")

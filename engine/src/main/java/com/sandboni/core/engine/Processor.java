@@ -3,6 +3,7 @@ package com.sandboni.core.engine;
 import com.sandboni.core.engine.common.CachingSupplier;
 import com.sandboni.core.engine.contract.Finder;
 import com.sandboni.core.engine.exception.ParseRuntimeException;
+import com.sandboni.core.engine.filter.ScopeFilter;
 import com.sandboni.core.engine.render.banner.BannerRenderService;
 import com.sandboni.core.engine.result.FilterIndicator;
 import com.sandboni.core.engine.sta.Builder;
@@ -20,10 +21,12 @@ import com.sandboni.core.scm.scope.analysis.ChangeScopeAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.sandboni.core.engine.utils.TimeUtils.elapsedTime;
@@ -40,12 +43,15 @@ public class Processor {
     private final Supplier<ChangeScope<Change>> changeScopeSupplier = new CachingSupplier<>(this::getScope);
     private final Supplier<Builder> builderSupplier = new CachingSupplier<>(this::getBuilder);
     private final Supplier<ResultGenerator> resultGeneratorSupplier = new CachingSupplier<>(this::getResultGeneratorImpl);
+    private final ScopeFilter<ChangeScope<Change>, Set<File>> scopeFilter;
 
-    Processor(Arguments arguments, GitInterface changeDetector, Finder[] finders, Connector[] connectors) {
+    Processor(Arguments arguments, GitInterface changeDetector, Finder[] finders, Connector[] connectors,
+              ScopeFilter<ChangeScope<Change>, Set<File>> scopeFilter) {
         this.arguments = arguments;
         this.changeDetector = changeDetector;
         this.finders = Collections.unmodifiableCollection(Arrays.asList(finders));
         this.connectors = Collections.unmodifiableCollection(Arrays.asList(connectors));
+        this.scopeFilter = scopeFilter;
 
         //rendering Sandboni logo
         new BannerRenderService().render();
@@ -142,6 +148,12 @@ public class Processor {
 
             context.getChangeScope().include(FileExtensions.JAVA, FileExtensions.FEATURE);
 
+            // at least one file in the change scope exists in this module source code.
+            if (!moduleContainsChanges(context.getChangeScope())) {
+                log.info("Changed files are not included in this module, skipping Sandboni");
+                return new Builder(context, FilterIndicator.NONE);
+            }
+
             Instant start = Instant.now();
             executeFinders(context);
             Instant finish = Instant.now();
@@ -166,6 +178,13 @@ public class Processor {
             return new Builder(context, FilterIndicator.ALL);
         }
         return new Builder(context);
+    }
+
+    private boolean moduleContainsChanges(ChangeScope<Change> changeScope) {
+        return scopeFilter.isInScope(changeScope,
+                Stream.of(arguments.getSrcLocation())
+                        .map(File::new)
+                        .collect(Collectors.toSet()));
     }
 
     private void executeFinders(Context context) {

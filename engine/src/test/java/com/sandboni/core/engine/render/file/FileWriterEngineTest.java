@@ -167,6 +167,7 @@ public class FileWriterEngineTest {
 
     private Arguments getArguments(String fromChangeId, boolean selectiveMode) {
         return Arguments.builder()
+                .srcLocation(new String[]{"."})
                 .fromChangeId(fromChangeId)
                 .toChangeId("999eee")
                 .repository(".")
