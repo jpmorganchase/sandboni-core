@@ -18,9 +18,7 @@ import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.FileTreeIterator;
 import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.treewalk.filter.OrTreeFilter;
-import org.eclipse.jgit.treewalk.filter.PathFilter;
-import org.eclipse.jgit.treewalk.filter.TreeFilter;
+import org.eclipse.jgit.treewalk.filter.*;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 
 import java.io.File;
@@ -49,11 +47,7 @@ public class ChangeScopeResolver {
     public ChangeScope<Change> getChangeScope(RevisionScope<ObjectId> revisionScope) throws SourceControlException {
         final ChangeScope<Change> scope = new ChangeScopeImpl();
         try {
-            AbstractTreeIterator from = getAbstractTreeIterator(revisionScope.getFrom());
-            AbstractTreeIterator to = getAbstractTreeIterator(revisionScope.getTo());
-
-            List<DiffEntry> entries = diffFormatter.scan(from, to);
-            List<DiffEntry> filtered = filterEntries(entries, revisionScope);
+            List<DiffEntry> filtered = getFilteredEntries(revisionScope);
 
             for (DiffEntry entry : filtered) {
                 EditList editList = diffFormatter.toFileHeader(entry).toEditList();
@@ -65,6 +59,49 @@ public class ChangeScopeResolver {
             throw new SourceControlException(ErrorMessages.SCAN_REVISIONS_EXCEPTION, e);
         }
         return scope;
+    }
+
+    private List<DiffEntry> getFilteredEntries(RevisionScope<ObjectId> revisionScope) throws IOException {
+        AbstractTreeIterator from = getAbstractTreeIterator(revisionScope.getFrom());
+        AbstractTreeIterator to = getAbstractTreeIterator(revisionScope.getTo());
+
+        if (!revisionScope.getTo().equals(ObjectId.zeroId())) {
+            return getEntriesFromDiff(from, to);
+        } else {
+            return getEntriesFromStatusCall(from, to);
+        }
+    }
+
+    private List<DiffEntry> getEntriesFromStatusCall(AbstractTreeIterator from, AbstractTreeIterator to) throws IOException {
+        Status status = PorcelainApi.call(repository, git -> git.status().call());
+
+        if (status.hasUncommittedChanges()) {
+            Set<String> toBeCommittedChanges = new HashSet<>();
+            toBeCommittedChanges.addAll(status.getModified());
+            toBeCommittedChanges.addAll(status.getChanged());
+            toBeCommittedChanges.addAll(status.getAdded());
+
+            if (toBeCommittedChanges.size() == 1) {
+                diffFormatter.setPathFilter(PathSuffixFilter.create(toBeCommittedChanges.iterator().next()));
+            } else {
+                diffFormatter.setPathFilter(OrTreeFilter.create(toBeCommittedChanges.stream().map(PathSuffixFilter::create).collect(Collectors.toSet())));
+            }
+
+            List<DiffEntry> diffEntries = diffFormatter.scan(from, to);
+
+            return toBeCommittedChanges.parallelStream()
+                    .map(toBeCommittedChange -> diffEntries.stream()
+                            .filter(diffEntry -> diffEntry.getNewPath().equals(toBeCommittedChange))
+                            .findFirst().orElse(null))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
+
+        return Collections.emptyList();
+    }
+
+    private List<DiffEntry> getEntriesFromDiff(AbstractTreeIterator from, AbstractTreeIterator to) throws IOException {
+        return diffFormatter.scan(from, to);
     }
 
     private void computeDiffEntry(DiffEntry entry, EditList editList, RevisionScope<ObjectId> revisionScope, ChangeScope<Change> changeScope) throws IOException {
@@ -172,29 +209,6 @@ public class ChangeScopeResolver {
                 return new CanonicalTreeParser(null, reader, commit.getTree());
             }
         }
-    }
-
-    private List<DiffEntry> filterEntries(List<DiffEntry> diffEntries, RevisionScope revisionScope) {
-        if (!revisionScope.getTo().equals(ObjectId.zeroId())) {
-            return diffEntries;
-        }
-
-        Status status = PorcelainApi.call(repository, git -> git.status().call());
-        if (status.hasUncommittedChanges()) {
-            Set<String> toBeCommittedChanges = new HashSet<>();
-            toBeCommittedChanges.addAll(status.getModified());
-            toBeCommittedChanges.addAll(status.getChanged());
-            toBeCommittedChanges.addAll(status.getAdded());
-
-            return toBeCommittedChanges.parallelStream()
-                    .map(toBeCommittedChange -> diffEntries.stream()
-                            .filter(diffEntry -> diffEntry.getNewPath().equals(toBeCommittedChange))
-                            .findFirst().orElse(null))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-        }
-
-        return Collections.emptyList();
     }
 
     public static class DiffFormatterBuilder {
