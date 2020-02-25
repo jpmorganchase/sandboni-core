@@ -3,10 +3,14 @@ package com.sandboni.core.scm.scope.analysis;
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeType;
 import com.sandboni.core.scm.scope.SCMChangeBuilder;
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,6 +52,12 @@ public class VersionScanTest {
     }
 
     @Test
+    public void testModifyVersionLineWithUnixLineSeparator() throws IOException {
+        VersionScanner vs = new VersionScanner();
+        Assert.assertFalse(vs.scan(createParentPOMChangeUnix(Collections.singleton(180), ChangeType.MODIFY)));
+    }
+
+    @Test
     public void testAddLine(){
         VersionScanner vs = new VersionScanner();
         Assert.assertFalse(vs.scan(createParentPOMChange(Collections.singleton(5), ChangeType.ADD)));
@@ -65,22 +75,27 @@ public class VersionScanTest {
         Assert.assertTrue(vs.scan(createChildPOMChange((Stream.of(6).collect(Collectors.toSet())), ChangeType.MODIFY)));
     }
 
+    private Change createParentPOMChange(Set<Integer> lines, ChangeType type){
+        return createParentPOMChange(lines, type, "src/test/resources/parentPOM.xml", rootPom);
+    }
 
-    private Change createParentPOMChange(Set<Integer> lines, ChangeType type ){
+    private Change createParentPOMChangeUnix(Set<Integer> lines, ChangeType type) throws IOException {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("unixPOM.xml")) {
+            String content = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            return createParentPOMChange(lines, type, "src/test/resources/unixPOM.xml", content);
+        }
+    }
+
+    private Change createParentPOMChange(Set<Integer> lines, ChangeType type, String path, String fileContent){
         return new SCMChangeBuilder().with(scm -> {
-            scm.path = "src/test/resources/parentPOM.xml";
+            scm.path = path;
             scm.changedLines = lines;
             scm.changeType = type;
-            scm.fileContent = rootPom;
+            scm.fileContent = fileContent;
         }).build();
     }
 
     private Change createChildPOMChange(Set<Integer> lines, ChangeType type ){
-        return new SCMChangeBuilder().with(scm -> {
-            scm.path = "src/test/resources/childPOM.xml";
-            scm.changedLines = lines;
-            scm.changeType = type;
-            scm.fileContent = childPom;
-        }).build();
+        return createParentPOMChange(lines, type, "src/test/resources/childPOM.xml", childPom);
     }
 }
