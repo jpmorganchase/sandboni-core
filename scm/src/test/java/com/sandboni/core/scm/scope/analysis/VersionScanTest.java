@@ -3,14 +3,11 @@ package com.sandboni.core.scm.scope.analysis;
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeType;
 import com.sandboni.core.scm.scope.SCMChangeBuilder;
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,6 +31,24 @@ public class VersionScanTest {
             "    <name>Test SCM</name>\r\n" +
             "</project>";
 
+    private String unixChildPom = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n" +
+            "\n" +
+            "  <modelVersion>4.0.0</modelVersion>\n" +
+            "  <groupId>com.jpmchase.awm.doctracktool</groupId>\n" +
+            "  <artifactId>dtt</artifactId>\n" +
+            "  <version>0.0.93-SNAPSHOT</version>\n" +
+            "  <packaging>pom</packaging>\n" +
+            "  <name>dtt</name>\n" +
+            "\n" +
+            "    <parent>\n" +
+            "        <artifactId>te-core</artifactId>\n" +
+            "        <groupId>com.jpmc.awm.te</groupId>\n" +
+            "        <version>1.0.3</version>\n" +
+            "    </parent>\n" +
+            "\n" +
+            "</project>\n";
+
 
     @Before
     public void init(){
@@ -54,7 +69,7 @@ public class VersionScanTest {
     @Test
     public void testModifyVersionLineWithUnixLineSeparator() throws IOException {
         VersionScanner vs = new VersionScanner();
-        Assert.assertFalse(vs.scan(createParentPOMChangeUnix(Collections.singleton(180), ChangeType.MODIFY)));
+        Assert.assertTrue(vs.scan(createChildPOMChangeUnix(Collections.singleton(14), ChangeType.MODIFY)));
     }
 
     @Test
@@ -76,17 +91,14 @@ public class VersionScanTest {
     }
 
     private Change createParentPOMChange(Set<Integer> lines, ChangeType type){
-        return createParentPOMChange(lines, type, "src/test/resources/parentPOM.xml", rootPom);
+        return createPOMChange(lines, type, "src/test/resources/parentPOM.xml", rootPom);
     }
 
-    private Change createParentPOMChangeUnix(Set<Integer> lines, ChangeType type) throws IOException {
-        try (InputStream inputStream = getClass().getResourceAsStream("/unixPOM.xml")) {
-            String content = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            return createParentPOMChange(lines, type, "src/test/resources/unixPOM.xml", content);
-        }
+    private Change createChildPOMChangeUnix(Set<Integer> lines, ChangeType type) throws IOException {
+            return createPOMChange(lines, type, "src/test/resources/childUnixPOM.xml", unixChildPom);
     }
 
-    private Change createParentPOMChange(Set<Integer> lines, ChangeType type, String path, String fileContent){
+    private Change createPOMChange(Set<Integer> lines, ChangeType type, String path, String fileContent){
         return new SCMChangeBuilder().with(scm -> {
             scm.path = path;
             scm.changedLines = lines;
@@ -96,6 +108,6 @@ public class VersionScanTest {
     }
 
     private Change createChildPOMChange(Set<Integer> lines, ChangeType type ){
-        return createParentPOMChange(lines, type, "src/test/resources/childPOM.xml", childPom);
+        return createPOMChange(lines, type, "src/test/resources/childPOM.xml", childPom);
     }
 }
