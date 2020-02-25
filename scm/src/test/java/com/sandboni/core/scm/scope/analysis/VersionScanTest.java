@@ -80,7 +80,7 @@ public class VersionScanTest {
     }
 
     private Change createParentPOMChangeUnix(Set<Integer> lines, ChangeType type) throws IOException {
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("unixPOM.xml")) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("/unixPOM.xml")) {
             String content = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             return createParentPOMChange(lines, type, "src/test/resources/unixPOM.xml", content);
         }
