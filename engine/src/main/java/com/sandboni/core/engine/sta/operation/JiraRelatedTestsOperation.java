@@ -3,6 +3,9 @@ package com.sandboni.core.engine.sta.operation;
 import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.SWConsts;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.jgrapht.Graph;
 
 import java.util.HashSet;
@@ -27,12 +30,15 @@ public class JiraRelatedTestsOperation extends AbstractGraphOperation<SetResult<
 
     @Override
     public SetResult<Edge> execute(Graph<Vertex, Edge> graph) {
-        return new SetResult<>(emptyIfFalse(graph.containsVertex(START_VERTEX) && graph.containsVertex(CONTAINER_VERTEX), () ->
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_EXECUTE, "ALL").start();
+        SetResult<Edge> edgeSetResult = new SetResult<>(emptyIfFalse(graph.containsVertex(START_VERTEX) && graph.containsVertex(CONTAINER_VERTEX), () ->
                 Stream.concat(
                         allReachableEdges.stream()
                                 .flatMap(re -> graph.edgesOf(re.getSource()).stream().filter(e -> e.getTarget().getActor().equals(TRACKING_VERTEX.getActor()))),
                         disconnectedTests.stream()
                                 .flatMap(v -> graph.edgesOf(v).stream().filter(e -> e.getSource().getActor().equals(TRACKING_VERTEX.getActor()))))
                         .filter(e -> e.getTarget().getActor().equals(TRACKING_VERTEX.getActor()))));
+        swAll.stop();
+        return edgeSetResult;
     }
 }

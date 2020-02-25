@@ -4,6 +4,9 @@ import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.vertex.CucumberVertex;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.SWConsts;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.jgrapht.Graph;
 
 import java.util.Objects;
@@ -14,7 +17,7 @@ public class CucumberTestsOperation extends AbstractGraphOperation<SetResult<Cuc
     private final Set<TestVertex> tests;
     private final boolean isExternal;
 
-    CucumberTestsOperation(Set<TestVertex> tests){
+    CucumberTestsOperation(Set<TestVertex> tests) {
         this(tests, false);
     }
 
@@ -26,10 +29,13 @@ public class CucumberTestsOperation extends AbstractGraphOperation<SetResult<Cuc
 
     @Override
     public SetResult<CucumberVertex> execute(Graph<Vertex, Edge> graph) {
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_EXECUTE, "ALL").start();
         Set<CucumberVertex> set = tests.stream()
                 .filter(v -> v instanceof CucumberVertex && v.isExternalLocation() == isExternal)
-                .map(v -> (CucumberVertex)v)
+                .map(v -> (CucumberVertex) v)
                 .collect(Collectors.toSet());
-        return new SetResult<>(set);
+        SetResult<CucumberVertex> cucumberVertexSetResult = new SetResult<>(set);
+        swAll.stop();
+        return cucumberVertexSetResult;
     }
 }

@@ -2,6 +2,9 @@ package com.sandboni.core.engine.sta.operation;
 
 import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.SWConsts;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.jgrapht.Graph;
 
 import java.util.HashSet;
@@ -19,6 +22,9 @@ public class ChangesMapOperation extends AbstractGraphOperation<MapResult<String
 
     @Override
     public MapResult<String, Set<String>> execute(Graph<Vertex, Edge> graph) {
-        return new MapResult<>(changes.stream().collect(toMapActorAction));
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_EXECUTE, "ALL").start();
+        MapResult<String, Set<String>> stringSetMapResult = new MapResult<>(changes.stream().collect(toMapActorAction));
+        swAll.stop();
+        return stringSetMapResult;
     }
 }

@@ -2,6 +2,9 @@ package com.sandboni.core.engine.sta.operation;
 
 import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.SWConsts;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
@@ -22,11 +25,14 @@ public class AllReachableEdgesOperation extends AbstractGraphOperation<SetResult
 
     @Override
     public SetResult<Edge> execute(Graph<Vertex, Edge> graph) {
-        return new SetResult<>(emptyIfFalse(graph.containsVertex(START_VERTEX) && graph.containsVertex(END_VERTEX),
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_EXECUTE, "ALL").start();
+        SetResult<Edge> edgeSetResult = new SetResult<>(emptyIfFalse(graph.containsVertex(START_VERTEX) && graph.containsVertex(END_VERTEX),
                 () -> {
                     AllDirectedPaths<Vertex, Edge> algorithm = new AllDirectedPaths<>((DirectedGraph<Vertex, Edge>) graph);
                     List<GraphPath<Vertex, Edge>> ways = algorithm.getAllPaths(END_VERTEX, START_VERTEX, true, MAX_PATH_LENGTH);
                     return ways.stream().flatMap(w -> w.getEdgeList().stream()).distinct();
                 }));
+        swAll.stop();
+        return edgeSetResult;
     }
 }

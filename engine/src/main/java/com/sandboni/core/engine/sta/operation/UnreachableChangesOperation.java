@@ -2,6 +2,9 @@ package com.sandboni.core.engine.sta.operation;
 
 import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.SWConsts;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
@@ -19,11 +22,14 @@ public class UnreachableChangesOperation extends AbstractGraphOperation<MapResul
 
     @Override
     public MapResult<String, Set<String>> execute(Graph<Vertex, Edge> graph) {
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_EXECUTE, "ALL").start();
         ShortestPathAlgorithm<Vertex, Edge> algorithm = new BellmanFordShortestPath<>(graph);
-        return new MapResult<>(emptyIfFalse(graph.containsVertex(END_VERTEX) && graph.containsVertex(START_VERTEX),
+        MapResult<String, Set<String>> stringSetMapResult = new MapResult<>(emptyIfFalse(graph.containsVertex(END_VERTEX) && graph.containsVertex(START_VERTEX),
                 () -> graph.edgesOf(END_VERTEX).stream()
                         .map(Edge::getTarget)
                         .filter(v -> algorithm.getPath(v, START_VERTEX) == null))
                 .stream().collect(toMapActorAction));
+        swAll.stop();
+        return stringSetMapResult;
     }
 }

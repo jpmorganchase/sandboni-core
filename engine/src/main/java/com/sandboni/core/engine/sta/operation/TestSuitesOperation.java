@@ -5,6 +5,9 @@ import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.TestSuiteVertex;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.SWConsts;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.jgrapht.Graph;
 
 import java.util.HashSet;
@@ -28,9 +31,12 @@ public class TestSuitesOperation extends AbstractGraphOperation<SetResult<TestVe
 
     @Override
     public SetResult<TestVertex> execute(Graph<Vertex, Edge> graph) {
-        return new SetResult<>(emptyIfFalse(graph.containsVertex(TEST_SUITE_VERTEX) && graph.containsVertex(START_VERTEX) && graph.containsVertex(END_VERTEX),
-                () -> testsToCheck.stream().flatMap(v -> graph.edgesOf(v).stream().filter(e -> LinkType.TEST_SUITE.equals(e.getLinkType()))).map(e -> (TestSuiteVertex)e.getTarget())
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_EXECUTE, "ALL").start();
+        SetResult<TestVertex> testVertexSetResult = new SetResult<>(emptyIfFalse(graph.containsVertex(TEST_SUITE_VERTEX) && graph.containsVertex(START_VERTEX) && graph.containsVertex(END_VERTEX),
+                () -> testsToCheck.stream().flatMap(v -> graph.edgesOf(v).stream().filter(e -> LinkType.TEST_SUITE.equals(e.getLinkType()))).map(e -> (TestSuiteVertex) e.getTarget())
         ));
+        swAll.stop();
+        return testVertexSetResult;
     }
 
 }

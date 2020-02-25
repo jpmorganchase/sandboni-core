@@ -3,6 +3,9 @@ package com.sandboni.core.engine.finder;
 import com.sandboni.core.engine.contract.Finder;
 import com.sandboni.core.engine.contract.ThrowingBiConsumer;
 import com.sandboni.core.engine.sta.Context;
+import com.sandboni.core.scm.utils.timing.SWConsts;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +23,11 @@ public abstract class FileTreeFinder implements Finder {
     public void find(Context context) {
         logger.info("[{}] Finder {} started", Thread.currentThread().getName(), this.getClass().getSimpleName());
 
+        StopWatch sw1 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_FIND, "getConsumers").start();
         consumers = getConsumers();
+        sw1.stop();
 
+        StopWatch sw2 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_FIND, "traverseAllLocations").start();
         context.forEachLocation(location -> {
             File f = new File(location);
             if (!f.exists()) {
@@ -29,6 +35,7 @@ public abstract class FileTreeFinder implements Finder {
             }
             traverse(f, context);
         }, scanDependencies());
+        sw2.stop();
 
         logger.info("[{}] Finder {} finished", Thread.currentThread().getName(), this.getClass().getSimpleName());
     }

@@ -3,6 +3,9 @@ package com.sandboni.core.engine.sta.operation;
 import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.SWConsts;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.jgrapht.Graph;
 
 import java.util.Objects;
@@ -19,7 +22,9 @@ public class AlwaysRunTestOperation extends AbstractGraphOperation<SetResult<Tes
 
     @Override
     public SetResult<TestVertex> execute(Graph<Vertex, Edge> graph) {
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_EXECUTE, "ALL").start();
         Set<TestVertex> tests = allTests.stream().filter(TestVertex::isAlwaysRun).collect(Collectors.toSet());
+        swAll.stop();
         return new SetResult<>(tests);
     }
 }

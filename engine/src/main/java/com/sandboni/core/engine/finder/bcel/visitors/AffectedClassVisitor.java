@@ -2,6 +2,9 @@ package com.sandboni.core.engine.finder.bcel.visitors;
 
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.Link;
+import com.sandboni.core.scm.utils.timing.SWConsts;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 
@@ -23,7 +26,9 @@ public class AffectedClassVisitor extends ClassVisitorBase {
     @Override
     public Stream<Link> start(JavaClass jc, Context c) {
         String relativeFileName = MethodUtils.getRelativeFileName(jc);
+        StopWatch sw1 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_START, "get linesChanges").start();
         this.linesChanges = c.getChangeScope().getAllLinesChanged(relativeFileName);
+        sw1.stop();
         if (!linesChanges.isEmpty()) {
             return super.start(jc, c);
         }

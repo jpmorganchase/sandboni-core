@@ -9,6 +9,9 @@ import com.sandboni.core.engine.result.Result;
 import com.sandboni.core.engine.result.ResultContent;
 import com.sandboni.core.engine.result.Status;
 import com.sandboni.core.engine.sta.operation.GraphOperations;
+import com.sandboni.core.scm.utils.timing.SWConsts;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,18 +41,23 @@ public class ResultGenerator {
     }
 
     public Result generate(ResultContent... resultContents) {
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_GENERATE, "ALL").start();
         log.debug("....generate result for {}", Arrays.stream(resultContents).collect(Collectors.toList()));
 
         Arrays.stream(resultContents)
                 .parallel()
                 .forEach(rc -> {
+                    StopWatch sw1 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_GENERATE, "getContent for " + rc).start();
                     Object data = getContent(rc);
+                    sw1.stop();
 
                     Class clazz = Objects.requireNonNull(data).getClass();
                     result.put(rc, clazz, data);
 
                     if (rc.isOutputToFile()) { //if we want to output to file
+                        StopWatch sw2 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_GENERATE, "writeOutputToFile").start();
                         writeOutputToFile(result, rc);
+                        sw2.stop();
                     }
                 });
 
@@ -57,6 +65,10 @@ public class ResultGenerator {
             result.setStatus(Status.OK);
         }
         result.setFilterIndicator(filterIndicator);
+        swAll.stop();
+
+        log.info("Generated Result for " + Arrays.stream(resultContents).map(Enum::name).collect(Collectors.joining(",")));
+        StopWatchManager.flushAll();
         return result;
     }
 

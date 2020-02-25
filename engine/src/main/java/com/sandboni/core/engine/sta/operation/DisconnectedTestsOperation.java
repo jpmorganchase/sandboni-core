@@ -3,6 +3,9 @@ package com.sandboni.core.engine.sta.operation;
 import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.SWConsts;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 
@@ -26,6 +29,7 @@ public class DisconnectedTestsOperation extends AbstractGraphOperation<SetResult
 
     @Override
     public SetResult<TestVertex> execute(Graph<Vertex, Edge> graph) {
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), SWConsts.METHOD_NAME_EXECUTE, "ALL").start();
         DirectedGraph<Vertex, Edge> directedGraph = (DirectedGraph<Vertex, Edge>) graph;
         //getting only the not-ignored and unrelated tests
         Set<TestVertex> notRelatedTests = allTests.parallelStream()
@@ -38,7 +42,7 @@ public class DisconnectedTestsOperation extends AbstractGraphOperation<SetResult
             Set<Vertex> visited = new HashSet<>();
             stack.push(tv);
             boolean found = false;
-            while (!stack.isEmpty()){
+            while (!stack.isEmpty()) {
                 Vertex v = stack.pop();
                 if (!visited.contains(v)) {
                     visited.add(v);
@@ -51,11 +55,13 @@ public class DisconnectedTestsOperation extends AbstractGraphOperation<SetResult
                     }
                 }
             }
-            if (!found){
+            if (!found) {
                 disconnectedTests.add(tv);
             }
         });
 
-        return new SetResult<>(disconnectedTests);
+        SetResult<TestVertex> testVertexSetResult = new SetResult<>(disconnectedTests);
+        swAll.stop();
+        return testVertexSetResult;
     }
 }
