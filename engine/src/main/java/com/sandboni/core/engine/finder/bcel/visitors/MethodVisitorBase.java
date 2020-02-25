@@ -2,6 +2,8 @@ package com.sandboni.core.engine.finder.bcel.visitors;
 
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.Link;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.LineNumber;
 import org.apache.bcel.classfile.Method;
@@ -33,9 +35,15 @@ public abstract class MethodVisitorBase extends EmptyVisitor {
 
     protected void visitInstructions(Method method) {
         // exact match (i.e. map) doesnt work here
+        StopWatch sw1 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "visitInstructions", "getLineNumberTable").start();
         LineNumber[] lineNumbers = method.getLineNumberTable() != null ? method.getLineNumberTable().getLineNumberTable() : null;
+        sw1.stop();
+        StopWatch sw2 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "visitInstructions", "getInstructionHandles").start();
         InstructionHandle[] instructionHandles = new InstructionList(method.getCode().getCode()).getInstructionHandles();
+        sw2.stop();
+        StopWatch sw3 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "visitInstructions", "handleMethodInstructions").start();
         handleMethodInstructions(lineNumbers, instructionHandles);
+        sw3.stop();
     }
 
     private void handleMethodInstructions(LineNumber[] lineNumbers, InstructionHandle[] instructionHandles) {
@@ -52,7 +60,9 @@ public abstract class MethodVisitorBase extends EmptyVisitor {
 
             //the check 'currentLineNumber >= startLineNumber' is meant to avoid a case where the instruction happens before the constructor
             if (currentLineNumber >= startLineNumber && !shouldVisitInstruction(i)) {
+                StopWatch swi = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "handleMethodInstructions", "i.accept").start();
                 i.accept(this);
+                swi.stop();
             }
         }
     }

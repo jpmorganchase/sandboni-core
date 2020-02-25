@@ -3,6 +3,8 @@ package com.sandboni.core.engine.finder.bcel.visitors;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
@@ -28,13 +30,13 @@ abstract class CallerFieldOrMethodVisitor extends MethodVisitorBase {
         if (!ignore)
             ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
 
-        if (testMethod){
+        if (testMethod) {
             currentMethodVertex = new TestVertex.Builder(jc.getClassName(), formatMethod(m.getName(), m.getArgumentTypes()), context.getCurrentLocation())
                     .withFilePath(getRelativeFileName(jc))
                     .withLineNumbers(MethodUtils.getMethodLineNumbers(m))
                     .withIgnore(ignore)
                     .build();
-        }else {
+        } else {
             currentMethodVertex = new Vertex.Builder(jc.getClassName(), formatMethod(m.getName(), m.getArgumentTypes()), context.getCurrentLocation())
                     .withFilePath(getRelativeFileName(jc))
                     .withLineNumbers(MethodUtils.getMethodLineNumbers(m))
@@ -46,7 +48,9 @@ abstract class CallerFieldOrMethodVisitor extends MethodVisitorBase {
         if (method.isAbstract() || method.isNative()) {
             return 0;
         }
+        StopWatch sw1 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "start", "visitInstructions").start();
         visitInstructions(method);
+        sw1.stop();
         return linksCount;
     }
 }

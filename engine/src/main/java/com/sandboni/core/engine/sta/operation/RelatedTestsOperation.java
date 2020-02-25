@@ -4,10 +4,12 @@ import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.vertex.CucumberVertex;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
-import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
+import org.jgrapht.alg.shortestpath.BidirectionalDijkstraShortestPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,16 +36,25 @@ public class RelatedTestsOperation extends AbstractGraphOperation<SetResult<Test
 
     @Override
     public SetResult<TestVertex> execute(Graph<Vertex, Edge> graph) {
-        ShortestPathAlgorithm<Vertex, Edge> algorithm = new BellmanFordShortestPath<>(graph);
-        return new SetResult<>(emptyIfFalse(graph.containsVertex(START_VERTEX) && graph.containsVertex(END_VERTEX),
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "execute", "ALL").start();
+        StopWatch sw1 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "execute", "BidirectionalDijkstraShortestPath - init").start();
+        ShortestPathAlgorithm<Vertex, Edge> algorithm = new BidirectionalDijkstraShortestPath<>(graph);
+        sw1.stop();
+        StopWatch sw2 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "execute", "filter tests").start();
+        SetResult<TestVertex> testVertexSetResult = new SetResult<>(emptyIfFalse(graph.containsVertex(START_VERTEX) && graph.containsVertex(END_VERTEX),
                 () -> allTests.stream()
                         .filter(v -> {
+                            StopWatch sw3 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "execute", "algorithm.getPath").start();
                             GraphPath<Vertex, Edge> path = algorithm.getPath(END_VERTEX, v);
+                            sw3.stop();
                             if (path != null && logger.isDebugEnabled()) {
                                 logger.debug("Found path for {} = {}", v, getPathString(path.getEdgeList()));
                             }
                             return isAffectedCucumberVertex(v) || path != null;
                         })));
+        sw2.stop();
+        swAll.stop();
+        return testVertexSetResult;
     }
 
     private String getPathString(List<Edge> edgeList) {

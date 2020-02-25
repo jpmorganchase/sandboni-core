@@ -4,6 +4,8 @@ import com.sandboni.core.engine.result.ChangeStats;
 import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.jgrapht.Graph;
 import org.jgrapht.traverse.DepthFirstIterator;
 
@@ -28,8 +30,11 @@ public class ChangeStatsOperation extends AbstractGraphOperation<MapResult<Verte
 
     @Override
     public MapResult<Vertex, ChangeStats> execute(Graph<Vertex, Edge> graph) {
-        return new MapResult<>(changes.parallelStream()
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "execute", "ALL").start();
+        MapResult<Vertex, ChangeStats> vertexChangeStatsMapResult = new MapResult<>(changes.parallelStream()
                 .collect(toMap(vertex -> vertex, vertex -> calculateStats(graph, vertex))));
+        swAll.stop();
+        return vertexChangeStatsMapResult;
     }
 
     private ChangeStats calculateStats(Graph<Vertex, Edge> graph, Vertex change) {

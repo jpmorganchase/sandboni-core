@@ -4,13 +4,15 @@ import com.sandboni.core.scm.exception.ErrorMessages;
 import com.sandboni.core.scm.exception.SourceControlException;
 import com.sandboni.core.scm.exception.SourceControlRuntimeException;
 import com.sandboni.core.scm.proxy.SourceControlFilter;
+import com.sandboni.core.scm.resolvers.BlameResolver;
+import com.sandboni.core.scm.resolvers.ChangeScopeResolver;
+import com.sandboni.core.scm.resolvers.RevisionResolver;
 import com.sandboni.core.scm.revision.RevInfo;
 import com.sandboni.core.scm.revision.RevisionScope;
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeScope;
-import com.sandboni.core.scm.resolvers.BlameResolver;
-import com.sandboni.core.scm.resolvers.ChangeScopeResolver;
-import com.sandboni.core.scm.resolvers.RevisionResolver;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -36,8 +38,13 @@ public class GitRepository implements GitInterface {
 
     @Override
     public ChangeScope<Change> getChanges(String fromRev, String toRev) throws SourceControlException {
+        StopWatch sw1 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "getChanges", "revisionResolver.resolve").start();
         RevisionScope<ObjectId> revisionScope = revisionResolver.resolve(fromRev, toRev);
-        return changeScopeResolver.getChangeScope(revisionScope);
+        sw1.stop();
+        StopWatch sw2 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "getChanges", "changeScopeResolver.getChangeScope").start();
+        ChangeScope<Change> changeScope = changeScopeResolver.getChangeScope(revisionScope);
+        sw2.stop();
+        return changeScope;
     }
 
     @Override

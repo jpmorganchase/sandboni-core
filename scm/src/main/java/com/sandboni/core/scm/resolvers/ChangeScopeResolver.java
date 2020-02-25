@@ -7,6 +7,8 @@ import com.sandboni.core.scm.revision.RevisionScope;
 import com.sandboni.core.scm.scope.*;
 import com.sandboni.core.scm.utils.PorcelainApi;
 import com.sandboni.core.scm.utils.RawUtil;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.diff.*;
 import org.eclipse.jgit.lib.ObjectId;
@@ -47,14 +49,18 @@ public class ChangeScopeResolver {
     public ChangeScope<Change> getChangeScope(RevisionScope<ObjectId> revisionScope) throws SourceControlException {
         final ChangeScope<Change> scope = new ChangeScopeImpl();
         try {
+            StopWatch sw1 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "getChangeScope", "getFilteredEntries").start();
             List<DiffEntry> filtered = getFilteredEntries(revisionScope);
+            sw1.stop();
 
+            StopWatch sw4 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "getChangeScope", "computeDiff for filtered entries").start();
             for (DiffEntry entry : filtered) {
                 EditList editList = diffFormatter.toFileHeader(entry).toEditList();
                 if (!editList.isEmpty()) {
                     computeDiffEntry(entry, editList, revisionScope, scope);
                 }
             }
+            sw4.stop();
         } catch (IOException e) {
             throw new SourceControlException(ErrorMessages.SCAN_REVISIONS_EXCEPTION, e);
         }

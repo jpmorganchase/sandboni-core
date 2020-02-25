@@ -34,6 +34,6 @@ public class BcelFinder extends FileTreeFinder {
     }
 
     protected Link[] startVisitors(JavaClass jc, Context c) {
-        return visitors.stream().flatMap(v -> v.start(jc, c)).toArray(Link[]::new);
+        return visitors.parallelStream().flatMap(v -> v.start(jc, c)).toArray(Link[]::new);
     }
 }

@@ -3,6 +3,8 @@ package com.sandboni.core.engine.finder.bcel.visitors;
 import com.sandboni.core.engine.finder.bcel.ClassVisitor;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.Link;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.apache.bcel.classfile.EmptyVisitor;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
@@ -22,17 +24,28 @@ public abstract class ClassVisitorBase extends EmptyVisitor implements ClassVisi
 
     @Override
     public void visitJavaClass(JavaClass jc) {
+        StopWatch sw1 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "visitJavaClass", "constantPool").start();
         jc.getConstantPool().accept(this);
+        sw1.stop();
+        StopWatch sw2 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "visitJavaClass", "visitMethods").start();
         for (Method method : jc.getMethods()) {
             method.accept(this);
         }
+        sw2.stop();
     }
 
     public Stream<Link> start(JavaClass jc, Context c) {
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "start", "ALL").start();
+        StopWatch sw1 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "start", "init").start();
         javaClass = jc;
         context = c.getLocalContext();
         constantPoolGen = new ConstantPoolGen(javaClass.getConstantPool());
+        sw1.stop();
+        StopWatch sw2 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "start", "visitJavaClass").start();
         visitJavaClass(javaClass);
-        return context.getLinks();
+        sw2.stop();
+        Stream<Link> links = context.getLinks();
+        swAll.stop();
+        return links;
     }
 }

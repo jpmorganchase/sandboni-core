@@ -6,6 +6,8 @@ import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.slf4j.Logger;
@@ -37,11 +39,13 @@ public class Builder {
     }
 
     private DirectedGraph<Vertex, Edge> buildGraph() {
+        StopWatch swAll = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "buildGraph()", "ALL").start();
         Instant start = Instant.now();
         DirectedGraph<Vertex, Edge> graph = new DefaultDirectedGraph<>(Edge.class);
         //reversing direction
         context.getLinks().sequential().forEach(l -> add(graph, l.getCallee(), l.getCaller(), l.getLinkType()));
         Instant finish = Instant.now();
+        swAll.stop();
 
         log.info("Build Graph execution total time: {}", Duration.between(start, finish).toMillis());
 

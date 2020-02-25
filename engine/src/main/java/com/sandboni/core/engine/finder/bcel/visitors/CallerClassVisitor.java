@@ -5,6 +5,8 @@ import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import com.sandboni.core.scm.utils.timing.StopWatch;
+import com.sandboni.core.scm.utils.timing.StopWatchManager;
 import org.apache.bcel.classfile.Method;
 
 import java.util.Arrays;
@@ -30,20 +32,27 @@ public class CallerClassVisitor extends ClassVisitorBase implements ClassVisitor
 
     @Override
     public void visitMethod(Method method) {
-        long linksAdded = Arrays.stream(getVisitors(method))
+        StopWatch sw1 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "visitMethod", "linksAdded (CallerFieldOrMethodVisitor)").start();
+        long linksAdded = Arrays.stream(getVisitors(method)).parallel()
                 .map(CallerFieldOrMethodVisitor::start)
                 .mapToInt(i -> i).sum();
+        sw1.stop();
 
-        // in order to detect locations (modules) each method has to have at least one entry in the graph as caller
+        // in order to detect locations (modules) each method has to have at least  one entry in the graph as caller
         if (linksAdded == 0) {
-            Vertex v ;
-            if (Objects.nonNull(context.getCurrentLocation()) && context.getTestLocations().contains(context.getCurrentLocation())){
+            Vertex v;
+            if (Objects.nonNull(context.getCurrentLocation()) && context.getTestLocations().contains(context.getCurrentLocation())) {
+                StopWatch sw2 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "visitMethod", "create TestVertex").start();
                 v = new TestVertex.Builder(this.javaClass.getClassName(), formatMethod(method), context.getCurrentLocation()).build();
-            }else{
-                v = new Vertex.Builder(this.javaClass.getClassName(), formatMethod(method), context.getCurrentLocation())
-                        .build();
+                sw2.stop();
+            } else {
+                StopWatch sw3 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "visitMethod", "create Vertex").start();
+                v = new Vertex.Builder(this.javaClass.getClassName(), formatMethod(method), context.getCurrentLocation()).build();
+                sw3.stop();
             }
-            context.addLink(LinkFactory.createInstance(context.getApplicationId(), v , DEAD_END_VERTEX, LinkType.METHOD_CALL));
+            StopWatch sw4 = StopWatchManager.getStopWatch(this.getClass().getSimpleName(), "visitMethod", "addLink").start();
+            context.addLink(LinkFactory.createInstance(context.getApplicationId(), v, DEAD_END_VERTEX, LinkType.METHOD_CALL));
+            sw4.stop();
         }
     }
 }
