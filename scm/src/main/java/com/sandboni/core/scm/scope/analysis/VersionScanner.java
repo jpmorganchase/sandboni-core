@@ -15,7 +15,7 @@ public class VersionScanner implements ChangeScanner {
             return false;
         }
 
-        String[] rows = change.getFileContent().orElse("").split(System.lineSeparator());
+        String[] rows = change.getFileContent().orElse("").split("\\R"); //covers Windows/Unix/Mac OS
 
         return change.getLinesChanged().stream().allMatch(i -> {
             String row = rows[i - 1].trim();
