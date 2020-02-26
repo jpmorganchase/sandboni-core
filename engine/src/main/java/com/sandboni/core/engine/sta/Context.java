@@ -1,8 +1,8 @@
 package com.sandboni.core.engine.sta;
 
 import com.sandboni.core.engine.contract.ThrowingConsumer;
+import com.sandboni.core.engine.sta.executor.AbstractParallelExecutor;
 import com.sandboni.core.engine.sta.executor.LocationScannerExecutor;
-import com.sandboni.core.engine.sta.executor.ScannerExecutor;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.utils.StringUtil;
@@ -173,12 +173,12 @@ public class Context {
             start = System.nanoTime();
             log.info("[{}] Start traversing jars", Thread.currentThread().getName());
             currentLocation = "DependencyJars";
-            getScannerExecutor(consumer).scan(new ArrayList<>(dependencyJars));
+            getScannerExecutor(consumer).execute(new ArrayList<>(dependencyJars));
             log.info("[{}] Finished traversing jars in {} milliseconds", Thread.currentThread().getName(), elapsedTime(start));
         }
     }
 
-    private ScannerExecutor getScannerExecutor(ThrowingConsumer<String> consumer) {
+    private AbstractParallelExecutor<String, String> getScannerExecutor(ThrowingConsumer<String> consumer) {
         return new LocationScannerExecutor(consumer);
     }
 

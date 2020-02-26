@@ -9,7 +9,7 @@ import com.sandboni.core.engine.result.FilterIndicator;
 import com.sandboni.core.engine.sta.Builder;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.connector.Connector;
-import com.sandboni.core.engine.sta.graph.Link;
+import com.sandboni.core.engine.sta.executor.FinderExecutor;
 import com.sandboni.core.engine.sta.operation.GraphOperations;
 import com.sandboni.core.engine.utils.StringUtil;
 import com.sandboni.core.scm.GitInterface;
@@ -188,11 +188,8 @@ public class Processor {
     }
 
     private void executeFinders(Context context) {
-        finders.parallelStream().forEach(f -> {
-            Context localContext = context.getLocalContext();
-            f.findSafe(localContext);
-            context.addLinks(localContext.getLinks().toArray(Link[]::new));
-        });
+        FinderExecutor finderExecutor = new FinderExecutor(context);
+        finderExecutor.execute(finders);
     }
 
     private static String[] getBuildFiles() {
