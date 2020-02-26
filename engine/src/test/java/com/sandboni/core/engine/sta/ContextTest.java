@@ -1,6 +1,5 @@
 package com.sandboni.core.engine.sta;
 
-import com.sandboni.core.scm.scope.ChangeScopeImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,6 +7,7 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ContextTest {
@@ -41,14 +41,6 @@ public class ContextTest {
         projectClasspath.forEach(item -> assertTrue(context.getClassPath().contains(item)));
     }
 
-    @Test
-    public void testForEachLocation() {
-        String[] tests = new String[] {"test1", "test2"};
-        String[] jars = new String[] {"jar1", "jar2"};
-        Context c = new Context("appId", new String[0], tests, jars, "filter", new ChangeScopeImpl(), null, null, true);
-        c.forEachLocation(path -> assertTrue(Arrays.stream(jars).anyMatch(path::contains) || Arrays.stream(tests).anyMatch(path::contains)), true);
-    }
-
     private List<String> getPathItems(String[] sourceLocations) {
         return Arrays.stream(sourceLocations)
                 .map(l -> new File(l).getAbsolutePath())
@@ -68,5 +60,12 @@ public class ContextTest {
 
         assertTrue(context.getLocalContext().getFilters().contains("com"));
         assertTrue(context.getLocalContext().getFilters().contains("org"));
+    }
+
+    @Test
+    public void localContextWithSameLocation() {
+        assertTrue(context.getCurrentLocation().isEmpty());
+        assertEquals(context.getCurrentLocation(), context.getLocalContext().getCurrentLocation());
+        assertEquals("NewLocation", context.getLocalContext("NewLocation").getCurrentLocation());
     }
 }

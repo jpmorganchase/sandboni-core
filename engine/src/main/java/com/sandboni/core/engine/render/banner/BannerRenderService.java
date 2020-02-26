@@ -33,7 +33,7 @@ public class BannerRenderService {
                 builder.append(l).append(N_LINE);
             }
         } catch (IOException e) {
-            log.warn("Error in rendering Sandboni banner : {} , {}", LOGO_FILE_NAME, e);
+            log.warn("Error in rendering Sandboni banner : {} , {}", LOGO_FILE_NAME, e.toString());
         }
         return builder.toString();
     }

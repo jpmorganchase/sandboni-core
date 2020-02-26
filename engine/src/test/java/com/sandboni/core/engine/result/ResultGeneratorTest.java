@@ -1,7 +1,9 @@
 package com.sandboni.core.engine.result;
 
 import com.sandboni.core.engine.*;
+import com.sandboni.core.engine.contract.Finder;
 import com.sandboni.core.engine.filter.MockChangeScopeFilter;
+import com.sandboni.core.engine.sta.connector.Connector;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,6 +25,8 @@ public class ResultGeneratorTest {
                 procBuilder.arguments = getArguments(fromChangeId, runSelective, runAllExternal, stage);
                 procBuilder.gitDetector = new ChangeDetectorResultMock();
                 procBuilder.scopeFilter = new MockChangeScopeFilter();
+                procBuilder.finders = new Finder[]{};
+                procBuilder.connectors = new Connector[]{};
             }).build();
     }
 
