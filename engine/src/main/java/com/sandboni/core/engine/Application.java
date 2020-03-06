@@ -1,8 +1,8 @@
 package com.sandboni.core.engine;
 
 import com.sandboni.core.engine.result.ResultContent;
-import com.sandboni.core.engine.utils.StringUtil;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
+import com.sandboni.core.engine.utils.StringUtil;
 import com.sandboni.core.engine.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +62,7 @@ public class Application {
                 .outputFormat(getValue(SystemProperties.OUTPUT_FORMAT))
                 .alwaysRunAnnotation(getValue(SystemProperties.ALWAYS_RUN_ANNOTATION))
                 .enablePreview(Boolean.parseBoolean(getValue(SystemProperties.ENABLE_PREVIEW)))
+                .useCliDiff(false)
                 .build();
 
         log.debug("[arguments collected] {}", arguments);

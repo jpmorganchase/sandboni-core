@@ -139,4 +139,16 @@ public class ArgumentBuilderTest {
 
         Assert.assertTrue(args.isEnablePreview());
     }
+
+    @Test
+    public void testUseScopeResolverFromCliGitDiffBuilder() {
+        Arguments args = Arguments.builder()
+                .fromChangeId("1")
+                .toChangeId("2")
+                .repository(".")
+                .useCliDiff(true)
+                .build();
+
+        Assert.assertTrue(args.isUseCliDiff());
+    }
 }
