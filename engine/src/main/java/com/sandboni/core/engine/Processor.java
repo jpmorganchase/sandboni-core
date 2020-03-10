@@ -8,6 +8,7 @@ import com.sandboni.core.engine.render.banner.BannerRenderService;
 import com.sandboni.core.engine.result.FilterIndicator;
 import com.sandboni.core.engine.sta.Builder;
 import com.sandboni.core.engine.sta.Context;
+import com.sandboni.core.engine.sta.analyzer.ContextAnalyzer;
 import com.sandboni.core.engine.sta.connector.Connector;
 import com.sandboni.core.engine.sta.executor.FinderExecutor;
 import com.sandboni.core.engine.sta.operation.GraphOperations;
@@ -24,7 +25,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -106,9 +110,9 @@ public class Processor {
      */
     private boolean proceed(ChangeScope<Change> changeScope) {
         return (!isRunAllExternalTests() || !isIntegrationStage())
-                && (arguments.isRunSelectiveMode()
-                || (ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles())
-                    && ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles())));
+            && (arguments.isRunSelectiveMode()
+            || (ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles())
+            && ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles())));
     }
 
     private boolean isRunAllExternalTests() {
@@ -133,8 +137,8 @@ public class Processor {
 
     private Context createContext() {
         return new Context(arguments.getApplicationId(), arguments.getSrcLocation(), arguments.getTestLocation(),
-                arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get(), arguments.getAlwaysRunAnnotation(),
-                arguments.getSeloniFilePath(), arguments.isEnablePreview());
+            arguments.getDependencies(), arguments.getFilter(), changeScopeSupplier.get(), arguments.getAlwaysRunAnnotation(),
+            arguments.getSeloniFilePath(), arguments.isEnablePreview());
     }
 
     private Builder getBuilder(Context context) {
@@ -165,9 +169,15 @@ public class Processor {
 
             log.debug("....Connectors execution total time: {}", Duration.between(start, finish).toMillis());
 
-            if (!StringUtil.isEmptyOrNull(arguments.getSeloniFilePath())){
+            if (arguments.isEnablePreview() && !arguments.isRunSelectiveMode() && ContextAnalyzer.containsReflectionCallers(context)) {
+                log.info(" ** Located reflection calls is source files; All tests will be executed **");
+                return new Builder(context, FilterIndicator.ALL);
+            }
+
+            if (!StringUtil.isEmptyOrNull(arguments.getSeloniFilePath())) {
                 return new Builder(context, FilterIndicator.SELECTIVE_EXTERNAL);
             }
+
         } else if (isRunAllExternalTests() && isIntegrationStage()) {
             log.info("Running All External Tests");
             executeFinders(context);
@@ -182,9 +192,9 @@ public class Processor {
 
     private boolean moduleContainsChanges(ChangeScope<Change> changeScope) {
         return scopeFilter.isInScope(changeScope,
-                Stream.of(arguments.getSrcLocation())
-                        .map(File::new)
-                        .collect(Collectors.toSet()));
+            Stream.of(arguments.getSrcLocation())
+                .map(File::new)
+                .collect(Collectors.toSet()));
     }
 
     private void executeFinders(Context context) {

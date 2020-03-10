@@ -15,11 +15,15 @@ public class AllTestsOperationTest extends GraphOperationsTest {
     public void getAllTests() {
         Set<TestVertex> allTests = graphOperations.getAllTests();
         assertNotNull(allTests);
-        assertEquals(7, allTests.size());
+        assertEquals(11, allTests.size());
         assertTrue(allTests.contains(callerTest));
         assertTrue(allTests.contains(disconnectedCallerTest));
         assertTrue(allTests.contains(cucumberTest));
         assertTrue(allTests.contains(affectedCucumberTest));
+        assertTrue(allTests.contains(relatedWithReflection));
+        assertTrue(allTests.contains(relatedWithoutReflection));
+        assertTrue(allTests.contains(disconnectedWithReflection));
+        assertTrue(allTests.contains(unRelatedWithReflection));
     }
 
     @Test
@@ -36,10 +40,14 @@ public class AllTestsOperationTest extends GraphOperationsTest {
         SetResult<TestVertex> result = allTestsOperation.execute(builder.getGraph());
         Set<TestVertex> allTests = result.get();
         assertNotNull(allTests);
-        assertEquals(7, allTests.size());
+        assertEquals(11, allTests.size());
         assertTrue(allTests.contains(new TestVertex.Builder("ClassBTest", "testCallerMethod()").build()));
         assertTrue(allTests.contains(new TestVertex.Builder("ClassBTest", "testDisconnectedFromCallerMethod()").build()));
         assertTrue(allTests.contains(new CucumberVertex.Builder("featureFile", "scenario1").build()));
         assertTrue(allTests.contains(new CucumberVertex.Builder("featureFile", "scenario2").build()));
+        assertTrue(allTests.contains(new TestVertex.Builder("ClassRTest", "testRelatedWithReflectionCall()").build()));
+        assertTrue(allTests.contains(new TestVertex.Builder("ClassRTest", "testRelatedWithoutReflectionCall()").build()));
+        assertTrue(allTests.contains(new TestVertex.Builder("ClassRTest", "testDisconnectedWithReflectionCall()").build()));
+        assertTrue(allTests.contains(new TestVertex.Builder("ClassRTest", "testUnRelatedWithReflectionCall()").build()));
     }
 }

@@ -1,7 +1,6 @@
 package com.sandboni.core.engine.finder.bcel.visitors;
 
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.Method;
+import org.apache.bcel.classfile.*;
 import org.apache.bcel.util.ClassPath;
 import org.apache.bcel.util.SyntheticRepository;
 
@@ -88,7 +87,7 @@ public class ClassUtils {
         Collections.reverse(superClassesTopToBottom);
 
         Map<JavaClass, List<Method>> allSuperMethods = superClassesTopToBottom
-                .stream().collect(Collectors.toMap(c -> c, ClassUtils::getInstanceMethods));
+            .stream().collect(Collectors.toMap(c -> c, ClassUtils::getInstanceMethods));
 
         for (Method method : existingMethods) {
             for (int i = 0; i < superClassesTopToBottom.size(); i++) {
@@ -115,5 +114,15 @@ public class ClassUtils {
             }
         }
         return result;
+    }
+
+    static String getClassNameFromMethodCall(ConstantPool obj, ConstantMethodref methodRef) {
+            int referencedClassIdx = methodRef.getClassIndex();
+            int referencedClassNameIdx = ((ConstantClass) obj.getConstant(referencedClassIdx)).getNameIndex();
+            return getConstantUTF8Bytes(obj, referencedClassNameIdx);
+    }
+
+    static String getConstantUTF8Bytes(ConstantPool obj, int methodNameRef) {
+        return ((ConstantUtf8) obj.getConstant(methodNameRef)).getBytes();
     }
 }
