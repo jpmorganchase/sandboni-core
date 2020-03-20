@@ -66,8 +66,7 @@ jobs:
 addons:
   sonarcloud:
     organization: "sandboni"
-    token:
-      secure: "$SONAR_TOKEN"
+    token: "$SONAR_TOKEN"
 
 cache:
   directories:
