@@ -1,9 +1,7 @@
-package com.sandboni.core.engine.finder;
+package com.sandboni.core.engine.finder.jar;
 
 import com.sandboni.core.engine.FinderTestBase;
 import com.sandboni.core.engine.contract.Finder;
-import com.sandboni.core.engine.finder.bcel.ClassVisitor;
-import com.sandboni.core.engine.finder.bcel.visitors.CallerClassVisitor;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
@@ -18,7 +16,7 @@ public class JarFinderTest extends FinderTestBase {
         super(ResourceUtils.getFile("./target/test-classes/jar-finder-1.0.jar").getAbsolutePath(), "sandboni-core");
     }
 
-    private void testVisitor(Link[] expectedLinks, ClassVisitor... visitors) {
+    private void testVisitor(Link[] expectedLinks) {
         Finder f = new JarFinder();
         f.findSafe(context);
 
@@ -31,7 +29,7 @@ public class JarFinderTest extends FinderTestBase {
     }
 
     private void testCallerVisitor(Link... expectedLinks) {
-        testVisitor(expectedLinks, new CallerClassVisitor());
+        testVisitor(expectedLinks);
     }
 
     @Test

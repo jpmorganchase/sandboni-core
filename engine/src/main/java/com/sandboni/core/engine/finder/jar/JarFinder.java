@@ -1,8 +1,11 @@
-package com.sandboni.core.engine.finder;
+package com.sandboni.core.engine.finder.jar;
 
-import com.sandboni.core.engine.ProcessorBuilder;
 import com.sandboni.core.engine.contract.ThrowingBiConsumer;
 import com.sandboni.core.engine.contract.ThrowingFunction;
+import com.sandboni.core.engine.exception.ParseRuntimeException;
+import com.sandboni.core.engine.finder.ExtensionType;
+import com.sandboni.core.engine.finder.FileTreeFinder;
+import com.sandboni.core.engine.finder.bcel.visitors.ClassVisitors;
 import com.sandboni.core.engine.finder.cucumber.CucumberFeatureFinder;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.Link;
@@ -30,10 +33,10 @@ public class JarFinder extends FileTreeFinder {
         HashMap<String, ThrowingBiConsumer<File, Context>> map = new HashMap<>();
         map.put(ExtensionType.JAR.type(), (file, context) -> {
             if (!context.inScope(file.getAbsolutePath())) {
-                log.info("[{}] Skipping Jar scanning for {}", Thread.currentThread().getName(), file.getAbsolutePath());
+                log.debug("[{}] Skipping Jar scanning for {}", Thread.currentThread().getName(), file.getAbsolutePath());
                 return;
             }
-            log.info("[{}] Jar scanning starts for {}", Thread.currentThread().getName(), file);
+            log.debug("[{}] Jar scanning starts for {}", Thread.currentThread().getName(), file);
             long start = System.nanoTime();
             try (JarFile jar = new JarFile(file)) {
                 Collections.list(jar.entries()).stream()
@@ -50,7 +53,7 @@ public class JarFinder extends FileTreeFinder {
                             }
                         });
             }
-            log.info("[{}] Jar scanning finished for {} in {} milliseconds", Thread.currentThread().getName(), file, TimeUtils.elapsedTime(start));
+            log.debug("[{}] Jar scanning finished for {} in {} milliseconds", Thread.currentThread().getName(), file, TimeUtils.elapsedTime(start));
         });
         return map;
     }
@@ -61,7 +64,7 @@ public class JarFinder extends FileTreeFinder {
     }
 
     private Link[] startVisitors(JavaClass jc, Context c) {
-        return Arrays.stream(ProcessorBuilder.getVisitors()).flatMap(v -> v.start(jc, c)).toArray(Link[]::new);
+        return Arrays.stream(ClassVisitors.getClassVisitors()).flatMap(v -> v.start(jc, c)).toArray(Link[]::new);
     }
 
     private String getFileContent(JarFile jar, JarEntry entry) {
@@ -69,8 +72,7 @@ public class JarFinder extends FileTreeFinder {
             InputStream inputStream = jar.getInputStream(entry);
             return IOUtils.toString(inputStream, Charset.defaultCharset());
         } catch (IOException e) {
-            log.error("Error during reading file: " + entry.getName(), e);
+            throw new ParseRuntimeException(e);
         }
-        return null;
     }
 }

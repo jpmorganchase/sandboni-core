@@ -3,7 +3,7 @@ package com.sandboni.core.engine.finder.bcel;
 import com.sandboni.core.engine.contract.ThrowingBiConsumer;
 import com.sandboni.core.engine.finder.ExtensionType;
 import com.sandboni.core.engine.finder.FileTreeFinder;
-import com.sandboni.core.engine.finder.bcel.visitors.ClassUtils;
+import com.sandboni.core.engine.finder.bcel.visitors.*;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.Link;
 import org.apache.bcel.classfile.ClassParser;
@@ -11,13 +11,14 @@ import org.apache.bcel.classfile.JavaClass;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class BcelFinder extends FileTreeFinder {
 
-    private Collection<ClassVisitor> visitors;
-
-    public BcelFinder(ClassVisitor[] visitors) {
-        this.visitors = Collections.unmodifiableCollection(Arrays.asList(visitors));
+    public BcelFinder() {
+        // To support parallel execution, now Visitors are not longer supported as constructor parameters,
+        // instead these are created on demand when the startVisitors method is called, this ensure that
+        // a different instance is used across multiple Finder executions.
     }
 
     @Override
@@ -27,13 +28,20 @@ public class BcelFinder extends FileTreeFinder {
             ClassParser cp = new ClassParser(file.getAbsolutePath());
             JavaClass jc = cp.parse();
             jc.setRepository(ClassUtils.getRepository(context.getClassPath()));
-            context.addLinks(startVisitors(jc, context));
+            Context localContext = context.getLocalContext();
+            context.addLinks(startVisitors(jc, localContext));
         });
 
         return map;
     }
 
     protected Link[] startVisitors(JavaClass jc, Context c) {
-        return visitors.stream().flatMap(v -> v.start(jc, c)).toArray(Link[]::new);
+        return Arrays.stream(ClassVisitors.getClassVisitors()).flatMap(v -> {
+            Context localContext = c.getLocalContext();
+            Stream<Link> start = v.start(jc, localContext);
+            c.addLinks(localContext.getLinks());
+            return start;
+        }).toArray(Link[]::new);
     }
+
 }

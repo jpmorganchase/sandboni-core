@@ -3,6 +3,7 @@ package com.sandboni.core.engine;
 import com.sandboni.core.engine.result.ResultContent;
 import com.sandboni.core.engine.utils.StringUtil;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
+import com.sandboni.core.engine.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,10 +21,12 @@ public class Application {
     private Arguments arguments;
 
     public static void main(String[] args) {
+
         Application app = new Application();
         app.buildArguments();
         Arguments arguments = app.getArguments();
 
+        long start = System.nanoTime();
         final Processor processor = new ProcessorBuilder()
                 .with(pb -> pb.arguments = arguments)
                 .build();
@@ -33,8 +36,11 @@ public class Application {
         Set<TestVertex> testSuites = processor.getResultGenerator().generate(ResultContent.TEST_SUITES).get(ResultContent.TEST_SUITES);
 
         log.info("Related tests to execute: {}", relatedTests);
+        log.info("Related tests to execute (size): {}", relatedTests.size());
         log.info("Disconnected tests to execute: {}", disconnectedTests);
         log.info("Related test suites: {}", testSuites);
+
+        log.info("Sandboni execution: {} milliseconds", TimeUtils.elapsedTime(start));
     }
 
     //synchronized was added because of SonarQube demand

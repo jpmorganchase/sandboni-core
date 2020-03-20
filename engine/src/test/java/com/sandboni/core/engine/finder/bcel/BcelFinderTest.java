@@ -27,8 +27,8 @@ import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.*;
 public class BcelFinderTest extends FinderTestBase {
     private static final String CALLER_ACTOR_VERTEX = PACKAGE_NAME + ".Caller";
 
-    private void testVisitor(Link[] expectedLinks, ClassVisitor... visitors) {
-        Finder f = new BcelFinder(visitors);
+    private void testVisitor(Link[] expectedLinks) {
+        Finder f = new BcelFinder();
         f.findSafe(context);
 
         assertLinksExist(expectedLinks);
@@ -40,31 +40,31 @@ public class BcelFinderTest extends FinderTestBase {
     }
 
     private void testCallerVisitor(Link... expectedLinks) {
-        testVisitor(expectedLinks, new CallerClassVisitor());
+        testVisitor(expectedLinks);
     }
 
     private void testSpringControllerVisitor(Link... expectedLinks) {
-        testVisitor(expectedLinks, new SpringControllerClassVisitor());
+        testVisitor(expectedLinks);
     }
 
     private void testJavaxControllerVisitor(Link... expectedLinks) {
-        testVisitor(expectedLinks, new JavaxControllerClassVisitor());
+        testVisitor(expectedLinks);
     }
 
     private void testTestClassVisitor(Link... expectedLinks) {
-        testVisitor(expectedLinks, new TestClassVisitor());
+        testVisitor(expectedLinks);
     }
 
     private void testInheritanceVisitor(Link... expectedLinks) {
-        testVisitor(expectedLinks, new InheritanceClassVisitor());
+        testVisitor(expectedLinks);
     }
 
     private void testAffectedVisitor(Link... expectedLinks) {
-        testVisitor(expectedLinks, new AffectedClassVisitor());
+        testVisitor(expectedLinks);
     }
 
     private void testImplementingVisitor(Link... expectedLinks) {
-        testVisitor(expectedLinks, new ImplementingClassVisitor());
+        testVisitor(expectedLinks);
     }
 
     @Test
@@ -544,7 +544,7 @@ public class BcelFinderTest extends FinderTestBase {
     public void testInvalidContextLocation() {
 
         Context context = new Context(new String[]{"non-existing-location"}, new String[]{"non-existing-location"}, "com.sandboni", new ChangeScopeImpl(), null);
-        Finder f = new BcelFinder(new ClassVisitor[]{new CallerClassVisitor()});
+        Finder f = new BcelFinder();
         f.findSafe(context);
     }
 

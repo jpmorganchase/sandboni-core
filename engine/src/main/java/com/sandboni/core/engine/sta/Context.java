@@ -1,8 +1,5 @@
 package com.sandboni.core.engine.sta;
 
-import com.sandboni.core.engine.contract.ThrowingConsumer;
-import com.sandboni.core.engine.sta.executor.AbstractParallelExecutor;
-import com.sandboni.core.engine.sta.executor.LocationScannerExecutor;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.utils.StringUtil;
@@ -18,8 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.sandboni.core.engine.utils.TimeUtils.elapsedTime;
-
 @Getter
 public class Context {
     private static final Logger log = LoggerFactory.getLogger(Context.class);
@@ -29,7 +24,7 @@ public class Context {
 
     private final Set<String> filters;
     private final ConcurrentHashMap<Link, Boolean> links;
-    private String currentLocation;
+    private final String currentLocation;
     private final ChangeScope<Change> changeScope;
     private final Collection<String> srcLocations;
     private final Collection<String> testLocations;
@@ -64,7 +59,7 @@ public class Context {
         this.srcLocations = getCollection(srcLocation);
         this.testLocations = getCollection(testLocation);
         this.dependencyJars = getCollection(dependencies);
-
+        this.currentLocation = "";
         this.classPath = getExecutionClasspath(srcLocations, testLocations, getCollection(dependencies));
 
         this.filters = getFilters(filter);
@@ -105,6 +100,10 @@ public class Context {
     }
 
     private Context(Context source) {
+        this(source, source.currentLocation);
+    }
+
+    private Context(Context source, String currentLocation) {
         this.links = new ConcurrentHashMap<>();
         this.adoptedLinkTypes = new ConcurrentHashMap<>();
         this.applicationId = source.applicationId;
@@ -114,15 +113,18 @@ public class Context {
         this.classPath = source.classPath;
         this.filters = Collections.unmodifiableSet(source.filters);
         this.changeScope = source.changeScope;
-        this.currentLocation = source.currentLocation;
+        this.currentLocation = currentLocation;
         this.alwaysRunAnnotation = source.alwaysRunAnnotation;
         this.seloniFilepath = source.seloniFilepath;
         this.enablePreview = source.enablePreview;
     }
 
-    // Adding synchronized to safely handle currentLocation mutable state. This needs to be refactored out.
-    public synchronized Context getLocalContext() {
+    public Context getLocalContext() {
         return new Context(this);
+    }
+
+    public Context getLocalContext(String currentLocation) {
+        return new Context(this, currentLocation);
     }
 
     public String getClassPath() {
@@ -152,34 +154,8 @@ public class Context {
         }
     }
 
-    public void forEachLocation(ThrowingConsumer<String> consumer, boolean scanDependencies) {
-        long start = System.nanoTime();
-        log.info("[{}] Start traversing testLocations", Thread.currentThread().getName());
-        testLocations.forEach(s -> {
-            currentLocation = s;
-            consumer.accept(currentLocation);
-        });
-        log.info("[{}] Finished traversing testLocations in {} milliseconds", Thread.currentThread().getName(), elapsedTime(start));
-
-        start = System.nanoTime();
-        log.info("[{}] Start traversing srcLocations", Thread.currentThread().getName());
-        srcLocations.forEach(s -> {
-            currentLocation = s;
-            consumer.accept(currentLocation);
-        });
-        log.info("[{}] Finished traversing srcLocations in {} milliseconds", Thread.currentThread().getName(), elapsedTime(start));
-
-        if (isEnablePreview() && scanDependencies) {
-            start = System.nanoTime();
-            log.info("[{}] Start traversing jars", Thread.currentThread().getName());
-            currentLocation = "DependencyJars";
-            getScannerExecutor(consumer).execute(new ArrayList<>(dependencyJars));
-            log.info("[{}] Finished traversing jars in {} milliseconds", Thread.currentThread().getName(), elapsedTime(start));
-        }
-    }
-
-    private AbstractParallelExecutor<String, String> getScannerExecutor(ThrowingConsumer<String> consumer) {
-        return new LocationScannerExecutor(consumer);
+    public void addLinks(Stream<Link> linksToAdd) {
+        linksToAdd.forEach(this::addLink);
     }
 
     public boolean isAdoptedLinkType(LinkType... linkTypes) {

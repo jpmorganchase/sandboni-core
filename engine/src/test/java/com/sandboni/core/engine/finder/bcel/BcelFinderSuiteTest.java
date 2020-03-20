@@ -28,15 +28,15 @@ public class BcelFinderSuiteTest extends FinderTestBase {
         super.initializeContext();
     }
 
-    private void testVisitor(Link[] expectedLinks, Link[] notExpectedLinks, ClassVisitor... visitors) {
-        Finder f = new BcelFinder(visitors);
+    private void testVisitor(Link[] expectedLinks, Link[] notExpectedLinks) {
+        Finder f = new BcelFinder();
         f.findSafe(context);
         assertLinksExist(expectedLinks);
         assertLinksNotExist(notExpectedLinks);
     }
 
     private void testTestClassVisitor(Link[] expectedLinks, Link[] notExpectedLinks) {
-        testVisitor(expectedLinks, notExpectedLinks, new TestClassVisitor());
+        testVisitor(expectedLinks, notExpectedLinks);
     }
 
     @Test
