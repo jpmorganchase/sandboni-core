@@ -2,7 +2,6 @@ package com.sandboni.core.engine.sta.executor;
 
 import com.sandboni.core.engine.contract.Finder;
 import com.sandboni.core.engine.sta.Context;
-import com.sandboni.core.engine.sta.graph.Link;
 
 import java.util.function.Function;
 
@@ -19,8 +18,13 @@ public class FinderExecutor extends AbstractParallelExecutor<Finder, Void> {
         return finder -> {
             Context localContext = context.getLocalContext();
             finder.findSafe(localContext);
-            context.addLinks(localContext.getLinks().toArray(Link[]::new));
+            context.addLinks(localContext.getLinks());
             return null;
         };
+    }
+
+    @Override
+    protected String getExecutorName() {
+        return this.getClass().getSimpleName();
     }
 }

@@ -28,7 +28,7 @@ public abstract class AbstractParallelExecutor<T, R> implements ParallelExecutor
                 .map(CompletableFuture::join)
                 .collect(toList());
 
-        logger.info("[{}] {} executed in {} milliseconds", Thread.currentThread().getName(), this.getClass().getSimpleName(), elapsedTime(start));
+        logger.debug("[{}] {} executed in {} milliseconds", Thread.currentThread().getName(), this.getExecutorName(), elapsedTime(start));
 
         return result;
     }
@@ -48,5 +48,9 @@ public abstract class AbstractParallelExecutor<T, R> implements ParallelExecutor
 
     protected Executor getExecutorPool() {
         return ExecutorPools.fixedThreadPool;
+    }
+
+    protected String getExecutorName() {
+        return this.getClass().getSimpleName();
     }
 }

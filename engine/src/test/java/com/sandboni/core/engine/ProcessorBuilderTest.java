@@ -2,7 +2,6 @@ package com.sandboni.core.engine;
 
 import com.sandboni.core.engine.contract.Finder;
 import com.sandboni.core.engine.finder.bcel.BcelFinder;
-import com.sandboni.core.engine.finder.bcel.CachedBcelFinder;
 import com.sandboni.core.engine.finder.cucumber.CucumberFeatureFinder;
 import com.sandboni.core.engine.result.ChangeDetectorResultMock;
 import com.sandboni.core.engine.sta.connector.Connector;
@@ -52,8 +51,7 @@ public class ProcessorBuilderTest {
 
         Assert.assertNotNull(p);
         Assert.assertTrue(p.getChangeDetector() instanceof CachedRepository);
-        Assert.assertTrue(p.getFinders().stream().anyMatch(f-> f instanceof CachedBcelFinder));
-        Assert.assertTrue(p.getFinders().stream().noneMatch(f-> !(f instanceof CachedBcelFinder) && f instanceof BcelFinder));
+        Assert.assertTrue(p.getFinders().stream().anyMatch(f -> f instanceof BcelFinder));
     }
 
     @Test
@@ -73,9 +71,8 @@ public class ProcessorBuilderTest {
                 .build();
 
         Assert.assertNotNull(p);
-        Assert.assertTrue(p.getChangeDetector() instanceof GitRepository && !(p.getChangeDetector() instanceof CachedBcelFinder));
-        Assert.assertTrue(p.getFinders().stream().anyMatch(f-> f instanceof BcelFinder && !(f instanceof CachedBcelFinder)));
-        Assert.assertTrue(p.getFinders().stream().noneMatch(f-> f instanceof CachedBcelFinder));
+        Assert.assertTrue(p.getChangeDetector() instanceof GitRepository);
+        Assert.assertTrue(p.getFinders().stream().anyMatch(f-> f instanceof BcelFinder));
     }
 
     @Test

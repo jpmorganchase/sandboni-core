@@ -3,13 +3,8 @@ package com.sandboni.core.engine;
 import com.sandboni.core.engine.contract.Finder;
 import com.sandboni.core.engine.filter.ChangeScopeFilter;
 import com.sandboni.core.engine.filter.ScopeFilter;
-import com.sandboni.core.engine.finder.JarFinder;
+import com.sandboni.core.engine.finder.jar.JarFinder;
 import com.sandboni.core.engine.finder.bcel.BcelFinder;
-import com.sandboni.core.engine.finder.bcel.CachedBcelFinder;
-import com.sandboni.core.engine.finder.bcel.ClassVisitor;
-import com.sandboni.core.engine.finder.bcel.visitors.*;
-import com.sandboni.core.engine.finder.bcel.visitors.http.JavaxControllerClassVisitor;
-import com.sandboni.core.engine.finder.bcel.visitors.http.SpringControllerClassVisitor;
 import com.sandboni.core.engine.finder.cucumber.CucumberFeatureFinder;
 import com.sandboni.core.engine.finder.explicit.ExplicitFinder;
 import com.sandboni.core.engine.sta.connector.*;
@@ -42,8 +37,6 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
 
     @SuppressWarnings("squid:S3358")
     public Processor build() {
-        BcelFinder bcelFinder = arguments.isCoreCache() ?
-                new CachedBcelFinder(getVisitors()) : new BcelFinder(getVisitors());
         LinkFactory.clear(arguments.getApplicationId());
 
         return new Processor(Objects.requireNonNull(this.arguments),
@@ -51,10 +44,12 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
                         arguments.isGitCache() ? new CachedRepository(this.arguments.getRepository()) :
                                 new GitRepository(this.arguments.getRepository()),
                 Objects.nonNull(finders) ? this.finders :
-                        new Finder[]{new ExplicitFinder(),
-                                bcelFinder,
+                        new Finder[]{
+                                new ExplicitFinder(),
+                                new BcelFinder(),
                                 new CucumberFeatureFinder(),
-                                new JarFinder()},
+                                new JarFinder()
+                        },
                 Objects.nonNull(this.connectors) ? this.connectors : getConnectors(),
                 getScopeFilter());
     }
@@ -67,14 +62,4 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
         return new Connector[]{new HttpTemplateConnector(), new CucumberJavaConnector(), new TestSuiteConnector()};
     }
 
-    public static ClassVisitor[] getVisitors() {
-        return new ClassVisitor[]{
-                new AffectedClassVisitor(),
-                new CallerClassVisitor(),
-                new ImplementingClassVisitor(),
-                new InheritanceClassVisitor(),
-                new JavaxControllerClassVisitor(),
-                new SpringControllerClassVisitor(),
-                new TestClassVisitor()};
-    }
 }

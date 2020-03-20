@@ -16,7 +16,7 @@ public class CachedBcelFinderTest extends FinderTestBase {
     private static final String CALLER_ACTOR_VERTEX = PACKAGE_NAME + ".Caller";
 
     private void testVisitor(Link[] expectedLinks, ClassVisitor... visitors) {
-        Finder f = new BcelFinder(visitors);
+        Finder f = new BcelFinder();
         f.findSafe(context);
 
         assertLinksExist(expectedLinks);
