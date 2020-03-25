@@ -44,6 +44,8 @@ public class Processor {
     private final Supplier<Builder> builderSupplier = new CachingSupplier<>(this::getBuilder);
     private final Supplier<ResultGenerator> resultGeneratorSupplier = new CachingSupplier<>(this::getResultGeneratorImpl);
     private final ScopeFilter<ChangeScope<Change>, Set<File>> scopeFilter;
+    private static final String LOW = "LOW";
+    private static final String MED = "MED";
 
     Processor(Arguments arguments, GitInterface changeDetector, Finder[] finders, Connector[] connectors,
               ScopeFilter<ChangeScope<Change>, Set<File>> scopeFilter) {
@@ -107,8 +109,17 @@ public class Processor {
     private boolean proceed(ChangeScope<Change> changeScope) {
         return (!isRunAllExternalTests() || !isIntegrationStage())
                 && (arguments.isRunSelectiveMode()
-                || (ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles())
-                    && ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles())));
+                || (meetsVolatilityRequirements(changeScope)));
+    }
+
+    private boolean meetsVolatilityRequirements(ChangeScope<Change> changeScope){
+        if (LOW.equals(arguments.getVolatilityLevel()))
+            return true;
+        else if (MED.equals(arguments.getVolatilityLevel()))
+            return ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles());
+        else
+            return ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles()) &&
+                    ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles());
     }
 
     private boolean isRunAllExternalTests() {
