@@ -35,6 +35,7 @@ public class GraphOperations {
     private final Supplier<Map<Vertex, ChangeStats>> changeStatsSupplier = new CachingSupplier<>(this::getChangeStatsImpl);
     private final Supplier<Set<FormattedChangeStats>> formattedChangeStatsSupplier = new CachingSupplier<>(this::getFormattedChangeStatsImpl);
     private final Supplier<Set<TestVertex>> cucumberRunnersSupplier = new CachingSupplier<>(this::getCucumberRunnersImpl);
+    private final Supplier<Set<TestVertex>> reflectionCallTestsSupplier = new CachingSupplier<>(this::getReflectionCallTestsImpl);
 
     public GraphOperations(Graph<Vertex, Edge> graph, Context context) {
         operationExecutor = new OperationExecutor(graph);
@@ -80,6 +81,13 @@ public class GraphOperations {
         return operationExecutor.execute(new RelatedTestsOperation(allTestsSupplier.get()));
     }
 
+    public Set<TestVertex> getReflectionCallTests() {
+        return reflectionCallTestsSupplier.get();
+    }
+    private Set<TestVertex> getReflectionCallTestsImpl() {
+        return operationExecutor.execute(new ReflectionCallTestsOperation(allTestsSupplier.get()));
+    }
+
     public Set<TestVertex> getTestSuites() {
         return testSuitesSupplier.get();
     }
@@ -91,7 +99,7 @@ public class GraphOperations {
         return disconnectedTestsSupplier.get();
     }
     private Set<TestVertex> getDisconnectedTestsImpl() {
-        return operationExecutor.execute(new DisconnectedTestsOperation(allTestsSupplier.get(), relatedTestsSupplier.get(), context.getSrcLocations()));
+        return operationExecutor.execute(new DisconnectedTestsOperation(allTestsSupplier.get(), relatedTestsSupplier.get(), reflectionCallTestsSupplier.get(), context.getSrcLocations()));
     }
 
     public Map<String, Set<String>> getUnreachableChanges() {
