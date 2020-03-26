@@ -78,7 +78,11 @@ public enum LinkType {
 
     CUCUMBER_RUNNER("Cucumber Runner", true),
 
-    TEST_SUITE("Test Suite", false);
+    TEST_SUITE("Test Suite", false),
+
+    REFLECTION_CALL_SRC("Reflection call source class", true),
+
+    REFLECTION_CALL_TEST("Reflection call test class", true);
 
     private String description;
 

@@ -7,29 +7,35 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DisconnectedTestsOperation extends AbstractGraphOperation<SetResult<TestVertex>> {
 
     private final Set<TestVertex> allTests;
     private final Set<TestVertex> relatedTests;
+    private final Set<TestVertex> reflectionCallTests;
     private final Collection<String> sourceLocations;
 
-    DisconnectedTestsOperation(Set<TestVertex> allTests, Set<TestVertex> relatedTests, Collection<String> sourceLocations) {
+    DisconnectedTestsOperation(Set<TestVertex> allTests, Set<TestVertex> relatedTests, Set<TestVertex> reflectionCallTests, Collection<String> sourceLocations) {
         Objects.requireNonNull(allTests, INVALID_ARGUMENT);
         Objects.requireNonNull(relatedTests, INVALID_ARGUMENT);
+        Objects.requireNonNull(reflectionCallTests, INVALID_ARGUMENT);
         Objects.requireNonNull(sourceLocations, INVALID_ARGUMENT);
         this.allTests = new HashSet<>(allTests);
         this.relatedTests = new HashSet<>(relatedTests);
+        this.reflectionCallTests = new HashSet<>(reflectionCallTests);
         this.sourceLocations = new HashSet<>(sourceLocations);
     }
 
     @Override
     public SetResult<TestVertex> execute(Graph<Vertex, Edge> graph) {
         DirectedGraph<Vertex, Edge> directedGraph = (DirectedGraph<Vertex, Edge>) graph;
+
         //getting only the not-ignored and unrelated tests
-        Set<TestVertex> notRelatedTests = allTests.parallelStream()
-                .filter(t -> !t.isIgnore() && !relatedTests.contains(t)).collect(Collectors.toSet());
+        Predicate<TestVertex> unRelatedPredicate = t -> !t.isIgnore() && !relatedTests.contains(t);
+        Stream<TestVertex> notRelatedTests = allTests.parallelStream().filter(unRelatedPredicate);
 
         Set<TestVertex> disconnectedTests = new HashSet<>();
 
@@ -55,6 +61,9 @@ public class DisconnectedTestsOperation extends AbstractGraphOperation<SetResult
                 disconnectedTests.add(tv);
             }
         });
+
+        Set<TestVertex> reflectionTestsUnRelated = reflectionCallTests.parallelStream().filter(unRelatedPredicate).collect(Collectors.toSet());
+        disconnectedTests.addAll(reflectionTestsUnRelated);
 
         return new SetResult<>(disconnectedTests);
     }

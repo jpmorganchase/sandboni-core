@@ -22,6 +22,7 @@ public abstract class GraphOperationsTest {
     protected final Vertex modified;
     protected final Vertex modifiedUncovered;
     protected final Vertex caller;
+    protected final Vertex unModifiedSrc;
     protected final Vertex callerTest;
     protected final Vertex disconnectedCallerTest;
     protected final Vertex appLocation;
@@ -33,6 +34,12 @@ public abstract class GraphOperationsTest {
     protected final TestVertex runnerTest;
     protected final TestVertex externalUnitTest;
 
+    protected final TestVertex relatedWithReflection;
+    protected final TestVertex relatedWithoutReflection;
+    protected final TestVertex disconnectedWithReflection;
+    protected final TestVertex unRelatedWithReflection;
+    protected final TestVertex classRReflectionDummy;
+
     protected GraphOperations graphOperations;
     protected Builder builder;
 
@@ -43,6 +50,8 @@ public abstract class GraphOperationsTest {
         modifiedUncovered = new Vertex.Builder("ClassA", "uncoveredMethod()").build();
 
         caller = new Vertex.Builder("ClassB", "callerMethod()").build();
+
+        unModifiedSrc = new Vertex.Builder("ClassC", "someUnModifiedMethod()", "ClassC").build();
 
         callerTest = new TestVertex.Builder("ClassBTest", "testCallerMethod()").build();
         externalUnitTest = new TestVertex.Builder("ClassBTest123", "testCallerMethod123()").markAsExternalLocation().build();
@@ -59,6 +68,12 @@ public abstract class GraphOperationsTest {
         alwaysRunTest = new TestVertex.Builder("AlwaysRunMethodTest", "testTwo()").withAlwaysRun(true).build();
 
         runnerTest = new TestVertex.Builder("com.sandboni.core.engine.scenario.CucumberRunner", "runWith", context.getCurrentLocation()).withRunWithOptions("src/test/resources/features/").build();
+
+        relatedWithReflection = new TestVertex.Builder("ClassRTest", "testRelatedWithReflectionCall()").build();
+        relatedWithoutReflection = new TestVertex.Builder("ClassRTest", "testRelatedWithoutReflectionCall()").build();
+        disconnectedWithReflection = new TestVertex.Builder("ClassRTest", "testDisconnectedWithReflectionCall()").build();
+        unRelatedWithReflection = new TestVertex.Builder("ClassRTest", "testUnRelatedWithReflectionCall()").build();
+        classRReflectionDummy = new TestVertex.Builder("ClassRTest", "reflection ref (test)", context.getCurrentLocation()).build();
     }
 
     @Before
@@ -76,6 +91,15 @@ public abstract class GraphOperationsTest {
         context.addLink(LinkFactory.createInstance(APP_ID, affectedCucumberTest, modified, LinkType.CUCUMBER_TEST));
         context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, alwaysRunTest, ENTRY_POINT));
         context.addLink(LinkFactory.createInstance(APP_ID, runnerTest, CUCUMBER_RUNNER_VERTEX, LinkType.CUCUMBER_RUNNER));
+        //Reflection:
+        context.addLink(LinkFactory.createInstance(APP_ID, classRReflectionDummy, REFLECTION_CALL_VERTEX, LinkType.REFLECTION_CALL_TEST));
+        context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, disconnectedWithReflection, ENTRY_POINT));
+        context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, relatedWithReflection, ENTRY_POINT));
+        context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, relatedWithoutReflection, ENTRY_POINT));
+        context.addLink(LinkFactory.createInstance(APP_ID, relatedWithReflection, modified, LinkType.METHOD_CALL));
+        context.addLink(LinkFactory.createInstance(APP_ID, relatedWithoutReflection, modified, LinkType.METHOD_CALL));
+        context.addLink(LinkFactory.createInstance(APP_ID, unRelatedWithReflection, unModifiedSrc, LinkType.METHOD_CALL));
+        context.addLink(LinkFactory.createInstance(APP_ID, START_VERTEX, unRelatedWithReflection, ENTRY_POINT));
 
         builder = new Builder(context);
 

@@ -35,12 +35,19 @@ public class AllExternalTestsOperationTest extends GraphOperationsTest {
         Map<String, Set<String>> allExternalTests = allExternalTestsResult.get();
 
         assertNotNull(allExternalTests);
-        assertEquals(5, allExternalTests.size());
+        assertEquals(6, allExternalTests.size());
         Set<String> classBTest = allExternalTests.get("ClassBTest");
         assertNotNull(classBTest);
         assertEquals(2, classBTest.size());
         assertTrue(classBTest.contains("testDisconnectedFromCallerMethod()"));
         assertTrue(classBTest.contains("testCallerMethod()"));
+        Set<String> classRTest = allExternalTests.get("ClassRTest");
+        assertNotNull(classRTest);
+        assertEquals(4, classRTest.size());
+        assertTrue(classRTest.contains("testRelatedWithReflectionCall()"));
+        assertTrue(classRTest.contains("testRelatedWithoutReflectionCall()"));
+        assertTrue(classRTest.contains("testDisconnectedWithReflectionCall()"));
+        assertTrue(classRTest.contains("testUnRelatedWithReflectionCall()"));
 
         Set<String> featureFile = allExternalTests.get("featureFile");
         assertNotNull(featureFile);
