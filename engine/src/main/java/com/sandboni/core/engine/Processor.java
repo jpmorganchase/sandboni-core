@@ -97,18 +97,12 @@ public class Processor {
         return getBuilder(contextSupplier.get());
     }
 
-    /**
-     * Returns true if first: is build stage or runAllExternalTests is false
-     * then: (a) no change was made (b) change was made and contains at least one java file (not just cnfg files)
-     *
-     * @param changeScope the change scope
-     * @return boolean
-     */
     private boolean proceed(ChangeScope<Change> changeScope) {
         return (!isRunAllExternalTests() || !isIntegrationStage())
                 && (arguments.isRunSelectiveMode()
-                || (ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles())
-                    && ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles())));
+                || (ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles()))
+                && (arguments.isIgnoreUnsupportedFiles()
+                || ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles())));
     }
 
     private boolean isRunAllExternalTests() {

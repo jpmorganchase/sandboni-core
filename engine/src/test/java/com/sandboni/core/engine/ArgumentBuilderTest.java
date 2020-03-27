@@ -34,6 +34,7 @@ public class ArgumentBuilderTest {
         Assert.assertFalse(args.isCoreCache());
         Assert.assertNull(args.getStage());
         Assert.assertNull(args.getAlwaysRunAnnotation());
+        Assert.assertFalse(args.isIgnoreUnsupportedFiles());
 
     }
 

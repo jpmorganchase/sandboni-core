@@ -62,6 +62,7 @@ public class Application {
                 .outputFormat(getValue(SystemProperties.OUTPUT_FORMAT))
                 .alwaysRunAnnotation(getValue(SystemProperties.ALWAYS_RUN_ANNOTATION))
                 .enablePreview(Boolean.parseBoolean(getValue(SystemProperties.ENABLE_PREVIEW)))
+                .ignoreUnsupportedFiles(Boolean.parseBoolean(getValue(SystemProperties.IGNORE_UNSUPPORTED_FILES)))
                 .build();
 
         log.debug("[arguments collected] {}", arguments);

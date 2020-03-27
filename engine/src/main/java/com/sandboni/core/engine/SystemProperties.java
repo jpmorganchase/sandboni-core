@@ -19,7 +19,8 @@ public enum SystemProperties {
     FILTER("sandboni.filter", "Filter elements pattern", false),
     ALWAYS_RUN_ANNOTATION("sandboni.alwaysRunAnnotation", "Always run annotation", false),
     SELONI_FILEPATH("seloni.filepath", "Seloni json file path", false),
-    ENABLE_PREVIEW("sandboni.enable.preview", "Enable preview of new features", false);
+    ENABLE_PREVIEW("sandboni.enable.preview", "Enable preview of new features", false),
+    IGNORE_UNSUPPORTED_FILES("sandboni.ignore.unsupported.files", "Ignore changes in unsupported files", false, Boolean.TRUE.toString());
 
     SystemProperties(String name, String description , boolean required) {
         this.name = name;
