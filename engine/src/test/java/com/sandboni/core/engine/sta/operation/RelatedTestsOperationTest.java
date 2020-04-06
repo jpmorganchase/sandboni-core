@@ -15,9 +15,11 @@ public class RelatedTestsOperationTest extends GraphOperationsTest {
     @Test
     public void getRelatedTests() {
         Set<TestVertex> result = graphOperations.getRelatedTests();
-        assertEquals(2, result.size());
+        assertEquals(4, result.size());
         assertTrue(result.contains(callerTest));
         assertTrue(result.contains(affectedCucumberTest));
+        assertTrue(result.contains(relatedWithReflection));
+        assertTrue(result.contains(relatedWithoutReflection));
     }
 
     @Test
@@ -42,13 +44,15 @@ public class RelatedTestsOperationTest extends GraphOperationsTest {
         SetResult<TestVertex> result = relatedTestsOperation.execute(builder.getGraph());
         Set<TestVertex> relatedTests = result.get();
         assertNotNull(relatedTests);
-        assertEquals(2, relatedTests.size());
+        assertEquals(4, relatedTests.size());
         assertTrue(relatedTests.contains(new TestVertex.Builder("ClassBTest", "testCallerMethod()").build()));
         assertTrue(relatedTests.contains(new CucumberVertex.Builder("featureFile", "scenario2").build()));
+        assertTrue(relatedTests.contains(new TestVertex.Builder("ClassRTest", "testRelatedWithReflectionCall()").build()));
+        assertTrue(relatedTests.contains(new TestVertex.Builder("ClassRTest", "testRelatedWithoutReflectionCall()").build()));
     }
 
     @Test(expected = NullPointerException.class)
-    public void nullParameters() {
+    public void nullAllTests() {
         new RelatedTestsOperation(null);
     }
 }

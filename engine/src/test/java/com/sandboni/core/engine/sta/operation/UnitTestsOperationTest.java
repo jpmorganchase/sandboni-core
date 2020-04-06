@@ -12,7 +12,7 @@ public class UnitTestsOperationTest extends GraphOperationsTest  {
         SetResult<TestVertex> result = operation.execute(builder.getGraph());
 
         assertNotNull(result);
-        assertEquals(3, result.get().size());
+        assertEquals(7, result.get().size());
     }
 
     @Test
