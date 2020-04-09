@@ -79,8 +79,8 @@ public class CliChangeScopeResolverTest {
         assertNotNull(changes);
         assertEquals(1, changes.size());
         Change change = changes.get(0);
-        assertEquals(change.getFilename(), fileName);
-        assertEquals(change.getType(), ChangeType.DELETE);
+        assertEquals(fileName, change.getFilename());
+        assertEquals(ChangeType.DELETE, change.getType());
         Set<Integer> linesChanged = change.getLinesChanged();
         assertNotNull(linesChanged);
         assertEquals(2, linesChanged.size());
@@ -145,15 +145,15 @@ public class CliChangeScopeResolverTest {
         assertEquals(3, changes2.size());
 
         Change added = changes2.get(0);
-        assertEquals(added.getType(), ChangeType.ADD);
+        assertEquals(ChangeType.ADD, added.getType());
         assertEquals(4, added.getLinesChanged().size());
 
         Change deleted = changes2.get(1);
-        assertEquals(deleted.getType(), ChangeType.DELETE);
+        assertEquals(ChangeType.DELETE, deleted.getType());
         assertEquals(3, deleted.getLinesChanged().size());
 
         Change modified = changes2.get(2);
-        assertEquals(modified.getType(), ChangeType.MODIFY);
+        assertEquals(ChangeType.MODIFY, modified.getType());
         assertEquals(2, modified.getLinesChanged().size());
 
     }

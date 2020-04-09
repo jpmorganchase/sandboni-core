@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 
 public class ProcessRunner {
 
+    private ProcessRunner() {
+    }
+
     private static Process start(ProcessBuilder pb) throws IOException {
         try {
             return pb.start();
@@ -26,6 +29,8 @@ public class ProcessRunner {
                 throw new IOException("command " + Arrays.toString(command) + " exited with code: " + exitCode + ". Output: " + outputLines.stream().collect(Collectors.joining(System.lineSeparator())));
             }
         } catch (InterruptedException e) {
+            // Restore interrupted state
+            Thread.currentThread().interrupt();
             throw new IOException("Error running process", e);
         }
     }
