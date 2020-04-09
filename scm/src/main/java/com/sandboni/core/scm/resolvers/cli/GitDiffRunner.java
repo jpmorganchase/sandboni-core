@@ -19,6 +19,9 @@ public class GitDiffRunner {
 
     private static final String NEW_DIFF_PREFIX = "diff --git";
 
+    private GitDiffRunner() {
+    }
+
     public static List<Diff> diff(Repository repository, RevisionScope<ObjectId> revisionScope) throws SourceControlException {
         String[] command = buildDiffCommand(revisionScope);
         try {
