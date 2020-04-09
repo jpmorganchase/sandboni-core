@@ -4,13 +4,11 @@ import com.sandboni.core.scm.exception.ErrorMessages;
 import com.sandboni.core.scm.exception.SourceControlException;
 import com.sandboni.core.scm.exception.SourceControlRuntimeException;
 import com.sandboni.core.scm.proxy.SourceControlFilter;
+import com.sandboni.core.scm.resolvers.*;
 import com.sandboni.core.scm.revision.RevInfo;
 import com.sandboni.core.scm.revision.RevisionScope;
 import com.sandboni.core.scm.scope.Change;
 import com.sandboni.core.scm.scope.ChangeScope;
-import com.sandboni.core.scm.resolvers.BlameResolver;
-import com.sandboni.core.scm.resolvers.ChangeScopeResolver;
-import com.sandboni.core.scm.resolvers.RevisionResolver;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -28,9 +26,13 @@ public class GitRepository implements GitInterface {
     private final BlameResolver blameResolver;
 
     public GitRepository(String repositoryPath, SourceControlFilter... filters) {
+        this(repositoryPath, false, filters);
+    }
+
+    public GitRepository(String repositoryPath, boolean useCliDiff, SourceControlFilter... filters) {
         Repository repository = buildRepository(repositoryPath);
         this.revisionResolver = new RevisionResolver(repository);
-        this.changeScopeResolver = new ChangeScopeResolver(repository, filters);
+        this.changeScopeResolver = useCliDiff ? new CliChangeScopeResolver(repository) : new JGitChangeScopeResolver(repository, filters);
         this.blameResolver = new BlameResolver(repository, Constants.HEAD);
     }
 
@@ -59,8 +61,8 @@ public class GitRepository implements GitInterface {
             try {
                 File dir = new File(path);
                 this.addCeilingDirectory(dir)
-                        .findGitDir(dir)
-                        .build();
+                    .findGitDir(dir)
+                    .build();
             } catch (Exception e) {
                 throw new SourceControlRuntimeException(ErrorMessages.UNABLE_TO_FIND_REPOSITORY + path, e);
             }
