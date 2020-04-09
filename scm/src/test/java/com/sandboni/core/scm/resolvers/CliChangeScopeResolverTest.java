@@ -294,5 +294,4 @@ public class CliChangeScopeResolverTest {
         return hunk;
     }
 
-
 }

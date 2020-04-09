@@ -52,5 +52,4 @@ public class ProcessRunner {
         return br.lines().collect(Collectors.toList());
     }
 
-
 }

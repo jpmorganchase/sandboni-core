@@ -81,5 +81,4 @@ public class GitDiffRunner {
         return command.toArray(new String[0]);
     }
 
-
 }
