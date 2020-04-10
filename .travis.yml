@@ -68,6 +68,9 @@ addons:
     organization: "sandboni"
     token:
       secure: "$SONAR_TOKEN"
+    branches:
+      - dev
+      - master
 
 cache:
   directories:
