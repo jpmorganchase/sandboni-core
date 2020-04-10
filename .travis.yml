@@ -10,8 +10,8 @@ jobs:
       name: "PR: mvn clean verify sonar:sonar"
       script:
         - mvn clean verify sonar:sonar
-      after_success:
-        - source ./scripts/breakbuild.sh
+#      after_success:
+#        - source ./scripts/breakbuild.sh
 
     - stage: release
       if: repo = jpmorganchase/sandboni-core AND branch = master AND type = push
