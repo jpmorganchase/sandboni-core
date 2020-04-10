@@ -30,6 +30,7 @@ public class GitRepository implements GitInterface {
     }
 
     public GitRepository(String repositoryPath, boolean useCliDiff, SourceControlFilter... filters) {
+        System.out.println("testing sonar");
         Repository repository = buildRepository(repositoryPath);
         this.revisionResolver = new RevisionResolver(repository);
         this.changeScopeResolver = useCliDiff ? new CliChangeScopeResolver(repository) : new JGitChangeScopeResolver(repository, filters);
