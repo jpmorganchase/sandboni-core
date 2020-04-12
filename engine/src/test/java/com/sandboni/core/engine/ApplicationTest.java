@@ -76,7 +76,7 @@ public class ApplicationTest {
         Assert.assertEquals(GitHelper.openCurrentFolder(), args.getRepository());
         Assert.assertTrue(args.isRunSelectiveMode());
         Assert.assertFalse(args.isRunAllExternalTests());
-        Assert.assertFalse(args.isIgnoreUnsupportedFiles());
+        Assert.assertTrue(args.isIgnoreUnsupportedFiles());
     }
 
     @Test

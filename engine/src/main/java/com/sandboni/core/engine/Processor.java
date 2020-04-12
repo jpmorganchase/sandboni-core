@@ -107,9 +107,6 @@ public class Processor {
                 || (ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles()))
                 && (arguments.isIgnoreUnsupportedFiles()
                 || ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles())));
-            && (arguments.isRunSelectiveMode()
-            || (ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles())
-            && ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles())));
     }
 
     private boolean isRunAllExternalTests() {
@@ -166,7 +163,7 @@ public class Processor {
 
             log.debug("....Connectors execution total time: {}", Duration.between(start, finish).toMillis());
 
-            if (arguments.isEnablePreview() && !arguments.isRunSelectiveMode() && ContextAnalyzer.containsReflectionCallers(context)) {
+            if (arguments.isEnablePreview() && !arguments.isIgnoreUnsupportedFiles() && ContextAnalyzer.containsReflectionCallers(context)) {
                 log.info(" ** Located reflection calls is source files; All tests will be executed **");
                 return new Builder(context, FilterIndicator.ALL);
             }
