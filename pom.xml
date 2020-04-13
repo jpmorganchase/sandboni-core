@@ -225,7 +225,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <format>JSON</format>
+                    <format>XML</format>
                     <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
                     <suppressionFile>${owasp.suppressionFile}</suppressionFile>
                 </configuration>
