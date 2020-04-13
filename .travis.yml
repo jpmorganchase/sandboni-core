@@ -9,7 +9,7 @@ jobs:
       if: repo = jpmorganchase/sandboni-core
       name: "PR: mvn clean verify sonar:sonar"
       script:
-        - mvn clean verify "sonar:sonar -Dsonar.dependencyCheck.reportPath=target/dependency-check-report.xml"
+        - mvn clean verify sonar:sonar -Dsonar.dependencyCheck.reportPath=target/dependency-check-report.xml
       after_success:
         - source ./scripts/breakbuild.sh
 
