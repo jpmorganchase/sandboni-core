@@ -34,6 +34,8 @@
         <mvn.compiler.target>1.8</mvn.compiler.target>
         <jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
         <jacoco.ut.execution.data.file>${project.build.directory}/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
+        <dependency.check.report.dir>${project.build.directory}/dependency-check-report</dependency.check.report.dir>
+        <sonar.dependencyCheck.reportPath>${dependency.check.report.dir}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
 
         <!--versions-->
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
@@ -228,6 +230,7 @@
                     <format>XML</format>
                     <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
                     <suppressionFile>${owasp.suppressionFile}</suppressionFile>
+                    <outputDirectory>${dependency.check.report.dir}</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
