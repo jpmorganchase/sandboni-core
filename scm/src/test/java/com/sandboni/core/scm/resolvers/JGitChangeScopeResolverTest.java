@@ -25,21 +25,21 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(PorcelainApi.class)
-public class ChangeScopeResolverTest {
+public class JGitChangeScopeResolverTest {
     private RevisionResolver revisionResolver;
-    private ChangeScopeResolver changeScopeResolver;
+    private JGitChangeScopeResolver jGitChangeScopeResolver;
 
     @Before
     public void before() {
         Repository repository = GitRepository.buildRepository(GitHelper.openCurrentFolder());
         revisionResolver = new RevisionResolver(repository);
-        changeScopeResolver = new ChangeScopeResolver(repository);
+        jGitChangeScopeResolver = new JGitChangeScopeResolver(repository);
     }
 
     @Test
     public void testComputeChangeScope() throws SourceControlException {
         RevisionScope<ObjectId> scope = revisionResolver.resolve("fc776fe5e50", "e6f7c3d2954d6");
-        ChangeScope<Change> changeScope = changeScopeResolver.getChangeScope(scope);
+        ChangeScope<Change> changeScope = jGitChangeScopeResolver.getChangeScope(scope);
         assertNotNull(changeScope);
         assertTrue(changeScope.getAllAffectedClasses().size() > 0);
     }
@@ -56,7 +56,7 @@ public class ChangeScopeResolverTest {
         when(PorcelainApi.call(any(), any())).thenReturn(status);
 
         RevisionScope<ObjectId> scope = revisionResolver.resolve(DiffConstants.LATEST_COMMIT, DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
-        ChangeScope<Change> changeScope = changeScopeResolver.getChangeScope(scope);
+        ChangeScope<Change> changeScope = jGitChangeScopeResolver.getChangeScope(scope);
         assertNotNull(changeScope);
     }
 
@@ -70,7 +70,7 @@ public class ChangeScopeResolverTest {
         when(PorcelainApi.call(any(), any())).thenReturn(status);
 
         RevisionScope<ObjectId> scope = revisionResolver.resolve(DiffConstants.LATEST_COMMIT, DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
-        ChangeScope<Change> changeScope = changeScopeResolver.getChangeScope(scope);
+        ChangeScope<Change> changeScope = jGitChangeScopeResolver.getChangeScope(scope);
         assertNotNull(changeScope);
     }
 }

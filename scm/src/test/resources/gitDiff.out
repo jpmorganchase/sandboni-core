@@ -1,0 +1,1268 @@
+diff --git a/engine/src/main/java/com/sandboni/core/engine/Application.java b/engine/src/main/java/com/sandboni/core/engine/Application.java
+index 7a0f451..9c83054 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/Application.java
++++ b/engine/src/main/java/com/sandboni/core/engine/Application.java
+@@ -5,2 +5,3 @@ import com.sandboni.core.engine.utils.StringUtil;
+ import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
++import com.sandboni.core.engine.utils.TimeUtils;
+ import org.slf4j.Logger;
+@@ -22,2 +23,3 @@ public class Application {
+     public static void main(String[] args) {
++
+         Application app = new Application();
+@@ -26,2 +28,3 @@ public class Application {
+ 
++        long start = System.nanoTime();
+         final Processor processor = new ProcessorBuilder()
+@@ -35,4 +38,7 @@ public class Application {
+         log.info("Related tests to execute: {}", relatedTests);
++        log.info("Related tests to execute (size): {}", relatedTests.size());
+         log.info("Disconnected tests to execute: {}", disconnectedTests);
+         log.info("Related test suites: {}", testSuites);
++
++        log.info("Sandboni execution: {} milliseconds", TimeUtils.elapsedTime(start));
+     }
+diff --git a/engine/src/main/java/com/sandboni/core/engine/ProcessorBuilder.java b/engine/src/main/java/com/sandboni/core/engine/ProcessorBuilder.java
+index 81be7a2..af135f9 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/ProcessorBuilder.java
++++ b/engine/src/main/java/com/sandboni/core/engine/ProcessorBuilder.java
+@@ -5,9 +5,4 @@ import com.sandboni.core.engine.filter.ChangeScopeFilter;
+ import com.sandboni.core.engine.filter.ScopeFilter;
+-import com.sandboni.core.engine.finder.JarFinder;
++import com.sandboni.core.engine.finder.jar.JarFinder;
+ import com.sandboni.core.engine.finder.bcel.BcelFinder;
+-import com.sandboni.core.engine.finder.bcel.CachedBcelFinder;
+-import com.sandboni.core.engine.finder.bcel.ClassVisitor;
+-import com.sandboni.core.engine.finder.bcel.visitors.*;
+-import com.sandboni.core.engine.finder.bcel.visitors.http.JavaxControllerClassVisitor;
+-import com.sandboni.core.engine.finder.bcel.visitors.http.SpringControllerClassVisitor;
+ import com.sandboni.core.engine.finder.cucumber.CucumberFeatureFinder;
+@@ -44,4 +39,2 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
+     public Processor build() {
+-        BcelFinder bcelFinder = arguments.isCoreCache() ?
+-                new CachedBcelFinder(getVisitors()) : new BcelFinder(getVisitors());
+         LinkFactory.clear(arguments.getApplicationId());
+@@ -53,6 +46,8 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
+                 Objects.nonNull(finders) ? this.finders :
+-                        new Finder[]{new ExplicitFinder(),
+-                                bcelFinder,
++                        new Finder[]{
++                                new ExplicitFinder(),
++                                new BcelFinder(),
+                                 new CucumberFeatureFinder(),
+-                                new JarFinder()},
++                                new JarFinder()
++                        },
+                 Objects.nonNull(this.connectors) ? this.connectors : getConnectors(),
+@@ -69,12 +64,2 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
+ 
+-    public static ClassVisitor[] getVisitors() {
+-        return new ClassVisitor[]{
+-                new AffectedClassVisitor(),
+-                new CallerClassVisitor(),
+-                new ImplementingClassVisitor(),
+-                new InheritanceClassVisitor(),
+-                new JavaxControllerClassVisitor(),
+-                new SpringControllerClassVisitor(),
+-                new TestClassVisitor()};
+-    }
+ }
+diff --git a/engine/src/main/java/com/sandboni/core/engine/finder/FileTreeFinder.java b/engine/src/main/java/com/sandboni/core/engine/finder/FileTreeFinder.java
+index 4a2293c..b3e5a0a 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/finder/FileTreeFinder.java
++++ b/engine/src/main/java/com/sandboni/core/engine/finder/FileTreeFinder.java
+@@ -4,2 +4,6 @@ import com.sandboni.core.engine.contract.Finder;
+ import com.sandboni.core.engine.contract.ThrowingBiConsumer;
++import com.sandboni.core.engine.finder.scanner.DirectoryScanner;
++import com.sandboni.core.engine.finder.scanner.FileConsumer;
++import com.sandboni.core.engine.finder.scanner.LocationConsumer;
++import com.sandboni.core.engine.finder.scanner.LocationScanner;
+ import com.sandboni.core.engine.sta.Context;
+@@ -11,2 +15,6 @@ import java.io.IOException;
+ import java.util.Map;
++import java.util.Set;
++
++import static com.sandboni.core.engine.utils.StringUtil.getExtension;
++import static com.sandboni.core.engine.utils.TimeUtils.elapsedTime;
+ 
+@@ -20,3 +28,4 @@ public abstract class FileTreeFinder implements Finder {
+     public void find(Context context) {
+-        logger.info("[{}] Finder {} started", Thread.currentThread().getName(), this.getClass().getSimpleName());
++        long start = System.nanoTime();
++        logger.debug("[{}] Finder {} started", Thread.currentThread().getName(), this.getClass().getSimpleName());
+ 
+@@ -24,3 +33,3 @@ public abstract class FileTreeFinder implements Finder {
+ 
+-        context.forEachLocation(location -> {
++        Map<String, Set<File>> locationFiles = getLocationScanner().scan((location, files) -> {
+             File f = new File(location);
+@@ -29,6 +38,16 @@ public abstract class FileTreeFinder implements Finder {
+             }
+-            traverse(f, context);
+-        }, scanDependencies());
++            traverse(f, files);
++        }, context, scanDependencies());
++
++        getLocationConsumer(context).consume(locationFiles);
++
++        logger.debug("[{}] Finder {} finished in {} milliseconds", Thread.currentThread().getName(), this.getClass().getSimpleName(), elapsedTime(start));
++    }
++
++    LocationScanner getLocationScanner() {
++        return new DirectoryScanner(this.getClass().getSimpleName());
++    }
+ 
+-        logger.info("[{}] Finder {} finished", Thread.currentThread().getName(), this.getClass().getSimpleName());
++    LocationConsumer getLocationConsumer(Context context) {
++        return new FileConsumer(consumers, context, this.getClass().getSimpleName());
+     }
+@@ -39,20 +58,21 @@ public abstract class FileTreeFinder implements Finder {
+ 
+-    private void traverse(File f, Context context) {
+-        if (f.isFile()) {
+-            int index = f.getName().lastIndexOf('.');
+-            if (index > 0) {
+-                String ext = f.getName().substring(index);
+-                if (consumers.containsKey(ext)) {
+-                    consumers.get(ext).accept(f, context);
+-                }
+-            }
+-        } else if (f.isDirectory()) {
+-            File[] files = f.listFiles();
++    // collect the list of files to be consumed
++    // later parallelize the consumption of each file
++    private void traverse(File file, Set<File> filesToScan) {
++        if (file.isDirectory()) {
++            File[] files = file.listFiles();
+             if (files != null) {
+                 for (File entry : files) {
+-                    traverse(entry, context);
++                    traverse(entry, filesToScan);
+                 }
+             }
++        } else {
++            if (consumers.containsKey(getExtension(file.getName()))) {
++                logger.debug("Adding file: {}", file.getAbsolutePath());
++                filesToScan.add(file);
++            }
+         }
+     }
++
++
+ }
+diff --git a/engine/src/main/java/com/sandboni/core/engine/finder/bcel/BcelFinder.java b/engine/src/main/java/com/sandboni/core/engine/finder/bcel/BcelFinder.java
+index 57185b0..75c2cfd 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/finder/bcel/BcelFinder.java
++++ b/engine/src/main/java/com/sandboni/core/engine/finder/bcel/BcelFinder.java
+@@ -5,3 +5,3 @@ import com.sandboni.core.engine.finder.ExtensionType;
+ import com.sandboni.core.engine.finder.FileTreeFinder;
+-import com.sandboni.core.engine.finder.bcel.visitors.ClassUtils;
++import com.sandboni.core.engine.finder.bcel.visitors.*;
+ import com.sandboni.core.engine.sta.Context;
+@@ -13,2 +13,3 @@ import java.io.File;
+ import java.util.*;
++import java.util.stream.Stream;
+ 
+@@ -16,6 +17,6 @@ public class BcelFinder extends FileTreeFinder {
+ 
+-    private Collection<ClassVisitor> visitors;
+-
+-    public BcelFinder(ClassVisitor[] visitors) {
+-        this.visitors = Collections.unmodifiableCollection(Arrays.asList(visitors));
++    public BcelFinder() {
++        // To support parallel execution, now Visitors are not longer supported as constructor parameters,
++        // instead these are created on demand when the startVisitors method is called, this ensure that
++        // a different instance is used across multiple Finder executions.
+     }
+@@ -29,3 +30,4 @@ public class BcelFinder extends FileTreeFinder {
+             jc.setRepository(ClassUtils.getRepository(context.getClassPath()));
+-            context.addLinks(startVisitors(jc, context));
++            Context localContext = context.getLocalContext();
++            context.addLinks(startVisitors(jc, localContext));
+         });
+@@ -36,4 +38,10 @@ public class BcelFinder extends FileTreeFinder {
+     protected Link[] startVisitors(JavaClass jc, Context c) {
+-        return visitors.stream().flatMap(v -> v.start(jc, c)).toArray(Link[]::new);
++        return Arrays.stream(ClassVisitors.getClassVisitors()).flatMap(v -> {
++            Context localContext = c.getLocalContext();
++            Stream<Link> start = v.start(jc, localContext);
++            c.addLinks(localContext.getLinks());
++            return start;
++        }).toArray(Link[]::new);
+     }
++
+ }
+diff --git a/engine/src/main/java/com/sandboni/core/engine/finder/bcel/CachedBcelFinder.java b/engine/src/main/java/com/sandboni/core/engine/finder/bcel/CachedBcelFinder.java
+deleted file mode 100644
+index 9f31d3b..0000000
+--- a/engine/src/main/java/com/sandboni/core/engine/finder/bcel/CachedBcelFinder.java
++++ /dev/null
+@@ -1,23 +0,0 @@
+-package com.sandboni.core.engine.finder.bcel;
+-
+-import com.sandboni.core.engine.sta.Context;
+-import com.sandboni.core.engine.sta.graph.Link;
+-import org.apache.bcel.classfile.JavaClass;
+-
+-import java.util.concurrent.ConcurrentHashMap;
+-import java.util.concurrent.ConcurrentMap;
+-
+-public class CachedBcelFinder extends BcelFinder {
+-
+-    private ConcurrentMap<JavaClass, Link[]> linkCache = new ConcurrentHashMap<>();
+-
+-    public CachedBcelFinder(ClassVisitor[] visitors) {
+-        super(visitors);
+-    }
+-
+-    @Override
+-    protected Link[] startVisitors(JavaClass jc, Context c) {
+-        return linkCache.computeIfAbsent(jc, jClass -> super.startVisitors(jClass, c));
+-    }
+-
+-}
+diff --git a/engine/src/main/java/com/sandboni/core/engine/finder/bcel/visitors/ClassVisitors.java b/engine/src/main/java/com/sandboni/core/engine/finder/bcel/visitors/ClassVisitors.java
+new file mode 100644
+index 0000000..8387850
+--- /dev/null
++++ b/engine/src/main/java/com/sandboni/core/engine/finder/bcel/visitors/ClassVisitors.java
+@@ -0,0 +1,30 @@
++package com.sandboni.core.engine.finder.bcel.visitors;
++
++import com.sandboni.core.engine.finder.bcel.ClassVisitor;
++import com.sandboni.core.engine.finder.bcel.visitors.http.JavaxControllerClassVisitor;
++import com.sandboni.core.engine.finder.bcel.visitors.http.SpringControllerClassVisitor;
++
++public class ClassVisitors {
++
++    /**
++     * Utility method that always return new ClassVisitors instances.
++     * This is needed as Visitors are not thread safe and a single instance
++     * can't be shared across multiple threads.
++     *
++     * @return ClassVisitor array with new instances in each invocation.
++     */
++    public static ClassVisitor[] getClassVisitors() {
++        return new ClassVisitor[]{
++                new AffectedClassVisitor(),
++                new CallerClassVisitor(),
++                new ImplementingClassVisitor(),
++                new InheritanceClassVisitor(),
++                new JavaxControllerClassVisitor(),
++                new SpringControllerClassVisitor(),
++                new TestClassVisitor()};
++    }
++
++    private ClassVisitors() {
++        // static methods
++    }
++}
+diff --git a/engine/src/main/java/com/sandboni/core/engine/finder/JarFinder.java b/engine/src/main/java/com/sandboni/core/engine/finder/jar/JarFinder.java
+similarity index 77%
+rename from engine/src/main/java/com/sandboni/core/engine/finder/JarFinder.java
+rename to engine/src/main/java/com/sandboni/core/engine/finder/jar/JarFinder.java
+index 62d8253..40171ba 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/finder/JarFinder.java
++++ b/engine/src/main/java/com/sandboni/core/engine/finder/jar/JarFinder.java
+@@ -1,6 +1,9 @@
+-package com.sandboni.core.engine.finder;
++package com.sandboni.core.engine.finder.jar;
+ 
+-import com.sandboni.core.engine.ProcessorBuilder;
+ import com.sandboni.core.engine.contract.ThrowingBiConsumer;
+ import com.sandboni.core.engine.contract.ThrowingFunction;
++import com.sandboni.core.engine.exception.ParseRuntimeException;
++import com.sandboni.core.engine.finder.ExtensionType;
++import com.sandboni.core.engine.finder.FileTreeFinder;
++import com.sandboni.core.engine.finder.bcel.visitors.ClassVisitors;
+ import com.sandboni.core.engine.finder.cucumber.CucumberFeatureFinder;
+@@ -32,6 +35,6 @@ public class JarFinder extends FileTreeFinder {
+             if (!context.inScope(file.getAbsolutePath())) {
+-                log.info("[{}] Skipping Jar scanning for {}", Thread.currentThread().getName(), file.getAbsolutePath());
++                log.debug("[{}] Skipping Jar scanning for {}", Thread.currentThread().getName(), file.getAbsolutePath());
+                 return;
+             }
+-            log.info("[{}] Jar scanning starts for {}", Thread.currentThread().getName(), file);
++            log.debug("[{}] Jar scanning starts for {}", Thread.currentThread().getName(), file);
+             long start = System.nanoTime();
+@@ -52,3 +55,3 @@ public class JarFinder extends FileTreeFinder {
+             }
+-            log.info("[{}] Jar scanning finished for {} in {} milliseconds", Thread.currentThread().getName(), file, TimeUtils.elapsedTime(start));
++            log.debug("[{}] Jar scanning finished for {} in {} milliseconds", Thread.currentThread().getName(), file, TimeUtils.elapsedTime(start));
+         });
+@@ -63,3 +66,3 @@ public class JarFinder extends FileTreeFinder {
+     private Link[] startVisitors(JavaClass jc, Context c) {
+-        return Arrays.stream(ProcessorBuilder.getVisitors()).flatMap(v -> v.start(jc, c)).toArray(Link[]::new);
++        return Arrays.stream(ClassVisitors.getClassVisitors()).flatMap(v -> v.start(jc, c)).toArray(Link[]::new);
+     }
+@@ -71,5 +74,4 @@ public class JarFinder extends FileTreeFinder {
+         } catch (IOException e) {
+-            log.error("Error during reading file: " + entry.getName(), e);
++            throw new ParseRuntimeException(e);
+         }
+-        return null;
+     }
+diff --git a/engine/src/main/java/com/sandboni/core/engine/finder/scanner/DirectoryScanner.java b/engine/src/main/java/com/sandboni/core/engine/finder/scanner/DirectoryScanner.java
+new file mode 100644
+index 0000000..2293ea0
+--- /dev/null
++++ b/engine/src/main/java/com/sandboni/core/engine/finder/scanner/DirectoryScanner.java
+@@ -0,0 +1,55 @@
++package com.sandboni.core.engine.finder.scanner;
++
++import com.sandboni.core.engine.contract.ThrowingBiConsumer;
++import com.sandboni.core.engine.sta.Context;
++import com.sandboni.core.engine.sta.executor.DirectoryScannerExecutor;
++import com.sandboni.core.engine.sta.executor.ParallelExecutor;
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
++
++import java.io.File;
++import java.util.*;
++import java.util.stream.Collectors;
++
++import static com.sandboni.core.engine.utils.TimeUtils.elapsedTime;
++
++public class DirectoryScanner implements LocationScanner {
++
++    private static final Logger logger = LoggerFactory.getLogger(DirectoryScanner.class);
++    static final String DEPENDENCY_JARS = "DependencyJars";
++
++    private final String scannerName;
++
++    public DirectoryScanner(String scannerName) {
++        this.scannerName = scannerName;
++    }
++
++    @Override
++    public Map<String, Set<File>> scan(ThrowingBiConsumer<String, Set<File>> consumer, Context context, boolean scanDependencies) {
++        long start = System.nanoTime();
++        logger.debug("[{}] {} Start traversing locations", Thread.currentThread().getName(), scannerName);
++
++        List<String> allLocations = new ArrayList<>();
++        allLocations.addAll(context.getTestLocations());
++        allLocations.addAll(context.getSrcLocations());
++
++        Map<String, Set<File>> locationFiles = new HashMap<>();
++        Collection<Map<String, Set<File>>> locationToFilesFound = getDirectoryFinder(consumer).execute(allLocations);
++        locationToFilesFound.forEach(map -> {
++            map.forEach(locationFiles::put);
++        });
++
++        logger.debug("[{}] {} Finished traversing locations in {} milliseconds", Thread.currentThread().getName(), scannerName, elapsedTime(start));
++
++        if (context.isEnablePreview() && scanDependencies) {
++            locationFiles.put(DEPENDENCY_JARS, context.getDependencyJars().stream()
++                    .map(File::new).collect(Collectors.toSet()));
++        }
++
++        return locationFiles;
++    }
++
++    ParallelExecutor<Collection<String>, Collection<Map<String, Set<File>>>> getDirectoryFinder(ThrowingBiConsumer<String, Set<File>> consumer) {
++        return new DirectoryScannerExecutor(consumer, scannerName);
++    }
++}
+diff --git a/engine/src/main/java/com/sandboni/core/engine/finder/scanner/FileConsumer.java b/engine/src/main/java/com/sandboni/core/engine/finder/scanner/FileConsumer.java
+new file mode 100644
+index 0000000..4070fba
+--- /dev/null
++++ b/engine/src/main/java/com/sandboni/core/engine/finder/scanner/FileConsumer.java
+@@ -0,0 +1,40 @@
++package com.sandboni.core.engine.finder.scanner;
++
++import com.sandboni.core.engine.contract.ThrowingBiConsumer;
++import com.sandboni.core.engine.sta.Context;
++import com.sandboni.core.engine.sta.executor.FileConsumerExecutor;
++import com.sandboni.core.engine.sta.executor.ParallelExecutor;
++
++import java.io.File;
++import java.util.Collection;
++import java.util.HashMap;
++import java.util.Map;
++import java.util.Set;
++
++public class FileConsumer implements LocationConsumer {
++
++    private final Map<String, ThrowingBiConsumer<File, Context>> consumers;
++    private final Context context;
++    private final String consumerName;
++
++    public FileConsumer(Map<String, ThrowingBiConsumer<File, Context>> consumers, Context context, String consumerName) {
++        this.consumers = new HashMap<>(consumers);
++        this.context = context;
++        this.consumerName = consumerName;
++    }
++
++    @Override
++    public void consume(Map<String, Set<File>> locationFiles) {
++        for (Map.Entry<String, Set<File>> entry : locationFiles.entrySet()) {
++            String location = entry.getKey();
++            Context localContext = context.getLocalContext(location);
++            getFileConsumerExecutor(localContext).execute(entry.getValue());
++            context.addLinks(localContext.getLinks());
++        }
++
++    }
++
++    ParallelExecutor<Collection<File>, Collection<String>> getFileConsumerExecutor(Context localContext) {
++        return new FileConsumerExecutor(consumers, localContext, consumerName);
++    }
++}
+diff --git a/engine/src/main/java/com/sandboni/core/engine/finder/scanner/LocationConsumer.java b/engine/src/main/java/com/sandboni/core/engine/finder/scanner/LocationConsumer.java
+new file mode 100644
+index 0000000..9f2cce6
+--- /dev/null
++++ b/engine/src/main/java/com/sandboni/core/engine/finder/scanner/LocationConsumer.java
+@@ -0,0 +1,10 @@
++package com.sandboni.core.engine.finder.scanner;
++
++import java.io.File;
++import java.util.Map;
++import java.util.Set;
++
++public interface LocationConsumer {
++
++    void consume(Map<String, Set<File>> locationFiles);
++}
+diff --git a/engine/src/main/java/com/sandboni/core/engine/finder/scanner/LocationScanner.java b/engine/src/main/java/com/sandboni/core/engine/finder/scanner/LocationScanner.java
+new file mode 100644
+index 0000000..4afbf9d
+--- /dev/null
++++ b/engine/src/main/java/com/sandboni/core/engine/finder/scanner/LocationScanner.java
+@@ -0,0 +1,13 @@
++package com.sandboni.core.engine.finder.scanner;
++
++import com.sandboni.core.engine.contract.ThrowingBiConsumer;
++import com.sandboni.core.engine.sta.Context;
++
++import java.io.File;
++import java.util.Map;
++import java.util.Set;
++
++public interface LocationScanner {
++
++    Map<String, Set<File>> scan(ThrowingBiConsumer<String, Set<File>> consumer, Context context, boolean scanDependencies);
++}
+diff --git a/engine/src/main/java/com/sandboni/core/engine/render/banner/BannerRenderService.java b/engine/src/main/java/com/sandboni/core/engine/render/banner/BannerRenderService.java
+index 9932639..a040138 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/render/banner/BannerRenderService.java
++++ b/engine/src/main/java/com/sandboni/core/engine/render/banner/BannerRenderService.java
+@@ -35,3 +35,3 @@ public class BannerRenderService {
+         } catch (IOException e) {
+-            log.warn("Error in rendering Sandboni banner : {} , {}", LOGO_FILE_NAME, e);
++            log.warn("Error in rendering Sandboni banner : {} , {}", LOGO_FILE_NAME, e.toString());
+         }
+diff --git a/engine/src/main/java/com/sandboni/core/engine/sta/Context.java b/engine/src/main/java/com/sandboni/core/engine/sta/Context.java
+index 38eb10d..2989c30 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/sta/Context.java
++++ b/engine/src/main/java/com/sandboni/core/engine/sta/Context.java
+@@ -2,5 +2,2 @@ package com.sandboni.core.engine.sta;
+ 
+-import com.sandboni.core.engine.contract.ThrowingConsumer;
+-import com.sandboni.core.engine.sta.executor.AbstractParallelExecutor;
+-import com.sandboni.core.engine.sta.executor.LocationScannerExecutor;
+ import com.sandboni.core.engine.sta.graph.Link;
+@@ -20,4 +17,2 @@ import java.util.stream.Stream;
+ 
+-import static com.sandboni.core.engine.utils.TimeUtils.elapsedTime;
+-
+ @Getter
+@@ -31,3 +26,3 @@ public class Context {
+     private final ConcurrentHashMap<Link, Boolean> links;
+-    private String currentLocation;
++    private final String currentLocation;
+     private final ChangeScope<Change> changeScope;
+@@ -66,3 +61,3 @@ public class Context {
+         this.dependencyJars = getCollection(dependencies);
+-
++        this.currentLocation = "";
+         this.classPath = getExecutionClasspath(srcLocations, testLocations, getCollection(dependencies));
+@@ -107,2 +102,6 @@ public class Context {
+     private Context(Context source) {
++        this(source, source.currentLocation);
++    }
++
++    private Context(Context source, String currentLocation) {
+         this.links = new ConcurrentHashMap<>();
+@@ -116,3 +115,3 @@ public class Context {
+         this.changeScope = source.changeScope;
+-        this.currentLocation = source.currentLocation;
++        this.currentLocation = currentLocation;
+         this.alwaysRunAnnotation = source.alwaysRunAnnotation;
+@@ -122,4 +121,3 @@ public class Context {
+ 
+-    // Adding synchronized to safely handle currentLocation mutable state. This needs to be refactored out.
+-    public synchronized Context getLocalContext() {
++    public Context getLocalContext() {
+         return new Context(this);
+@@ -127,2 +125,6 @@ public class Context {
+ 
++    public Context getLocalContext(String currentLocation) {
++        return new Context(this, currentLocation);
++    }
++
+     public String getClassPath() {
+@@ -154,30 +156,4 @@ public class Context {
+ 
+-    public void forEachLocation(ThrowingConsumer<String> consumer, boolean scanDependencies) {
+-        long start = System.nanoTime();
+-        log.info("[{}] Start traversing testLocations", Thread.currentThread().getName());
+-        testLocations.forEach(s -> {
+-            currentLocation = s;
+-            consumer.accept(currentLocation);
+-        });
+-        log.info("[{}] Finished traversing testLocations in {} milliseconds", Thread.currentThread().getName(), elapsedTime(start));
+-
+-        start = System.nanoTime();
+-        log.info("[{}] Start traversing srcLocations", Thread.currentThread().getName());
+-        srcLocations.forEach(s -> {
+-            currentLocation = s;
+-            consumer.accept(currentLocation);
+-        });
+-        log.info("[{}] Finished traversing srcLocations in {} milliseconds", Thread.currentThread().getName(), elapsedTime(start));
+-
+-        if (isEnablePreview() && scanDependencies) {
+-            start = System.nanoTime();
+-            log.info("[{}] Start traversing jars", Thread.currentThread().getName());
+-            currentLocation = "DependencyJars";
+-            getScannerExecutor(consumer).execute(new ArrayList<>(dependencyJars));
+-            log.info("[{}] Finished traversing jars in {} milliseconds", Thread.currentThread().getName(), elapsedTime(start));
+-        }
+-    }
+-
+-    private AbstractParallelExecutor<String, String> getScannerExecutor(ThrowingConsumer<String> consumer) {
+-        return new LocationScannerExecutor(consumer);
++    public void addLinks(Stream<Link> linksToAdd) {
++        linksToAdd.forEach(this::addLink);
+     }
+diff --git a/engine/src/main/java/com/sandboni/core/engine/sta/executor/AbstractParallelExecutor.java b/engine/src/main/java/com/sandboni/core/engine/sta/executor/AbstractParallelExecutor.java
+index 376a9e2..f64363a 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/sta/executor/AbstractParallelExecutor.java
++++ b/engine/src/main/java/com/sandboni/core/engine/sta/executor/AbstractParallelExecutor.java
+@@ -30,3 +30,3 @@ public abstract class AbstractParallelExecutor<T, R> implements ParallelExecutor
+ 
+-        logger.info("[{}] {} executed in {} milliseconds", Thread.currentThread().getName(), this.getClass().getSimpleName(), elapsedTime(start));
++        logger.debug("[{}] {} executed in {} milliseconds", Thread.currentThread().getName(), this.getExecutorName(), elapsedTime(start));
+ 
+@@ -51,2 +51,6 @@ public abstract class AbstractParallelExecutor<T, R> implements ParallelExecutor
+     }
++
++    protected String getExecutorName() {
++        return this.getClass().getSimpleName();
++    }
+ }
+diff --git a/engine/src/main/java/com/sandboni/core/engine/sta/executor/DirectoryScannerExecutor.java b/engine/src/main/java/com/sandboni/core/engine/sta/executor/DirectoryScannerExecutor.java
+new file mode 100644
+index 0000000..5556405
+--- /dev/null
++++ b/engine/src/main/java/com/sandboni/core/engine/sta/executor/DirectoryScannerExecutor.java
+@@ -0,0 +1,51 @@
++package com.sandboni.core.engine.sta.executor;
++
++import com.sandboni.core.engine.contract.ThrowingBiConsumer;
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
++
++import java.io.File;
++import java.util.HashMap;
++import java.util.HashSet;
++import java.util.Map;
++import java.util.Set;
++import java.util.function.Function;
++
++import static com.sandboni.core.engine.utils.TimeUtils.elapsedTime;
++
++public class DirectoryScannerExecutor extends AbstractParallelExecutor<String, Map<String, Set<File>>> {
++
++    private static final Logger logger = LoggerFactory.getLogger(DirectoryScannerExecutor.class);
++
++    private final ThrowingBiConsumer<String, Set<File>> consumer;
++    private final String executorName;
++
++    public DirectoryScannerExecutor(ThrowingBiConsumer<String, Set<File>> consumer, String executorName) {
++        this.consumer = consumer;
++        this.executorName = executorName;
++    }
++
++    @Override
++    Function<String, Map<String, Set<File>>> getMappingFunction() {
++        return location -> {
++            logger.debug("[{}] {} Starting scanning for {}", Thread.currentThread().getName(), this.getExecutorName(), location);
++
++            long start = System.nanoTime();
++
++            Map<String, Set<File>> locationFiles = new HashMap<>();
++            Set<File> testFiles = new HashSet<>();
++            consumer.accept(location, testFiles);
++
++            locationFiles.put(location, testFiles);
++
++            logger.debug("[{}] {} {} executed in {} milliseconds", Thread.currentThread().getName(), this.getExecutorName(), location, elapsedTime(start));
++
++            return locationFiles;
++        };
++    }
++
++    @Override
++    public String getExecutorName() {
++        return this.getClass().getSimpleName() + "_" + executorName;
++    }
++}
+diff --git a/engine/src/main/java/com/sandboni/core/engine/sta/executor/ExecutorPools.java b/engine/src/main/java/com/sandboni/core/engine/sta/executor/ExecutorPools.java
+index 994c1e4..2f3d4c3 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/sta/executor/ExecutorPools.java
++++ b/engine/src/main/java/com/sandboni/core/engine/sta/executor/ExecutorPools.java
+@@ -5,3 +5,3 @@ import java.util.concurrent.Executors;
+ 
+-public class ExecutorPools {
++class ExecutorPools {
+ 
+@@ -10,3 +10,3 @@ public class ExecutorPools {
+ 
+-    public static final Executor fixedThreadPool =
++    static final Executor fixedThreadPool =
+             Executors.newFixedThreadPool(THREAD_NUMBER,
+diff --git a/engine/src/main/java/com/sandboni/core/engine/sta/executor/FileConsumerExecutor.java b/engine/src/main/java/com/sandboni/core/engine/sta/executor/FileConsumerExecutor.java
+new file mode 100644
+index 0000000..08fe5b1
+--- /dev/null
++++ b/engine/src/main/java/com/sandboni/core/engine/sta/executor/FileConsumerExecutor.java
+@@ -0,0 +1,40 @@
++package com.sandboni.core.engine.sta.executor;
++
++import com.sandboni.core.engine.contract.ThrowingBiConsumer;
++import com.sandboni.core.engine.sta.Context;
++
++import java.io.File;
++import java.util.HashMap;
++import java.util.Map;
++import java.util.function.Function;
++
++import static com.sandboni.core.engine.utils.StringUtil.getExtension;
++
++public class FileConsumerExecutor extends AbstractParallelExecutor<File, String> {
++
++    private Map<String, ThrowingBiConsumer<File, Context>> consumers;
++    private Context context;
++    private String executorName;
++
++    public FileConsumerExecutor(Map<String, ThrowingBiConsumer<File, Context>> consumers, Context context, String executorName) {
++        this.consumers = new HashMap<>(consumers);
++        this.context = context;
++        this.executorName = executorName;
++    }
++
++    @Override
++    Function<File, String> getMappingFunction() {
++        return input -> {
++            ThrowingBiConsumer<File, Context> consumer = consumers.get(getExtension(input.getName()));
++            if (consumer != null) {
++                consumer.accept(input, context);
++            }
++            return input.getAbsolutePath();
++        };
++    }
++
++    @Override
++    public String getExecutorName() {
++        return this.getClass().getSimpleName() + "_" + executorName;
++    }
++}
+diff --git a/engine/src/main/java/com/sandboni/core/engine/sta/executor/FinderExecutor.java b/engine/src/main/java/com/sandboni/core/engine/sta/executor/FinderExecutor.java
+index b234254..4ef88a0 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/sta/executor/FinderExecutor.java
++++ b/engine/src/main/java/com/sandboni/core/engine/sta/executor/FinderExecutor.java
+@@ -4,3 +4,2 @@ import com.sandboni.core.engine.contract.Finder;
+ import com.sandboni.core.engine.sta.Context;
+-import com.sandboni.core.engine.sta.graph.Link;
+ 
+@@ -21,3 +20,3 @@ public class FinderExecutor extends AbstractParallelExecutor<Finder, Void> {
+             finder.findSafe(localContext);
+-            context.addLinks(localContext.getLinks().toArray(Link[]::new));
++            context.addLinks(localContext.getLinks());
+             return null;
+@@ -25,2 +24,7 @@ public class FinderExecutor extends AbstractParallelExecutor<Finder, Void> {
+     }
++
++    @Override
++    protected String getExecutorName() {
++        return this.getClass().getSimpleName();
++    }
+ }
+diff --git a/engine/src/main/java/com/sandboni/core/engine/sta/executor/LocationScannerExecutor.java b/engine/src/main/java/com/sandboni/core/engine/sta/executor/LocationScannerExecutor.java
+deleted file mode 100644
+index d14bef2..0000000
+--- a/engine/src/main/java/com/sandboni/core/engine/sta/executor/LocationScannerExecutor.java
++++ /dev/null
+@@ -1,22 +0,0 @@
+-package com.sandboni.core.engine.sta.executor;
+-
+-import com.sandboni.core.engine.contract.ThrowingConsumer;
+-
+-import java.util.function.Function;
+-
+-public class LocationScannerExecutor extends AbstractParallelExecutor<String, String> {
+-
+-    private final ThrowingConsumer<String> consumer;
+-
+-    public LocationScannerExecutor(ThrowingConsumer<String> consumer) {
+-        this.consumer = consumer;
+-    }
+-
+-    @Override
+-    Function<String, String> getMappingFunction() {
+-        return input -> {
+-            consumer.accept(input);
+-            return input;
+-        };
+-    }
+-}
+diff --git a/engine/src/main/java/com/sandboni/core/engine/utils/StringUtil.java b/engine/src/main/java/com/sandboni/core/engine/utils/StringUtil.java
+index bb327b1..d79d129 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/utils/StringUtil.java
++++ b/engine/src/main/java/com/sandboni/core/engine/utils/StringUtil.java
+@@ -8,2 +8,10 @@ public class StringUtil {
+     }
++
++    public static String getExtension(String fileName) {
++        int index = fileName.lastIndexOf('.');
++        if (index > 0) {
++            return fileName.substring(index);
++        }
++        return "";
++    }
+ }
+diff --git a/engine/src/test/java/com/sandboni/core/engine/ProcessorBuilderTest.java b/engine/src/test/java/com/sandboni/core/engine/ProcessorBuilderTest.java
+index 3c32598..cb5b416 100644
+--- a/engine/src/test/java/com/sandboni/core/engine/ProcessorBuilderTest.java
++++ b/engine/src/test/java/com/sandboni/core/engine/ProcessorBuilderTest.java
+@@ -4,3 +4,2 @@ import com.sandboni.core.engine.contract.Finder;
+ import com.sandboni.core.engine.finder.bcel.BcelFinder;
+-import com.sandboni.core.engine.finder.bcel.CachedBcelFinder;
+ import com.sandboni.core.engine.finder.cucumber.CucumberFeatureFinder;
+@@ -54,4 +53,3 @@ public class ProcessorBuilderTest {
+         Assert.assertTrue(p.getChangeDetector() instanceof CachedRepository);
+-        Assert.assertTrue(p.getFinders().stream().anyMatch(f-> f instanceof CachedBcelFinder));
+-        Assert.assertTrue(p.getFinders().stream().noneMatch(f-> !(f instanceof CachedBcelFinder) && f instanceof BcelFinder));
++        Assert.assertTrue(p.getFinders().stream().anyMatch(f -> f instanceof BcelFinder));
+     }
+@@ -75,5 +73,4 @@ public class ProcessorBuilderTest {
+         Assert.assertNotNull(p);
+-        Assert.assertTrue(p.getChangeDetector() instanceof GitRepository && !(p.getChangeDetector() instanceof CachedBcelFinder));
+-        Assert.assertTrue(p.getFinders().stream().anyMatch(f-> f instanceof BcelFinder && !(f instanceof CachedBcelFinder)));
+-        Assert.assertTrue(p.getFinders().stream().noneMatch(f-> f instanceof CachedBcelFinder));
++        Assert.assertTrue(p.getChangeDetector() instanceof GitRepository);
++        Assert.assertTrue(p.getFinders().stream().anyMatch(f-> f instanceof BcelFinder));
+     }
+diff --git a/engine/src/test/java/com/sandboni/core/engine/finder/bcel/BcelFinderSuiteTest.java b/engine/src/test/java/com/sandboni/core/engine/finder/bcel/BcelFinderSuiteTest.java
+index 4aca56b..224ca24 100644
+--- a/engine/src/test/java/com/sandboni/core/engine/finder/bcel/BcelFinderSuiteTest.java
++++ b/engine/src/test/java/com/sandboni/core/engine/finder/bcel/BcelFinderSuiteTest.java
+@@ -30,4 +30,4 @@ public class BcelFinderSuiteTest extends FinderTestBase {
+ 
+-    private void testVisitor(Link[] expectedLinks, Link[] notExpectedLinks, ClassVisitor... visitors) {
+-        Finder f = new BcelFinder(visitors);
++    private void testVisitor(Link[] expectedLinks, Link[] notExpectedLinks) {
++        Finder f = new BcelFinder();
+         f.findSafe(context);
+@@ -38,3 +38,3 @@ public class BcelFinderSuiteTest extends FinderTestBase {
+     private void testTestClassVisitor(Link[] expectedLinks, Link[] notExpectedLinks) {
+-        testVisitor(expectedLinks, notExpectedLinks, new TestClassVisitor());
++        testVisitor(expectedLinks, notExpectedLinks);
+     }
+diff --git a/engine/src/test/java/com/sandboni/core/engine/finder/bcel/BcelFinderTest.java b/engine/src/test/java/com/sandboni/core/engine/finder/bcel/BcelFinderTest.java
+index c1c13c4..e5250de 100644
+--- a/engine/src/test/java/com/sandboni/core/engine/finder/bcel/BcelFinderTest.java
++++ b/engine/src/test/java/com/sandboni/core/engine/finder/bcel/BcelFinderTest.java
+@@ -29,4 +29,4 @@ public class BcelFinderTest extends FinderTestBase {
+ 
+-    private void testVisitor(Link[] expectedLinks, ClassVisitor... visitors) {
+-        Finder f = new BcelFinder(visitors);
++    private void testVisitor(Link[] expectedLinks) {
++        Finder f = new BcelFinder();
+         f.findSafe(context);
+@@ -42,3 +42,3 @@ public class BcelFinderTest extends FinderTestBase {
+     private void testCallerVisitor(Link... expectedLinks) {
+-        testVisitor(expectedLinks, new CallerClassVisitor());
++        testVisitor(expectedLinks);
+     }
+@@ -46,3 +46,3 @@ public class BcelFinderTest extends FinderTestBase {
+     private void testSpringControllerVisitor(Link... expectedLinks) {
+-        testVisitor(expectedLinks, new SpringControllerClassVisitor());
++        testVisitor(expectedLinks);
+     }
+@@ -50,3 +50,3 @@ public class BcelFinderTest extends FinderTestBase {
+     private void testJavaxControllerVisitor(Link... expectedLinks) {
+-        testVisitor(expectedLinks, new JavaxControllerClassVisitor());
++        testVisitor(expectedLinks);
+     }
+@@ -54,3 +54,3 @@ public class BcelFinderTest extends FinderTestBase {
+     private void testTestClassVisitor(Link... expectedLinks) {
+-        testVisitor(expectedLinks, new TestClassVisitor());
++        testVisitor(expectedLinks);
+     }
+@@ -58,3 +58,3 @@ public class BcelFinderTest extends FinderTestBase {
+     private void testInheritanceVisitor(Link... expectedLinks) {
+-        testVisitor(expectedLinks, new InheritanceClassVisitor());
++        testVisitor(expectedLinks);
+     }
+@@ -62,3 +62,3 @@ public class BcelFinderTest extends FinderTestBase {
+     private void testAffectedVisitor(Link... expectedLinks) {
+-        testVisitor(expectedLinks, new AffectedClassVisitor());
++        testVisitor(expectedLinks);
+     }
+@@ -66,3 +66,3 @@ public class BcelFinderTest extends FinderTestBase {
+     private void testImplementingVisitor(Link... expectedLinks) {
+-        testVisitor(expectedLinks, new ImplementingClassVisitor());
++        testVisitor(expectedLinks);
+     }
+@@ -546,3 +546,3 @@ public class BcelFinderTest extends FinderTestBase {
+         Context context = new Context(new String[]{"non-existing-location"}, new String[]{"non-existing-location"}, "com.sandboni", new ChangeScopeImpl(), null);
+-        Finder f = new BcelFinder(new ClassVisitor[]{new CallerClassVisitor()});
++        Finder f = new BcelFinder();
+         f.findSafe(context);
+diff --git a/engine/src/test/java/com/sandboni/core/engine/finder/bcel/CachedBcelFinderTest.java b/engine/src/test/java/com/sandboni/core/engine/finder/bcel/CachedBcelFinderTest.java
+index 0de32b1..1c7ef9d 100644
+--- a/engine/src/test/java/com/sandboni/core/engine/finder/bcel/CachedBcelFinderTest.java
++++ b/engine/src/test/java/com/sandboni/core/engine/finder/bcel/CachedBcelFinderTest.java
+@@ -18,3 +18,3 @@ public class CachedBcelFinderTest extends FinderTestBase {
+     private void testVisitor(Link[] expectedLinks, ClassVisitor... visitors) {
+-        Finder f = new BcelFinder(visitors);
++        Finder f = new BcelFinder();
+         f.findSafe(context);
+diff --git a/engine/src/test/java/com/sandboni/core/engine/finder/bcel/visitors/ClassVisitorsTest.java b/engine/src/test/java/com/sandboni/core/engine/finder/bcel/visitors/ClassVisitorsTest.java
+new file mode 100644
+index 0000000..339d3ea
+--- /dev/null
++++ b/engine/src/test/java/com/sandboni/core/engine/finder/bcel/visitors/ClassVisitorsTest.java
+@@ -0,0 +1,24 @@
++package com.sandboni.core.engine.finder.bcel.visitors;
++
++import com.sandboni.core.engine.finder.bcel.ClassVisitor;
++import org.junit.Assert;
++import org.junit.Test;
++
++import java.util.Arrays;
++
++public class ClassVisitorsTest {
++
++    @Test
++    public void testDifferentInstance() {
++        ClassVisitor[] classVisitorsFirst = ClassVisitors.getClassVisitors();
++        ClassVisitor[] classVisitorsSecond = ClassVisitors.getClassVisitors();
++
++        Arrays.stream(classVisitorsFirst)
++                .forEach(first ->
++                        Arrays.stream(classVisitorsSecond)
++                                .filter(second -> first.getClass().equals(second.getClass()))
++                                .findAny()
++                                .ifPresent(second -> Assert.assertNotSame(first, second))
++                );
++    }
++}
+diff --git a/engine/src/test/java/com/sandboni/core/engine/finder/JarFinderTest.java b/engine/src/test/java/com/sandboni/core/engine/finder/jar/JarFinderTest.java
+similarity index 81%
+rename from engine/src/test/java/com/sandboni/core/engine/finder/JarFinderTest.java
+rename to engine/src/test/java/com/sandboni/core/engine/finder/jar/JarFinderTest.java
+index f8c44f5..e0b1e4d 100644
+--- a/engine/src/test/java/com/sandboni/core/engine/finder/JarFinderTest.java
++++ b/engine/src/test/java/com/sandboni/core/engine/finder/jar/JarFinderTest.java
+@@ -1,2 +1,2 @@
+-package com.sandboni.core.engine.finder;
++package com.sandboni.core.engine.finder.jar;
+ 
+@@ -4,4 +4,2 @@ import com.sandboni.core.engine.FinderTestBase;
+ import com.sandboni.core.engine.contract.Finder;
+-import com.sandboni.core.engine.finder.bcel.ClassVisitor;
+-import com.sandboni.core.engine.finder.bcel.visitors.CallerClassVisitor;
+ import com.sandboni.core.engine.sta.graph.Link;
+@@ -20,3 +18,3 @@ public class JarFinderTest extends FinderTestBase {
+ 
+-    private void testVisitor(Link[] expectedLinks, ClassVisitor... visitors) {
++    private void testVisitor(Link[] expectedLinks) {
+         Finder f = new JarFinder();
+@@ -33,3 +31,3 @@ public class JarFinderTest extends FinderTestBase {
+     private void testCallerVisitor(Link... expectedLinks) {
+-        testVisitor(expectedLinks, new CallerClassVisitor());
++        testVisitor(expectedLinks);
+     }
+diff --git a/engine/src/test/java/com/sandboni/core/engine/finder/scanner/DirectoryScannerTest.java b/engine/src/test/java/com/sandboni/core/engine/finder/scanner/DirectoryScannerTest.java
+new file mode 100644
+index 0000000..e205f51
+--- /dev/null
++++ b/engine/src/test/java/com/sandboni/core/engine/finder/scanner/DirectoryScannerTest.java
+@@ -0,0 +1,96 @@
++package com.sandboni.core.engine.finder.scanner;
++
++import com.sandboni.core.engine.contract.ThrowingBiConsumer;
++import com.sandboni.core.engine.sta.Context;
++import com.sandboni.core.engine.sta.executor.ParallelExecutor;
++import com.sandboni.core.scm.scope.ChangeScopeImpl;
++import org.junit.Before;
++import org.junit.Test;
++
++import java.io.File;
++import java.util.*;
++import java.util.stream.Collectors;
++import java.util.stream.Stream;
++
++import static org.junit.Assert.*;
++
++public class DirectoryScannerTest {
++
++    private DirectoryScanner directoryScanner;
++
++    @Before
++    public void setUp() {
++        directoryScanner = new DirectoryScanner("DirectoryScannerTest") {
++            @Override
++            ParallelExecutor<Collection<String>, Collection<Map<String, Set<File>>>> getDirectoryFinder(ThrowingBiConsumer<String, Set<File>> consumer) {
++                return new DirectoryScannerExecutorMock();
++            }
++        };
++    }
++
++    @Test
++    public void scanAllLocations() {
++        String[] srcLocation = new String[]{"srcLocation1", "srcLocation2"};
++        String[] testLocation = new String[]{"testLocation1", "testLocation2"};
++        String[] dependencies = new String[]{"dependency1", "dependency2"};
++        Set<String> allLocations = new HashSet<>();
++        allLocations.addAll(Stream.of(srcLocation).map(location -> new File(location).getAbsolutePath()).collect(Collectors.toSet()));
++        allLocations.addAll(Stream.of(testLocation).map(location -> new File(location).getAbsolutePath()).collect(Collectors.toSet()));
++        allLocations.add(DirectoryScanner.DEPENDENCY_JARS);
++
++        Context context = new Context("appId", srcLocation, testLocation, dependencies, "", new ChangeScopeImpl(), null, null, true);
++
++        Map<String, Set<File>> scanResult = directoryScanner.scan((location, files) -> {
++            // not called because is not running parallel executor
++        }, context, true);
++
++
++        assertEquals(5, scanResult.size());
++        allLocations.forEach(location -> {
++            assertTrue(scanResult.containsKey(location));
++            assertFalse(scanResult.get(location).isEmpty());
++        });
++    }
++
++    @Test
++    public void skipDependencyLocations() {
++        String[] srcLocation = new String[]{"srcLocation1", "srcLocation2"};
++        String[] testLocation = new String[]{"testLocation1", "testLocation2"};
++        String[] dependencies = new String[]{"dependency1", "dependency2"};
++        Set<String> allLocations = new HashSet<>();
++        allLocations.addAll(Stream.of(srcLocation).map(location -> new File(location).getAbsolutePath()).collect(Collectors.toSet()));
++        allLocations.addAll(Stream.of(testLocation).map(location -> new File(location).getAbsolutePath()).collect(Collectors.toSet()));
++        allLocations.add(DirectoryScanner.DEPENDENCY_JARS);
++
++        Context context = new Context("appId", srcLocation, testLocation, dependencies, "", new ChangeScopeImpl(), null, null, true);
++
++        Map<String, Set<File>> scanResult = directoryScanner.scan((location, files) -> {
++            // not called because is not running parallel executor
++        }, context, false);
++
++
++        assertEquals(4, scanResult.size());
++        allLocations.forEach(location -> {
++            if (!location.equals(DirectoryScanner.DEPENDENCY_JARS)) {
++                assertTrue(scanResult.containsKey(location));
++                assertFalse(scanResult.get(location).isEmpty());
++            }
++        });
++    }
++
++    private static class DirectoryScannerExecutorMock implements ParallelExecutor<Collection<String>, Collection<Map<String, Set<File>>>> {
++
++        @Override
++        public Collection<Map<String, Set<File>>> execute(Collection<String> input) {
++            List<Map<String, Set<File>>> result = new ArrayList<>();
++            input.forEach(location -> {
++                Map<String, Set<File>> map = new HashMap<>();
++                Set<File> files = new HashSet<>();
++                files.add(new File("file1"));
++                map.put(location, files);
++                result.add(map);
++            });
++            return result;
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/engine/src/test/java/com/sandboni/core/engine/finder/scanner/FileConsumerTest.java b/engine/src/test/java/com/sandboni/core/engine/finder/scanner/FileConsumerTest.java
+new file mode 100644
+index 0000000..f543d5e
+--- /dev/null
++++ b/engine/src/test/java/com/sandboni/core/engine/finder/scanner/FileConsumerTest.java
+@@ -0,0 +1,79 @@
++package com.sandboni.core.engine.finder.scanner;
++
++import com.sandboni.core.engine.contract.ThrowingBiConsumer;
++import com.sandboni.core.engine.sta.Context;
++import com.sandboni.core.engine.sta.executor.ParallelExecutor;
++import com.sandboni.core.engine.sta.graph.LinkFactory;
++import com.sandboni.core.engine.sta.graph.LinkType;
++import com.sandboni.core.engine.sta.graph.vertex.Vertex;
++import com.sandboni.core.scm.scope.ChangeScopeImpl;
++import org.junit.Before;
++import org.junit.Test;
++
++import java.io.File;
++import java.util.*;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertTrue;
++
++public class FileConsumerTest {
++
++    private FileConsumer fileConsumer;
++    private Context context;
++    private Map<String, Set<File>> locationFiles;
++
++    @Before
++    public void setUp() {
++        HashMap<String, ThrowingBiConsumer<File, Context>> consumers = new HashMap<>();
++        consumers.put("txt", (file, context) -> {
++            // not called because we are using mock executor
++        });
++        context = new Context("appId", new String[]{}, new String[]{}, new String[]{}, "", new ChangeScopeImpl(), null, null, true);
++
++        locationFiles = new HashMap<>();
++        Set<File> files1 = new HashSet<>();
++        files1.add(new File("test1.txt"));
++        locationFiles.put("location1", files1);
++
++        Set<File> files2 = new HashSet<>();
++        files2.add(new File("test2.txt"));
++        locationFiles.put("location2", files2);
++
++        fileConsumer = new FileConsumer(consumers, context, "FileConsumerTest") {
++            @Override
++            ParallelExecutor<Collection<File>, Collection<String>> getFileConsumerExecutor(Context localContext) {
++                return new FileConsumerExecutorMock(localContext, locationFiles);
++            }
++        };
++    }
++
++    @Test
++    public void consume() {
++        fileConsumer.consume(locationFiles);
++        assertEquals(2, context.getLinks().count());
++        assertTrue(context.getLinks().anyMatch(link -> link.getCaller().getActor().equals("caller_location1")));
++        assertTrue(context.getLinks().anyMatch(link -> link.getCaller().getActor().equals("caller_location2")));
++    }
++
++    private static class FileConsumerExecutorMock implements ParallelExecutor<Collection<File>, Collection<String>> {
++
++        private Context localContext;
++        private Map<String, Set<File>> locationFiles;
++
++        FileConsumerExecutorMock(Context localContext, Map<String, Set<File>> locationFiles) {
++            this.localContext = localContext;
++            this.locationFiles = locationFiles;
++        }
++
++        @Override
++        public Collection<String> execute(Collection<File> input) {
++            assertTrue(locationFiles.containsKey(localContext.getCurrentLocation()));
++            localContext.addLink(LinkFactory.createInstance(localContext.getApplicationId(),
++                    new Vertex.Builder("caller_" + localContext.getCurrentLocation(), "callerAction", localContext.getCurrentLocation()).build(),
++                    new Vertex.Builder("callee_" + localContext.getCurrentLocation(), "calleeAction", localContext.getCurrentLocation()).build(),
++                    LinkType.METHOD_CALL));
++            return new ArrayList<>();
++        }
++    }
++
++}
+diff --git a/engine/src/test/java/com/sandboni/core/engine/result/ResultGeneratorTest.java b/engine/src/test/java/com/sandboni/core/engine/result/ResultGeneratorTest.java
+index b36780a..eb36244 100644
+--- a/engine/src/test/java/com/sandboni/core/engine/result/ResultGeneratorTest.java
++++ b/engine/src/test/java/com/sandboni/core/engine/result/ResultGeneratorTest.java
+@@ -3,3 +3,5 @@ package com.sandboni.core.engine.result;
+ import com.sandboni.core.engine.*;
++import com.sandboni.core.engine.contract.Finder;
+ import com.sandboni.core.engine.filter.MockChangeScopeFilter;
++import com.sandboni.core.engine.sta.connector.Connector;
+ import org.junit.Assert;
+@@ -25,2 +27,4 @@ public class ResultGeneratorTest {
+                 procBuilder.scopeFilter = new MockChangeScopeFilter();
++                procBuilder.finders = new Finder[]{};
++                procBuilder.connectors = new Connector[]{};
+             }).build();
+diff --git a/engine/src/test/java/com/sandboni/core/engine/sta/ContextTest.java b/engine/src/test/java/com/sandboni/core/engine/sta/ContextTest.java
+index 6ecb3f8..06da86b 100644
+--- a/engine/src/test/java/com/sandboni/core/engine/sta/ContextTest.java
++++ b/engine/src/test/java/com/sandboni/core/engine/sta/ContextTest.java
+@@ -2,3 +2,2 @@ package com.sandboni.core.engine.sta;
+ 
+-import com.sandboni.core.scm.scope.ChangeScopeImpl;
+ import org.junit.Before;
+@@ -10,2 +9,3 @@ import java.util.stream.Collectors;
+ 
++import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertTrue;
+@@ -43,10 +43,2 @@ public class ContextTest {
+ 
+-    @Test
+-    public void testForEachLocation() {
+-        String[] tests = new String[] {"test1", "test2"};
+-        String[] jars = new String[] {"jar1", "jar2"};
+-        Context c = new Context("appId", new String[0], tests, jars, "filter", new ChangeScopeImpl(), null, null, true);
+-        c.forEachLocation(path -> assertTrue(Arrays.stream(jars).anyMatch(path::contains) || Arrays.stream(tests).anyMatch(path::contains)), true);
+-    }
+-
+     private List<String> getPathItems(String[] sourceLocations) {
+@@ -71,2 +63,9 @@ public class ContextTest {
+     }
++
++    @Test
++    public void localContextWithSameLocation() {
++        assertTrue(context.getCurrentLocation().isEmpty());
++        assertEquals(context.getCurrentLocation(), context.getLocalContext().getCurrentLocation());
++        assertEquals("NewLocation", context.getLocalContext("NewLocation").getCurrentLocation());
++    }
+ }
+diff --git a/engine/src/test/java/com/sandboni/core/engine/sta/executor/DirectoryScannerExecutorTest.java b/engine/src/test/java/com/sandboni/core/engine/sta/executor/DirectoryScannerExecutorTest.java
+new file mode 100644
+index 0000000..954b502
+--- /dev/null
++++ b/engine/src/test/java/com/sandboni/core/engine/sta/executor/DirectoryScannerExecutorTest.java
+@@ -0,0 +1,37 @@
++package com.sandboni.core.engine.sta.executor;
++
++import org.junit.Assert;
++import org.junit.Before;
++import org.junit.Test;
++
++import java.io.File;
++import java.util.*;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertTrue;
++
++public class DirectoryScannerExecutorTest {
++
++    private DirectoryScannerExecutor directoryScannerExecutor;
++    private Set<String> locations;
++
++    @Before
++    public void setUp() {
++        locations = new HashSet<>();
++        locations.add("location1");
++        locations.add("location2");
++
++        directoryScannerExecutor = new DirectoryScannerExecutor((location, files) -> {
++            assertTrue(locations.contains(location));
++        }, "DirectoryScannerExecutorTest");
++    }
++
++    @Test
++    public void execute() {
++        Collection<Map<String, Set<File>>> scanningResult = directoryScannerExecutor.execute(locations);
++        assertEquals(2, scanningResult.size());
++        scanningResult.forEach(map -> {
++            assertTrue(locations.contains(map.keySet().iterator().next()));
++        });
++    }
++}
+diff --git a/engine/src/test/java/com/sandboni/core/engine/sta/executor/FileConsumerExecutorTest.java b/engine/src/test/java/com/sandboni/core/engine/sta/executor/FileConsumerExecutorTest.java
+new file mode 100644
+index 0000000..076388e
+--- /dev/null
++++ b/engine/src/test/java/com/sandboni/core/engine/sta/executor/FileConsumerExecutorTest.java
+@@ -0,0 +1,43 @@
++package com.sandboni.core.engine.sta.executor;
++
++import com.sandboni.core.engine.contract.ThrowingBiConsumer;
++import com.sandboni.core.engine.sta.Context;
++import com.sandboni.core.scm.scope.ChangeScopeImpl;
++import org.junit.Before;
++import org.junit.Test;
++
++import java.io.File;
++import java.util.Collection;
++import java.util.HashMap;
++import java.util.HashSet;
++import java.util.Set;
++
++import static org.junit.Assert.assertEquals;
++
++public class FileConsumerExecutorTest {
++
++    private FileConsumerExecutor fileConsumerExecutor;
++    private Context context;
++    private File file1;
++
++    @Before
++    public void setUp() {
++        HashMap<String, ThrowingBiConsumer<File, Context>> consumers = new HashMap<>();
++        consumers.put("txt", (file, context) -> {
++            assertEquals(file1, file);
++        });
++
++        context = new Context("appId", new String[]{}, new String[]{}, new String[]{}, "", new ChangeScopeImpl(), null, null, true);
++        file1 = new File("file1.txt");
++        fileConsumerExecutor = new FileConsumerExecutor(consumers, context, "FileConsumerExecutorTest");
++    }
++
++    @Test
++    public void execute() {
++        Set<File> files = new HashSet<>();
++        files.add(file1);
++        Collection<String> execute = fileConsumerExecutor.execute(files);
++        assertEquals(file1.getAbsolutePath(), execute.iterator().next());
++
++    }
++}
+diff --git a/engine/src/test/java/com/sandboni/core/engine/sta/executor/FinderExecutorTest.java b/engine/src/test/java/com/sandboni/core/engine/sta/executor/FinderExecutorTest.java
+new file mode 100644
+index 0000000..83e0bed
+--- /dev/null
++++ b/engine/src/test/java/com/sandboni/core/engine/sta/executor/FinderExecutorTest.java
+@@ -0,0 +1,43 @@
++package com.sandboni.core.engine.sta.executor;
++
++import com.sandboni.core.engine.contract.Finder;
++import com.sandboni.core.engine.sta.Context;
++import com.sandboni.core.engine.sta.graph.LinkFactory;
++import com.sandboni.core.engine.sta.graph.LinkType;
++import com.sandboni.core.engine.sta.graph.vertex.Vertex;
++import com.sandboni.core.scm.scope.ChangeScopeImpl;
++import org.junit.Before;
++import org.junit.Test;
++
++import java.util.HashSet;
++import java.util.Set;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertTrue;
++
++public class FinderExecutorTest {
++
++    private FinderExecutor finderExecutor;
++    private Context context;
++
++    @Before
++    public void setUp() {
++        context = new Context("appId", new String[]{}, new String[]{}, new String[]{}, "", new ChangeScopeImpl(), null, null, true);
++        finderExecutor = new FinderExecutor(context);
++    }
++
++    @Test
++    public void execute() {
++        Set<Finder> finders = new HashSet<>();
++        finders.add(localContext -> localContext.addLink(LinkFactory.createInstance(context.getApplicationId(),
++                new Vertex.Builder("caller", "action1", context.getCurrentLocation()).build(),
++                new Vertex.Builder("callee", "action2", context.getCurrentLocation()).build(),
++                LinkType.METHOD_CALL)));
++
++        finderExecutor.execute(finders);
++        assertEquals(1, context.getLinks().count());
+
+sss
++        assertTrue(context.getLinks().anyMatch(link -> link.getCaller().getActor().equals("caller")));
++
++    }
++
++}

@@ -42,7 +42,7 @@ public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuil
         return new Processor(Objects.requireNonNull(this.arguments),
                 Objects.nonNull(gitDetector) ? gitDetector :
                         arguments.isGitCache() ? new CachedRepository(this.arguments.getRepository()) :
-                                new GitRepository(this.arguments.getRepository()),
+                                new GitRepository(this.arguments.getRepository(), this.arguments.isUseCliDiff()),
                 Objects.nonNull(finders) ? this.finders :
                         new Finder[]{
                                 new ExplicitFinder(),

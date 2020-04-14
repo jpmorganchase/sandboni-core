@@ -27,4 +27,5 @@ public class Arguments {
     private String alwaysRunAnnotation;
     private String seloniFilePath;
     private boolean enablePreview;
+    private boolean useCliDiff;
 }
