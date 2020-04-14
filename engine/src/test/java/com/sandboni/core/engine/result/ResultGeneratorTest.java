@@ -15,7 +15,7 @@ import org.junit.Test;
 
 public class ResultGeneratorTest {
 
-    private Arguments getArguments(String fromChangeId, boolean selectiveMode, boolean unsupportedFile, boolean runAllExternalTests, Stage stage, boolean enablePreview) {
+    private Arguments getArguments(String fromChangeId, boolean selectiveMode, boolean ignoreUnsupportedFiles, boolean runAllExternalTests, Stage stage, boolean enablePreview) {
         return Arguments.builder()
             .srcLocation(new String[]{"."})
             .fromChangeId(fromChangeId)
@@ -25,16 +25,16 @@ public class ResultGeneratorTest {
             .stage(stage.name())
             .runAllExternalTests(runAllExternalTests)
             .enablePreview(enablePreview)
-            .ignoreUnsupportedFiles(unsupportedFile).build();
+            .ignoreUnsupportedFiles(ignoreUnsupportedFiles).build();
     }
 
-    private Processor getProcessor(String fromChangeId, boolean runSelective, boolean unsupportedFile, boolean runAllExternal, Stage stage) {
-        return getProcessor(fromChangeId, runSelective, unsupportedFile, runAllExternal, stage, false, null);
+    private Processor getProcessor(String fromChangeId, boolean runSelective, boolean ignoreUnsupportedFiles, boolean runAllExternal, Stage stage) {
+        return getProcessor(fromChangeId, runSelective, ignoreUnsupportedFiles, runAllExternal, stage, false, null);
     }
 
-    private Processor getProcessor(String fromChangeId, boolean runSelective, boolean unsupportedFile, boolean runAllExternal, Stage stage, boolean enablePreview, Finder[] finders) {
+    private Processor getProcessor(String fromChangeId, boolean runSelective, boolean ignoreUnsupportedFiles, boolean runAllExternal, Stage stage, boolean enablePreview, Finder[] finders) {
         return new ProcessorBuilder().with(procBuilder -> {
-            procBuilder.arguments = getArguments(fromChangeId, runSelective, unsupportedFile, runAllExternal, stage, enablePreview);
+            procBuilder.arguments = getArguments(fromChangeId, runSelective, ignoreUnsupportedFiles, runAllExternal, stage, enablePreview);
             procBuilder.gitDetector = new ChangeDetectorResultMock();
             procBuilder.scopeFilter = new MockChangeScopeFilter();
             procBuilder.finders = finders != null ? finders : new Finder[]{};
@@ -180,7 +180,7 @@ public class ResultGeneratorTest {
     }
 
     @Test
-    public void testResultWhenOnlyJavaContextAndReflectionAndUnsupportedFileTrueAndEnablePreviewTrue() {
+    public void testResultWhenOnlyJavaContextAndReflectionAndIgnoreUnsupportedFilesTrueAndEnablePreviewTrue() {
         Finder[] finders = Arrays.array(new MockBcelReflectionFinder());
         Processor processor = getProcessor("2", false, true,false, Stage.BUILD, true, finders);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
