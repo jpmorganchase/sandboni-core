@@ -357,5 +357,9 @@
             <name>Ayelet Levron</name>
             <email>Ayelet.Levron@jpmchase.com</email>
         </developer>
+        <developer>
+            <name>Jesse Sawa</name>
+            <email>jesse.sawa@gmail.com</email>
+        </developer>
     </developers>
 </project>

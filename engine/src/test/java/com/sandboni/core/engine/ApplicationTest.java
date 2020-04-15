@@ -17,6 +17,7 @@ public class ApplicationTest {
         System.setProperty("sandboni.selectiveMode", "true");
         System.setProperty("sandboni.runAllExternaltests", "false");
         System.setProperty("sandboni.stage", Stage.BUILD.name());
+        System.setProperty("sandboni.ignore.unsupported.files", "true");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -75,6 +76,7 @@ public class ApplicationTest {
         Assert.assertEquals(GitHelper.openCurrentFolder(), args.getRepository());
         Assert.assertTrue(args.isRunSelectiveMode());
         Assert.assertFalse(args.isRunAllExternalTests());
+        Assert.assertTrue(args.isIgnoreUnsupportedFiles());
     }
 
     @Test
@@ -94,5 +96,6 @@ public class ApplicationTest {
         Assert.assertEquals("LOCAL_CHANGES_NOT_COMMITTED", args.getToChangeId());
         Assert.assertEquals(GitHelper.openCurrentFolder(), args.getRepository());
         Assert.assertTrue(args.isRunSelectiveMode());
+        Assert.assertTrue(args.isIgnoreUnsupportedFiles());
     }
 }
