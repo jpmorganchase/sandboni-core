@@ -15,7 +15,7 @@ import org.junit.Test;
 
 public class ResultGeneratorTest {
 
-    private Arguments getArguments(String fromChangeId, boolean selectiveMode, boolean runAllExternalTests, Stage stage, boolean enablePreview) {
+    private Arguments getArguments(String fromChangeId, boolean selectiveMode, boolean ignoreUnsupportedFiles, boolean runAllExternalTests, Stage stage, boolean enablePreview) {
         return Arguments.builder()
             .srcLocation(new String[]{"."})
             .fromChangeId(fromChangeId)
@@ -24,16 +24,17 @@ public class ResultGeneratorTest {
             .runSelectiveMode(selectiveMode)
             .stage(stage.name())
             .runAllExternalTests(runAllExternalTests)
-            .enablePreview(enablePreview).build();
+            .enablePreview(enablePreview)
+            .ignoreUnsupportedFiles(ignoreUnsupportedFiles).build();
     }
 
-    private Processor getProcessor(String fromChangeId, boolean runSelective, boolean runAllExternal, Stage stage) {
-        return getProcessor(fromChangeId, runSelective, runAllExternal, stage, false, null);
+    private Processor getProcessor(String fromChangeId, boolean runSelective, boolean ignoreUnsupportedFiles, boolean runAllExternal, Stage stage) {
+        return getProcessor(fromChangeId, runSelective, ignoreUnsupportedFiles, runAllExternal, stage, false, null);
     }
 
-    private Processor getProcessor(String fromChangeId, boolean runSelective, boolean runAllExternal, Stage stage, boolean enablePreview, Finder[] finders) {
+    private Processor getProcessor(String fromChangeId, boolean runSelective, boolean ignoreUnsupportedFiles, boolean runAllExternal, Stage stage, boolean enablePreview, Finder[] finders) {
         return new ProcessorBuilder().with(procBuilder -> {
-            procBuilder.arguments = getArguments(fromChangeId, runSelective, runAllExternal, stage, enablePreview);
+            procBuilder.arguments = getArguments(fromChangeId, runSelective, ignoreUnsupportedFiles, runAllExternal, stage, enablePreview);
             procBuilder.gitDetector = new ChangeDetectorResultMock();
             procBuilder.scopeFilter = new MockChangeScopeFilter();
             procBuilder.finders = finders != null ? finders : new Finder[]{};
@@ -43,7 +44,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenEmptyContext() {
-        Processor processor = getProcessor("0", false, false, Stage.BUILD);
+        Processor processor = getProcessor("0", false, false, false, Stage.BUILD);
 
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
@@ -52,7 +53,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenOnlyCnfgContext() {
-        Processor processor = getProcessor("1", false, false, Stage.BUILD);
+        Processor processor = getProcessor("1", false, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
@@ -60,7 +61,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenOnlyJavaContext() {
-        Processor processor = getProcessor("2", false, false, Stage.BUILD);
+        Processor processor = getProcessor("2", false, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
@@ -68,7 +69,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenOnlyNonSupportedFileContext() {
-        Processor processor = getProcessor("5", false, false, Stage.BUILD);
+        Processor processor = getProcessor("5", false, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
@@ -76,7 +77,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenOnlyNonSupportedFileContextRunSelectiveTrue() {
-        Processor processor = getProcessor("5", true, false, Stage.BUILD);
+        Processor processor = getProcessor("5", true, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
@@ -84,7 +85,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenBothBuildCnfgAndJavaContext() {
-        Processor processor = getProcessor("3", false, false, Stage.BUILD);
+        Processor processor = getProcessor("3", false, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
@@ -92,7 +93,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenBothBuildCnfgAndJavaContextRunSelectiveTrue() {
-        Processor processor = getProcessor("3", true, false, Stage.BUILD);
+        Processor processor = getProcessor("3", true, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
@@ -100,7 +101,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenBothBuildCnfgAndNonSupportedFileContext() {
-        Processor processor = getProcessor("6", false, false, Stage.BUILD);
+        Processor processor = getProcessor("6", false, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
@@ -108,7 +109,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenBothBuildCnfgAndNonSupportedFileContextRunSelectiveTrue() {
-        Processor processor = getProcessor("6", true, false, Stage.BUILD);
+        Processor processor = getProcessor("6", true, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
@@ -116,7 +117,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenBuildCnfgJavaAndNonSupportedFileContext() {
-        Processor processor = getProcessor("7", false, false, Stage.BUILD);
+        Processor processor = getProcessor("7", false, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
@@ -124,7 +125,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenBuildCnfgJavaAndNonSupportedFileContextRunSelectiveTrue() {
-        Processor processor = getProcessor("7", true, false, Stage.BUILD);
+        Processor processor = getProcessor("7", true, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
@@ -132,7 +133,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenJavaAndNonSupportedFileContext() {
-        Processor processor = getProcessor("8", false, false, Stage.BUILD);
+        Processor processor = getProcessor("8", false, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
@@ -140,7 +141,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenJavaAndNonSupportedFileContextRunSelectiveTrue() {
-        Processor processor = getProcessor("8", true, false, Stage.BUILD);
+        Processor processor = getProcessor("8", true, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
@@ -148,7 +149,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testWhenCnfgVVersionChangeAndJavaContext() {
-        Processor processor = getProcessor("4", false, false, Stage.BUILD);
+        Processor processor = getProcessor("4", false, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
@@ -156,7 +157,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenEmptyContextAndRunSelectiveModeIsTrue() {
-        Processor processor = getProcessor("0", true, false, Stage.BUILD);
+        Processor processor = getProcessor("0", true, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.NONE, res.getFilterIndicator());
@@ -164,7 +165,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenOnlyCnfgContextAndRunSelectiveModeIsTrue() {
-        Processor processor = getProcessor("1", true, false, Stage.BUILD);
+        Processor processor = getProcessor("1", true, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
@@ -172,16 +173,16 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenOnlyJavaContextAndRunSelectiveModeIsTrue() {
-        Processor processor = getProcessor("2", true, false, Stage.BUILD);
+        Processor processor = getProcessor("2", true, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
     }
 
     @Test
-    public void testResultWhenOnlyJavaContextAndReflectionAndRunSelectiveTrueAndEnablePreviewTrue() {
+    public void testResultWhenOnlyJavaContextAndReflectionAndIgnoreUnsupportedFilesTrueAndEnablePreviewTrue() {
         Finder[] finders = Arrays.array(new MockBcelReflectionFinder());
-        Processor processor = getProcessor("2", true, false, Stage.BUILD, true, finders);
+        Processor processor = getProcessor("2", false, true,false, Stage.BUILD, true, finders);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
@@ -190,7 +191,7 @@ public class ResultGeneratorTest {
     @Test
     public void testResultWhenOnlyJavaContextAndReflectionAndRunSelectivefalseAndEnablePreviewTrue() {
         Finder[] finders = Arrays.array(new MockBcelReflectionFinder());
-        Processor processor = getProcessor("2", false, false, Stage.BUILD, true, finders);
+        Processor processor = getProcessor("2", false, false,false, Stage.BUILD, true, finders);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.ALL, res.getFilterIndicator());
@@ -199,7 +200,7 @@ public class ResultGeneratorTest {
     @Test
     public void testResultWhenOnlyJavaContextAndNoReflectionAndRunSelectivefalseAndEnablePreviewTrue() {
         Finder[] finders = Arrays.array(new MockBcelReflectionEmptyFinder());
-        Processor processor = getProcessor("2", false, false, Stage.BUILD, true, finders);
+        Processor processor = getProcessor("2", false, false,false, Stage.BUILD, true, finders);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
@@ -207,7 +208,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenBothBuildCnfgAndJavaContextAndRunSelectiveModeIsTrue() {
-        Processor processor = getProcessor("2", true, false, Stage.BUILD);
+        Processor processor = getProcessor("2", true, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
@@ -215,7 +216,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenRunAllExternalTestsIsTrueDuringBuildStage() {
-        Processor processor = getProcessor("2", true, true, Stage.BUILD);
+        Processor processor = getProcessor("2", true, false,true, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_UNIT);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.SELECTIVE, res.getFilterIndicator());
@@ -223,7 +224,7 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultWhenRunAllExternalTestsIsTrueDuringIntegrationStage() {
-        Processor processor = getProcessor("2", true, true, Stage.INTEGRATION);
+        Processor processor = getProcessor("2", true,false, true, Stage.INTEGRATION);
         Result res = processor.getResultGenerator().generate(ResultContent.ALL_EXTERNAL_CUCUMBER);
         Assert.assertTrue(res.isSuccess());
         Assert.assertEquals(FilterIndicator.ALL_EXTERNAL, res.getFilterIndicator());
@@ -231,21 +232,21 @@ public class ResultGeneratorTest {
 
     @Test
     public void testResultGetFilterIndicator() {
-        Processor processor = getProcessor("2", true, false, Stage.BUILD);
+        Processor processor = getProcessor("2", true, false,false, Stage.BUILD);
         FilterIndicator indicator = processor.getResultGenerator().getFilterIndicator();
         Assert.assertEquals(FilterIndicator.SELECTIVE, indicator);
     }
 
     @Test
     public void testResultAllReachableEdges() {
-        Processor processor = getProcessor("2", true, false, Stage.BUILD);
+        Processor processor = getProcessor("2", true,false, false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.ALL_REACHABLE_EDGES);
         Assert.assertTrue(res.isSuccess());
     }
 
     @Test
     public void testResultJiraRelatedTests() {
-        Processor processor = getProcessor("2", true, false, Stage.BUILD);
+        Processor processor = getProcessor("2", true, false,false, Stage.BUILD);
         Result res = processor.getResultGenerator().generate(ResultContent.JIRA_RELATED_TESTS);
         Assert.assertTrue(res.isSuccess());
     }

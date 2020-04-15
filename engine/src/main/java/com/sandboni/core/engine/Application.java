@@ -1,8 +1,8 @@
 package com.sandboni.core.engine;
 
 import com.sandboni.core.engine.result.ResultContent;
-import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.utils.StringUtil;
+import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class Application {
                 .filter(getValue(SystemProperties.FILTER))
                 .runSelectiveMode(Boolean.parseBoolean(getValue(SystemProperties.SELECTIVE_MODE)))
                 .reportDir(getValue(SystemProperties.REPORT_DIR))
-                .runAllExternalTests(Boolean.valueOf(getValue(SystemProperties.RUN_ALL_EXTERNAL_TESTS)))
+                .runAllExternalTests(Boolean.parseBoolean(getValue(SystemProperties.RUN_ALL_EXTERNAL_TESTS)))
                 .gitCache(Boolean.parseBoolean(getValue(SystemProperties.GIT_CACHE)))
                 .coreCache(Boolean.parseBoolean(getValue(SystemProperties.CORE_CACHE)))
                 .srcLocation(getValue(SystemProperties.SRC_LOCATION).split(","))
@@ -63,6 +63,7 @@ public class Application {
                 .alwaysRunAnnotation(getValue(SystemProperties.ALWAYS_RUN_ANNOTATION))
                 .enablePreview(Boolean.parseBoolean(getValue(SystemProperties.ENABLE_PREVIEW)))
                 .useCliDiff(false)
+                .ignoreUnsupportedFiles(Boolean.parseBoolean(getValue(SystemProperties.IGNORE_UNSUPPORTED_FILES)))
                 .build();
 
         log.debug("[arguments collected] {}", arguments);

@@ -101,18 +101,12 @@ public class Processor {
         return getBuilder(contextSupplier.get());
     }
 
-    /**
-     * Returns true if first: is build stage or runAllExternalTests is false
-     * then: (a) no change was made (b) change was made and contains at least one java file (not just cnfg files)
-     *
-     * @param changeScope the change scope
-     * @return boolean
-     */
     private boolean proceed(ChangeScope<Change> changeScope) {
         return (!isRunAllExternalTests() || !isIntegrationStage())
-            && (arguments.isRunSelectiveMode()
-            || (ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles())
-            && ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles())));
+                && (arguments.isRunSelectiveMode()
+                || (ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles()))
+                && (arguments.isIgnoreUnsupportedFiles()
+                || ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles())));
     }
 
     private boolean isRunAllExternalTests() {
@@ -169,7 +163,7 @@ public class Processor {
 
             log.debug("....Connectors execution total time: {}", Duration.between(start, finish).toMillis());
 
-            if (arguments.isEnablePreview() && !arguments.isRunSelectiveMode() && ContextAnalyzer.containsReflectionCallers(context)) {
+            if (arguments.isEnablePreview() && !arguments.isIgnoreUnsupportedFiles() && ContextAnalyzer.containsReflectionCallers(context)) {
                 log.info(" ** Located reflection calls is source files; All tests will be executed **");
                 return new Builder(context, FilterIndicator.ALL);
             }
