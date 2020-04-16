@@ -163,7 +163,7 @@ public class Processor {
 
             log.debug("....Connectors execution total time: {}", Duration.between(start, finish).toMillis());
 
-            if (arguments.isEnablePreview() && !arguments.isIgnoreUnsupportedFiles() && ContextAnalyzer.containsReflectionCallers(context)) {
+            if (!arguments.isIgnoreUnsupportedFiles() && ContextAnalyzer.containsReflectionCallers(context)) {
                 log.info(" ** Located reflection calls is source files; All tests will be executed **");
                 return new Builder(context, FilterIndicator.ALL);
             }
