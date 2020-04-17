@@ -41,7 +41,7 @@ public class DirectoryScanner implements LocationScanner {
 
         logger.debug("[{}] {} Finished traversing locations in {} milliseconds", Thread.currentThread().getName(), scannerName, elapsedTime(start));
 
-        if (context.isEnablePreview() && scanDependencies) {
+        if (scanDependencies) {
             locationFiles.put(DEPENDENCY_JARS, context.getDependencyJars().stream()
                     .map(File::new).collect(Collectors.toSet()));
         }
