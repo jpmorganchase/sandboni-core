@@ -113,6 +113,21 @@ public class GitDiffRunnerTest {
 
     }
 
+    @Test
+    public void testDiffWithSameToAndFrom() throws IOException, SourceControlException {
+        mockStatic(ProcessRunner.class);
+
+        List<String> diffLines = ResourceFileUtils.getResourceFileContentAsList(getClass(), "gitDiffSameToFrom.out");
+
+        when(ProcessRunner.runCommand(any(), anyVararg())).thenReturn(diffLines);
+
+        RevisionScope<ObjectId> scope = revisionResolver.resolve("fc776fe5e50", "fc776fe5e50"); // same
+        List<Diff> diffs = GitDiffRunner.diff(repository, scope);
+
+        assertNotNull(diffs);
+        assertEquals(8, diffs.size());
+    }
+
     private List<Diff> findDiff(List<Diff> diffs, String fileName) {
         return diffs.stream().filter(d -> d.getFromFileName().contains(fileName) || d.getToFileName().contains(fileName)).collect(Collectors.toList());
     }
