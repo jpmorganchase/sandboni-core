@@ -40,7 +40,7 @@ public class Application {
         log.info("Disconnected tests to execute: {}", disconnectedTests);
         log.info("Related test suites: {}", testSuites);
 
-        log.info("Sandboni execution: {} milliseconds", TimeUtils.elapsedTime(start));
+        log.debug("Sandboni execution: {} milliseconds", TimeUtils.elapsedTime(start));
     }
 
     //synchronized was added because of SonarQube demand

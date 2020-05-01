@@ -126,8 +126,5 @@ public class RevisionResolver {
         if (from == null || to == null || from.equals(ObjectId.zeroId())) {
             throw new SourceControlException(ErrorMessages.UNABLE_TO_RESOLVE_REVISIONS);
         }
-        if (from.equals(to)) {
-            throw new SourceControlException(ErrorMessages.REVISIONS_CANNOT_BE_SAME);
-        }
     }
 }

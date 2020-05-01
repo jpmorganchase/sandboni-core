@@ -69,7 +69,10 @@ public class GitDiffRunner {
         command.add("git");
         command.add("diff");
         command.add("-U1");
-        command.add(fromRevision.getName());
+
+        if (toRevision.equals(fromRevision)) {
+            command.add(fromRevision.getName() + '~');
+        }
         if (!toRevision.equals(ObjectId.zeroId())) {
             command.add(toRevision.getName());
         }

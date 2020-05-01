@@ -130,7 +130,4 @@ public class GitDiffRunnerTest {
 
         assertTrue(true);
     }
-
-
-
 }
