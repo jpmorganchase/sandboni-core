@@ -93,4 +93,27 @@ public class DirectoryScannerTest {
             return result;
         }
     }
+
+    @Test
+    public void dependencyScanWhenEnablePreviewFalse() {
+        String[] srcLocation = new String[]{"srcLocation1", "srcLocation2"};
+        String[] testLocation = new String[]{"testLocation1", "testLocation2"};
+        String[] dependencies = new String[]{"dependency1", "dependency2"};
+        Set<String> allLocations = new HashSet<>();
+        allLocations.addAll(Stream.of(srcLocation).map(location -> new File(location).getAbsolutePath()).collect(Collectors.toSet()));
+        allLocations.addAll(Stream.of(testLocation).map(location -> new File(location).getAbsolutePath()).collect(Collectors.toSet()));
+
+        Context context = new Context("appId", srcLocation, testLocation, dependencies, "", new ChangeScopeImpl(), null, null, false);
+
+        Map<String, Set<File>> scanResult = directoryScanner.scan((location, files) -> {
+            // not called because is not running parallel executor
+        }, context, true);
+
+
+        assertEquals(4, scanResult.size());
+        allLocations.forEach(location -> {
+            assertTrue(scanResult.containsKey(location));
+            assertFalse(scanResult.get(location).isEmpty());
+        });
+    }
 }
