@@ -6,8 +6,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>engine</module>
         <module>scm</module>
+        <module>engine</module>
     </modules>
 
     <url>https://github.com/jpmorganchase/sandboni-core</url>
