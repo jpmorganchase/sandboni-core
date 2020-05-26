@@ -28,7 +28,7 @@ public class SCMChangeBuilder{
     public String repository = "";
 
     private Optional<FileExtensions> getFileExt(String filePath){
-        Optional tmp = FileUtil.getExtension(filePath);
+        Optional<String> tmp = FileUtil.getExtension(filePath);
         if (!tmp.isPresent())
             return Optional.empty();
 
