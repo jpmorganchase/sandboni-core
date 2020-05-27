@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class SCMChangeBuilder{
 
@@ -32,21 +32,21 @@ public class SCMChangeBuilder{
         if (!tmp.isPresent())
             return Optional.empty();
 
-        String ext = tmp.get().toString();
+        String ext = tmp.get();
         FileExtensions fe = FileExtensions.fromText(ext);
 
         if (Objects.isNull(fe)) return Optional.empty();
         return Optional.of(fe);
     }
 
-    private final Function<String, Boolean> isPropertyFile = filePath -> {
+    private final Predicate<String> isPropertyFile = filePath -> {
         Optional<FileExtensions> extensions = getFileExt(filePath);
         return extensions.map(fileExtensions ->
                 fileExtensions.in(FileExtensions.PROPERTIES, FileExtensions.PROPS, FileExtensions.YML))
                 .orElse(false);
     };
 
-    private final Function<String, Boolean> isBuildFile = filePath ->
+    private final Predicate<String> isBuildFile = filePath ->
             filePath.toLowerCase().endsWith(FileNames.POM.fileName());
 
     public SCMChangeBuilder with(Consumer<SCMChangeBuilder> function){
@@ -59,10 +59,10 @@ public class SCMChangeBuilder{
 
         if (changeType == ChangeType.DELETE) {
             change = new SCMChange(path, changedLines, changeType);
-        } else if (isPropertyFile.apply(path)){
+        } else if (isPropertyFile.test(path)){
             Set<String> keys = RawUtil.grepKeys(fileContent, changedLines);
             change = new SCMChangeInProperties(path, changedLines, keys, changeType);
-        } else if (isBuildFile.apply(path)) {
+        } else if (isBuildFile.test(path)) {
             MavenXpp3Reader reader = new MavenXpp3Reader();
             Model model = null;
             try {

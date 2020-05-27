@@ -22,13 +22,14 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 public class CliChangeScopeResolver extends JGitChangeScopeResolver implements ChangeScopeResolver {
 
-    final static String NON_EXISTING_FILE = "/dev/null";
-    private final static Function<String, String> trimFileName = t -> t.startsWith("a/") || t.startsWith("b/") ? t.substring(2) : t;
-    private final static Function<RawText, String> rawTextToString = t -> t.getString(0, t.size(), false);
+    static final String NON_EXISTING_FILE = "/dev/null";
+    private static final UnaryOperator<String> trimFileName = t -> t.startsWith("a/") || t.startsWith("b/") ? t.substring(2) : t;
+    private static final Function<RawText, String> rawTextToString = t -> t.getString(0, t.size(), false);
 
     private static final Logger log = LoggerFactory.getLogger(CliChangeScopeResolver.class);
 
@@ -98,7 +99,7 @@ public class CliChangeScopeResolver extends JGitChangeScopeResolver implements C
         Range fromFileRange = hunk.getFromFileRange();
         int currentLine = Math.max(fromFileRange.getLineStart(), 1); // for new files, hunk line will start with 0
         List<Integer> pendingLines = new LinkedList<>();
-        Map<ChangeType, Set<Integer>> changes = new HashMap<>();
+        Map<ChangeType, Set<Integer>> changes = new EnumMap<>(ChangeType.class);
 
         List<Line> lines = hunk.getLines();
         for (Line line : lines) {
