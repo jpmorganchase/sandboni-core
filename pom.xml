@@ -67,6 +67,7 @@
         <spring.version>2.0.5.RELEASE</spring.version>
         <powermock.version>1.7.3</powermock.version>
         <lombok.version>1.18.0</lombok.version>
+        <errorprone.version>2.3.4</errorprone.version>
 
         <!-- SonarCloud -->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -155,6 +156,36 @@
                 </plugins>
             </build>
 
+        </profile>
+        <profile>
+            <id>errorprone</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>${maven-compiler-plugin.version}</version>
+                        <configuration>
+                            <source>${mvn.compiler.source}</source>
+                            <target>${mvn.compiler.target}</target>
+                            <compilerArgs combine.children="append">
+                                <arg>-XDcompilePolicy=simple</arg>
+                                <arg>-Xplugin:ErrorProne</arg>
+                                <arg>-J-Xbootclasspath/p:${settings.localRepository}/com/google/errorprone/javac/${java.version}/javac-${java.version}.jar</arg>
+                            </compilerArgs>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>com.google.errorprone</groupId>
+                                    <artifactId>error_prone_core</artifactId>
+                                    <version>${errorprone.version}</version>
+                                </path>
+                                <!-- Add any other annotation processors here,
+                                     even if they are also on the project dependency classpath. -->
+                            </annotationProcessorPaths>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
