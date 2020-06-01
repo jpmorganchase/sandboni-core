@@ -275,6 +275,43 @@
                     <password>${GITHUB_TOKEN}</password>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.0.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs</artifactId>
+                        <version>4.0.3</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <failOnError>true</failOnError>
+                    <!--<includeFilterFile>${session.executionRootDirectory}/spotbugs-security-include.xml</includeFilterFile>
+                    <excludeFilterFile>${session.executionRootDirectory}/spotbugs-security-exclude.xml</excludeFilterFile>-->
+                    <plugins>
+                        <plugin>
+                            <groupId>com.h3xstream.findsecbugs</groupId>
+                            <artifactId>findsecbugs-plugin</artifactId>
+                            <version>1.10.1</version>
+                        </plugin>
+                    </plugins>
+                </configuration>
+                <!-- Uncomment the executions declaration below
+                to fail the build when violations are found-->
+                <!--
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                -->
+            </plugin>
         </plugins>
     </build>
 
