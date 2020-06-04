@@ -10,7 +10,7 @@ import com.sandboni.core.engine.sta.Builder;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.analyzer.ContextAnalyzer;
 import com.sandboni.core.engine.sta.connector.Connector;
-import com.sandboni.core.engine.sta.executor.FinderExecutor;
+import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.operation.GraphOperations;
 import com.sandboni.core.engine.utils.StringUtil;
 import com.sandboni.core.scm.GitInterface;
@@ -185,6 +185,7 @@ public class Processor {
     }
 
     private boolean moduleContainsChanges(ChangeScope<Change> changeScope) {
+        log.debug("Check if moduleContainsChanges");
         return scopeFilter.isInScope(changeScope,
             Stream.of(arguments.getSrcLocation())
                 .map(File::new)
@@ -192,8 +193,18 @@ public class Processor {
     }
 
     private void executeFinders(Context context) {
-        FinderExecutor finderExecutor = new FinderExecutor(context);
-        finderExecutor.execute(finders);
+        log.debug("executeFinders starts");
+        finders.parallelStream().forEach(f -> {
+            long start = System.nanoTime();
+            log.debug("[{}] Finder {} started", Thread.currentThread().getName(), f.getClass().getSimpleName());
+
+            Context localContext = context.getLocalContext();
+            f.findSafe(localContext);
+            context.addLinks(localContext.getLinks().toArray(Link[]::new));
+
+            log.debug("[{}] Finder {} finished in {} milliseconds", Thread.currentThread().getName(), f.getClass().getSimpleName(), elapsedTime(start));
+        });
+        log.debug("executeFinders ends");
     }
 
     private static String[] getBuildFiles() {

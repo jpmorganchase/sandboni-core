@@ -1,12 +1,16 @@
 package com.sandboni.core.scm.scope;
 
 import com.sandboni.core.scm.proxy.filter.FileExtensions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.stream.Collectors;
 
 public class ChangeScopeImpl implements ChangeScope<Change> {
+
+    private static final Logger logger = LoggerFactory.getLogger(ChangeScopeImpl.class);
 
     private Map<String, List<Change>> changes;
 
@@ -81,7 +85,9 @@ public class ChangeScopeImpl implements ChangeScope<Change> {
 
     @Override
     public void include(FileExtensions... fe) {
+        logger.debug("Start ChangeScopeImpl:include");
         changes.entrySet().removeIf(e -> Arrays.stream(fe).noneMatch(f -> e.getKey().endsWith(f.extension())));
+        logger.debug("End ChangeScopeImpl:include");
     }
 
     @Override
