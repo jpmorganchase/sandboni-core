@@ -68,6 +68,9 @@
         <powermock.version>1.7.3</powermock.version>
         <lombok.version>1.18.0</lombok.version>
         <errorprone.version>2.3.4</errorprone.version>
+        <spotbugs.maven.plugin.version>4.0.0</spotbugs.maven.plugin.version>
+        <spotbugs.version>4.0.3</spotbugs.version>
+        <findsecbugs.plugin.version>1.10.1</findsecbugs.plugin.version>
 
         <!-- SonarCloud -->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -278,12 +281,12 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.0.0</version>
+                <version>${spotbugs.maven.plugin.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>com.github.spotbugs</groupId>
                         <artifactId>spotbugs</artifactId>
-                        <version>4.0.3</version>
+                        <version>${spotbugs.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -296,7 +299,7 @@
                         <plugin>
                             <groupId>com.h3xstream.findsecbugs</groupId>
                             <artifactId>findsecbugs-plugin</artifactId>
-                            <version>1.10.1</version>
+                            <version>${findsecbugs.plugin.version}</version>
                         </plugin>
                     </plugins>
                 </configuration>
