@@ -71,6 +71,8 @@
         <spotbugs.maven.plugin.version>4.0.0</spotbugs.maven.plugin.version>
         <spotbugs.version>4.0.3</spotbugs.version>
         <findsecbugs.plugin.version>1.10.1</findsecbugs.plugin.version>
+        <maven.site.plugin.version>3.9.0</maven.site.plugin.version>
+        <maven.project.info.reports.plugin.version>3.1.0</maven.project.info.reports.plugin.version>
 
         <!-- SonarCloud -->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -315,6 +317,17 @@
                 </executions>
                 -->
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>${maven.site.plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>${maven.project.info.reports.plugin.version}</version>
+            </plugin>
         </plugins>
     </build>
 
@@ -433,4 +446,27 @@
             <email>jesse.sawa@gmail.com</email>
         </developer>
     </developers>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check-maven.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs.maven.plugin.version}</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
 </project>
