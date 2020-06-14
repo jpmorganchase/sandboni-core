@@ -8,7 +8,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 
-public class JaxbHelper implements FormatHelper {
+class JaxbHelper implements FormatHelper {
 
     @Override
     public <T> String marshal(T modelClassObject) throws RendererException {
