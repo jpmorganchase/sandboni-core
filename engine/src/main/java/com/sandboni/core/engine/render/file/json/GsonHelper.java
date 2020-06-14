@@ -1,4 +1,4 @@
-package com.sandboni.core.engine.render.file.json.util;
+package com.sandboni.core.engine.render.file.json;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -6,7 +6,7 @@ import com.sandboni.core.engine.render.file.FormatHelper;
 
 import java.lang.reflect.Type;
 
-public class GsonHelper implements FormatHelper {
+class GsonHelper implements FormatHelper {
 
     private Gson gson;
 
