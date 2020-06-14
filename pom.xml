@@ -163,6 +163,7 @@
 
         </profile>
         <profile>
+            <!-- Appears to have issues with Lombok :-(-->
             <id>errorprone</id>
             <build>
                 <plugins>
