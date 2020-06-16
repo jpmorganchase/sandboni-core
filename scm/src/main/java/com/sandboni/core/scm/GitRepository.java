@@ -22,24 +22,32 @@ import java.util.Set;
 
 public class GitRepository implements GitInterface {
     private final RevisionResolver revisionResolver;
-    private final ChangeScopeResolver changeScopeResolver;
     private final BlameResolver blameResolver;
+    private final Repository repository;
+    private final SourceControlFilter [] filters;
+    private final boolean useCliDiff;
 
     public GitRepository(String repositoryPath, SourceControlFilter... filters) {
         this(repositoryPath, false, filters);
     }
 
     public GitRepository(String repositoryPath, boolean useCliDiff, SourceControlFilter... filters) {
-        Repository repository = buildRepository(repositoryPath);
+        this.repository = buildRepository(repositoryPath);
         this.revisionResolver = new RevisionResolver(repository);
-        this.changeScopeResolver = useCliDiff ? new CliChangeScopeResolver(repository) : new JGitChangeScopeResolver(repository, filters);
         this.blameResolver = new BlameResolver(repository, Constants.HEAD);
+        this.useCliDiff = useCliDiff;
+        this.filters = filters;
     }
 
     @Override
     public ChangeScope<Change> getChanges(String fromRev, String toRev) throws SourceControlException {
         RevisionScope<ObjectId> revisionScope = revisionResolver.resolve(fromRev, toRev);
-        return changeScopeResolver.getChangeScope(revisionScope);
+        return getChangeScopeResolver(revisionScope.getFrom(), revisionScope.getTo()).getChangeScope(revisionScope);
+    }
+
+    public ChangeScopeResolver getChangeScopeResolver(ObjectId fromCommit, ObjectId toCommit) {
+        return useCliDiff || fromCommit.equals(toCommit) ? new CliChangeScopeResolver(repository) :
+                new JGitChangeScopeResolver(repository, filters);
     }
 
     @Override
