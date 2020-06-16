@@ -30,11 +30,6 @@ public class RevisionResolverTest {
     }
 
     @Test(expected = SourceControlException.class)
-    public void testFromAndToAreSame() throws SourceControlException {
-        revisionResolver.resolve(DiffConstants.LATEST_COMMIT, DiffConstants.LATEST_COMMIT);
-    }
-
-    @Test(expected = SourceControlException.class)
     public void testInvalidCommit() throws SourceControlException {
         revisionResolver.resolve("AAAAAA", DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
     }

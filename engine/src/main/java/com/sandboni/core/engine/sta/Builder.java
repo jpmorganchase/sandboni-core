@@ -43,7 +43,7 @@ public class Builder {
         context.getLinks().sequential().forEach(l -> add(graph, l.getCallee(), l.getCaller(), l.getLinkType()));
         Instant finish = Instant.now();
 
-        log.info("Build Graph execution total time: {}", Duration.between(start, finish).toMillis());
+        log.debug("Build Graph execution total time: {}", Duration.between(start, finish).toMillis());
 
         // Cleaning cache of not longer needed Vertex
         LinkFactory.clear(context.getApplicationId());

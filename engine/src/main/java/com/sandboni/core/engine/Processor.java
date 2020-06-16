@@ -122,7 +122,7 @@ public class Processor {
         long start = System.nanoTime();
         try {
             ChangeScope<Change> changes = changeDetector.getChanges(arguments.getFromChangeId(), arguments.getToChangeId());
-            log.info("[{}] Change scope retrieved in {} milliseconds", Thread.currentThread().getName(), elapsedTime(start));
+            log.debug("[{}] Change scope retrieved in {} milliseconds", Thread.currentThread().getName(), elapsedTime(start));
             return changes;
         } catch (SourceControlException e) {
             throw new ParseRuntimeException(e);
