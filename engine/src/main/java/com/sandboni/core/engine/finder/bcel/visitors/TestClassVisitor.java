@@ -23,8 +23,10 @@ import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMe
  * Note: This class is not thread safe.
  */
 public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
-    static final String JUNIT_PACKAGE = "org/junit/Test";
-    static final String TESTING_PACKAGE = "org/testing/annotations/Test";
+    private static final String JUNIT_PACKAGE = "org/junit/Test";
+    private static final String TESTING_PACKAGE = "org/testing/annotations/Test";
+    private static final String JUNIT_JUPITER_PACKAGE = "org/junit/jupiter/api/Test";
+    static final String[] ALL_TEST_PACKAGES = {JUNIT_PACKAGE, TESTING_PACKAGE, JUNIT_JUPITER_PACKAGE};
 
     private static final String VALUE = "value";
 
@@ -44,7 +46,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
 
     @Override
     public void visitMethod(Method method) {
-        boolean testMethod = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
+        boolean testMethod = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, ALL_TEST_PACKAGES) != null;
         if (testMethod) {
             new TestMethodVisitor(method, javaClass, context, ignore, alwaysRunClass).start();
             new TestHttpMethodVisitor(method, javaClass, context).start();

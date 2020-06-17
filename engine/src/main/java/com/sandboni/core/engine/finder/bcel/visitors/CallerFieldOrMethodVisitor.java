@@ -12,8 +12,7 @@ import java.util.Objects;
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotation;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.getRelativeFileName;
-import static com.sandboni.core.engine.finder.bcel.visitors.TestClassVisitor.JUNIT_PACKAGE;
-import static com.sandboni.core.engine.finder.bcel.visitors.TestClassVisitor.TESTING_PACKAGE;
+import static com.sandboni.core.engine.finder.bcel.visitors.TestClassVisitor.ALL_TEST_PACKAGES;
 
 abstract class CallerFieldOrMethodVisitor extends MethodVisitorBase {
     final Vertex currentMethodVertex;
@@ -22,7 +21,7 @@ abstract class CallerFieldOrMethodVisitor extends MethodVisitorBase {
     CallerFieldOrMethodVisitor(Method m, JavaClass jc, Context c) {
         super(m, jc, c);
         cp = new ConstantPoolGen(jc.getConstantPool());
-        boolean testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
+        boolean testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, ALL_TEST_PACKAGES) != null;
 
         boolean ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
         if (!ignore)
