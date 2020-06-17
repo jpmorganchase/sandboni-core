@@ -1,6 +1,5 @@
 package com.sandboni.core.engine.finder.bcel.visitors;
 
-import com.sandboni.core.engine.finder.bcel.ClassVisitor;
 import org.junit.Assert;
 import org.junit.Test;
 

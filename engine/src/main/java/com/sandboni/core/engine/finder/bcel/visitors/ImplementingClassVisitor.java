@@ -1,6 +1,5 @@
 package com.sandboni.core.engine.finder.bcel.visitors;
 
-import com.sandboni.core.engine.finder.bcel.ClassVisitor;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;

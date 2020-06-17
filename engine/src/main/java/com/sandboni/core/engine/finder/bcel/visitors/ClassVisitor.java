@@ -1,4 +1,4 @@
-package com.sandboni.core.engine.finder.bcel;
+package com.sandboni.core.engine.finder.bcel.visitors;
 
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.Link;

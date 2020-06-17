@@ -32,7 +32,7 @@ index 81be7a2..af135f9 100644
 +import com.sandboni.core.engine.finder.jar.JarFinder;
  import com.sandboni.core.engine.finder.bcel.BcelFinder;
 -import com.sandboni.core.engine.finder.bcel.CachedBcelFinder;
--import com.sandboni.core.engine.finder.bcel.ClassVisitor;
+-import com.sandboni.core.engine.finder.bcel.visitors.ClassVisitor;
 -import com.sandboni.core.engine.finder.bcel.visitors.*;
 -import com.sandboni.core.engine.finder.bcel.visitors.http.JavaxControllerClassVisitor;
 -import com.sandboni.core.engine.finder.bcel.visitors.http.SpringControllerClassVisitor;
@@ -229,7 +229,7 @@ index 0000000..8387850
 @@ -0,0 +1,30 @@
 +package com.sandboni.core.engine.finder.bcel.visitors;
 +
-+import com.sandboni.core.engine.finder.bcel.ClassVisitor;
++import com.sandboni.core.engine.finder.bcel.visitors.ClassVisitor;
 +import com.sandboni.core.engine.finder.bcel.visitors.http.JavaxControllerClassVisitor;
 +import com.sandboni.core.engine.finder.bcel.visitors.http.SpringControllerClassVisitor;
 +
@@ -839,7 +839,7 @@ index 0000000..339d3ea
 @@ -0,0 +1,24 @@
 +package com.sandboni.core.engine.finder.bcel.visitors;
 +
-+import com.sandboni.core.engine.finder.bcel.ClassVisitor;
++import com.sandboni.core.engine.finder.bcel.visitors.ClassVisitor;
 +import org.junit.Assert;
 +import org.junit.Test;
 +
@@ -874,7 +874,7 @@ index f8c44f5..e0b1e4d 100644
  
 @@ -4,4 +4,2 @@ import com.sandboni.core.engine.FinderTestBase;
  import com.sandboni.core.engine.contract.Finder;
--import com.sandboni.core.engine.finder.bcel.ClassVisitor;
+-import com.sandboni.core.engine.finder.bcel.visitors.ClassVisitor;
 -import com.sandboni.core.engine.finder.bcel.visitors.CallerClassVisitor;
  import com.sandboni.core.engine.sta.graph.Link;
 @@ -20,3 +18,3 @@ public class JarFinderTest extends FinderTestBase {

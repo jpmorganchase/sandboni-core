@@ -3,6 +3,7 @@ package com.sandboni.core.engine.finder.bcel;
 import com.sandboni.core.engine.FinderTestBase;
 import com.sandboni.core.engine.contract.ChangeDetector;
 import com.sandboni.core.engine.finder.bcel.visitors.AffectedClassVisitor;
+import com.sandboni.core.engine.finder.bcel.visitors.ClassVisitor;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.scm.scope.*;
 import org.apache.bcel.classfile.ClassParser;

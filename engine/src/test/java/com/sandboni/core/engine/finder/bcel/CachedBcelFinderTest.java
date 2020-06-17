@@ -3,6 +3,7 @@ package com.sandboni.core.engine.finder.bcel;
 import com.sandboni.core.engine.FinderTestBase;
 import com.sandboni.core.engine.contract.Finder;
 import com.sandboni.core.engine.finder.bcel.visitors.CallerClassVisitor;
+import com.sandboni.core.engine.finder.bcel.visitors.ClassVisitor;
 import com.sandboni.core.engine.finder.bcel.visitors.ImplementingClassVisitor;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
