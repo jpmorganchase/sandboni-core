@@ -7,9 +7,7 @@ import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.*;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.sandboni.core.engine.finder.bcel.visitors.ClassUtils.getInScopeInterfacesSafe;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.*;
@@ -30,7 +28,7 @@ public class ImplementingClassVisitor extends ClassVisitorBase implements ClassV
         InterfaceVisitor(JavaClass implementingClass, Context context) {
             this.implementingClass = implementingClass;
             this.context = context;
-            this.implementingClassMethods = getImplementingClassMethods(implementingClass);
+            this.implementingClassMethods = ImplementingClassMethodsGetter.getImplementingClassMethods(implementingClass);
         }
 
         @Override
@@ -66,10 +64,6 @@ public class ImplementingClassVisitor extends ClassVisitorBase implements ClassV
         private void start(JavaClass jc) {
             visitJavaClass(jc);
         }
-    }
-
-    static List<Method> getImplementingClassMethods(JavaClass implementingClass) {
-        return Arrays.stream(implementingClass.getMethods()).filter(m -> !m.isStatic() && !m.isAbstract()).collect(Collectors.toList());
     }
 
     @Override

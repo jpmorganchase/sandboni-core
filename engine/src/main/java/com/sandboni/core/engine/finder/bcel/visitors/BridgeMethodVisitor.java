@@ -20,7 +20,7 @@ public class BridgeMethodVisitor extends MethodVisitorBase {
     BridgeMethodVisitor(Method m, JavaClass jc, JavaClass implementingClass, Context c) {
         super(m, jc, c);
         this.implementingClass = implementingClass;
-        classMethods = ImplementingClassVisitor.getImplementingClassMethods(implementingClass);
+        classMethods = ImplementingClassMethodsGetter.getImplementingClassMethods(implementingClass);
     }
 
     @Override
