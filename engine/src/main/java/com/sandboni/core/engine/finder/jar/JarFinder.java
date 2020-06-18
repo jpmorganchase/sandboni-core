@@ -3,7 +3,7 @@ package com.sandboni.core.engine.finder.jar;
 import com.sandboni.core.engine.contract.ThrowingBiConsumer;
 import com.sandboni.core.engine.contract.ThrowingFunction;
 import com.sandboni.core.engine.exception.ParseRuntimeException;
-import com.sandboni.core.engine.finder.ExtensionType;
+import com.sandboni.core.engine.common.ExtensionType;
 import com.sandboni.core.engine.finder.FileTreeFinder;
 import com.sandboni.core.engine.finder.bcel.visitors.ClassVisitors;
 import com.sandboni.core.engine.finder.cucumber.CucumberFeatureFinder;

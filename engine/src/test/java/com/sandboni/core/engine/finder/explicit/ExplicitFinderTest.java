@@ -3,7 +3,7 @@ package com.sandboni.core.engine.finder.explicit;
 import com.sandboni.core.engine.FinderTestBase;
 import com.sandboni.core.engine.MockChangeDetector;
 import com.sandboni.core.engine.contract.ThrowingBiConsumer;
-import com.sandboni.core.engine.finder.ExtensionType;
+import com.sandboni.core.engine.common.ExtensionType;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;

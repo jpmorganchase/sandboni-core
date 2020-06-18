@@ -1,7 +1,7 @@
 package com.sandboni.core.engine.finder.bcel;
 
 import com.sandboni.core.engine.contract.ThrowingBiConsumer;
-import com.sandboni.core.engine.finder.ExtensionType;
+import com.sandboni.core.engine.common.ExtensionType;
 import com.sandboni.core.engine.finder.FileTreeFinder;
 import com.sandboni.core.engine.finder.bcel.visitors.*;
 import com.sandboni.core.engine.sta.Context;

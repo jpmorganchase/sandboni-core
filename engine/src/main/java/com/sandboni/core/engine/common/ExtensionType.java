@@ -1,4 +1,4 @@
-package com.sandboni.core.engine.finder;
+package com.sandboni.core.engine.common;
 
 public enum ExtensionType {
 
