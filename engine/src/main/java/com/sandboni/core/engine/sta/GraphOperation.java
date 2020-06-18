@@ -1,4 +1,4 @@
-package com.sandboni.core.engine.sta.operation;
+package com.sandboni.core.engine.sta;
 
 import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;

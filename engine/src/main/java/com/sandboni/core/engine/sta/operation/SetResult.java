@@ -1,5 +1,7 @@
 package com.sandboni.core.engine.sta.operation;
 
+import com.sandboni.core.engine.sta.OperationResult;
+
 import java.util.Objects;
 import java.util.Set;
 
