@@ -8,7 +8,7 @@ import com.sandboni.core.engine.render.banner.BannerRenderService;
 import com.sandboni.core.engine.result.FilterIndicator;
 import com.sandboni.core.engine.sta.Builder;
 import com.sandboni.core.engine.sta.Context;
-import com.sandboni.core.engine.sta.analyzer.ContextAnalyzer;
+import com.sandboni.core.engine.analyzer.ContextAnalyzer;
 import com.sandboni.core.engine.sta.connector.Connector;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.operation.GraphOperations;

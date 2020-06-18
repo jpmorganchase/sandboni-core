@@ -1,4 +1,4 @@
-package com.sandboni.core.engine.sta.analyzer;
+package com.sandboni.core.engine.analyzer;
 
 import com.sandboni.core.engine.filter.VertexFilterFactory;
 import com.sandboni.core.engine.sta.Context;
