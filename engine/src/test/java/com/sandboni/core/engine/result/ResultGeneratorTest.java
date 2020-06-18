@@ -4,7 +4,7 @@ import com.sandboni.core.engine.Arguments;
 import com.sandboni.core.engine.Processor;
 import com.sandboni.core.engine.ProcessorBuilder;
 import com.sandboni.core.engine.Stage;
-import com.sandboni.core.engine.contract.Finder;
+import com.sandboni.core.engine.sta.Finder;
 import com.sandboni.core.engine.filter.MockChangeScopeFilter;
 import com.sandboni.core.engine.finder.bcel.MockBcelReflectionEmptyFinder;
 import com.sandboni.core.engine.finder.bcel.MockBcelReflectionFinder;

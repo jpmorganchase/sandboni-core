@@ -1,8 +1,7 @@
 package com.sandboni.core.engine.finder.bcel;
 
 import com.sandboni.core.engine.FinderTestBase;
-import com.sandboni.core.engine.contract.Finder;
-import com.sandboni.core.engine.finder.bcel.visitors.TestClassVisitor;
+import com.sandboni.core.engine.sta.Finder;
 import com.sandboni.core.engine.scenario.SuiteTestClass1;
 import com.sandboni.core.engine.scenario.SuiteTestClass2;
 import com.sandboni.core.engine.scenario.SuiteTestClass3;

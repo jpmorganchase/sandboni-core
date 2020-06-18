@@ -1,6 +1,6 @@
 package com.sandboni.core.engine.sta.executor;
 
-import com.sandboni.core.engine.contract.Finder;
+import com.sandboni.core.engine.sta.Finder;
 import com.sandboni.core.engine.sta.Context;
 
 import java.util.function.Function;

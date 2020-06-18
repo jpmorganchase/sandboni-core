@@ -1,7 +1,7 @@
 package com.sandboni.core.engine.finder.bcel;
 
 import com.sandboni.core.engine.FinderTestBase;
-import com.sandboni.core.engine.contract.Finder;
+import com.sandboni.core.engine.sta.Finder;
 import com.sandboni.core.engine.scenario.reflection.src.ReflectionCaller;
 import com.sandboni.core.engine.scenario.reflection.test.ReflectionExplicitTest;
 import com.sandboni.core.engine.scenario.reflection.test.ReflectionImplicitTest;

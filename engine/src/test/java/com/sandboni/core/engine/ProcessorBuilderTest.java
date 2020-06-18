@@ -1,6 +1,6 @@
 package com.sandboni.core.engine;
 
-import com.sandboni.core.engine.contract.Finder;
+import com.sandboni.core.engine.sta.Finder;
 import com.sandboni.core.engine.finder.bcel.BcelFinder;
 import com.sandboni.core.engine.finder.cucumber.CucumberFeatureFinder;
 import com.sandboni.core.engine.result.ChangeDetectorResultMock;

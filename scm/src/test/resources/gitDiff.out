@@ -71,7 +71,7 @@ diff --git a/engine/src/main/java/com/sandboni/core/engine/finder/FileTreeFinder
 index 4a2293c..b3e5a0a 100644
 --- a/engine/src/main/java/com/sandboni/core/engine/finder/FileTreeFinder.java
 +++ b/engine/src/main/java/com/sandboni/core/engine/finder/FileTreeFinder.java
-@@ -4,2 +4,6 @@ import com.sandboni.core.engine.contract.Finder;
+@@ -4,2 +4,6 @@ import com.sandboni.core.engine.sta.Finder;
  import com.sandboni.core.engine.contract.ThrowingBiConsumer;
 +import com.sandboni.core.engine.finder.scanner.DirectoryScanner;
 +import com.sandboni.core.engine.finder.scanner.FileConsumer;
@@ -673,7 +673,7 @@ diff --git a/engine/src/main/java/com/sandboni/core/engine/sta/executor/FinderEx
 index b234254..4ef88a0 100644
 --- a/engine/src/main/java/com/sandboni/core/engine/sta/executor/FinderExecutor.java
 +++ b/engine/src/main/java/com/sandboni/core/engine/sta/executor/FinderExecutor.java
-@@ -4,3 +4,2 @@ import com.sandboni.core.engine.contract.Finder;
+@@ -4,3 +4,2 @@ import com.sandboni.core.engine.sta.Finder;
  import com.sandboni.core.engine.sta.Context;
 -import com.sandboni.core.engine.sta.graph.Link;
  
@@ -737,7 +737,7 @@ diff --git a/engine/src/test/java/com/sandboni/core/engine/ProcessorBuilderTest.
 index 3c32598..cb5b416 100644
 --- a/engine/src/test/java/com/sandboni/core/engine/ProcessorBuilderTest.java
 +++ b/engine/src/test/java/com/sandboni/core/engine/ProcessorBuilderTest.java
-@@ -4,3 +4,2 @@ import com.sandboni.core.engine.contract.Finder;
+@@ -4,3 +4,2 @@ import com.sandboni.core.engine.sta.Finder;
  import com.sandboni.core.engine.finder.bcel.BcelFinder;
 -import com.sandboni.core.engine.finder.bcel.CachedBcelFinder;
  import com.sandboni.core.engine.finder.cucumber.CucumberFeatureFinder;
@@ -873,7 +873,7 @@ index f8c44f5..e0b1e4d 100644
 +package com.sandboni.core.engine.finder.jar;
  
 @@ -4,4 +4,2 @@ import com.sandboni.core.engine.FinderTestBase;
- import com.sandboni.core.engine.contract.Finder;
+ import com.sandboni.core.engine.sta.Finder;
 -import com.sandboni.core.engine.finder.bcel.visitors.ClassVisitor;
 -import com.sandboni.core.engine.finder.bcel.visitors.CallerClassVisitor;
  import com.sandboni.core.engine.sta.graph.Link;
@@ -1081,7 +1081,7 @@ index b36780a..eb36244 100644
 +++ b/engine/src/test/java/com/sandboni/core/engine/result/ResultGeneratorTest.java
 @@ -3,3 +3,5 @@ package com.sandboni.core.engine.result;
  import com.sandboni.core.engine.*;
-+import com.sandboni.core.engine.contract.Finder;
++import com.sandboni.core.engine.sta.Finder;
  import com.sandboni.core.engine.filter.MockChangeScopeFilter;
 +import com.sandboni.core.engine.sta.connector.Connector;
  import org.junit.Assert;
@@ -1223,7 +1223,7 @@ index 0000000..83e0bed
 @@ -0,0 +1,43 @@
 +package com.sandboni.core.engine.sta.executor;
 +
-+import com.sandboni.core.engine.contract.Finder;
++import com.sandboni.core.engine.sta.Finder;
 +import com.sandboni.core.engine.sta.Context;
 +import com.sandboni.core.engine.sta.graph.LinkFactory;
 +import com.sandboni.core.engine.sta.graph.LinkType;
