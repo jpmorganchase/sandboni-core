@@ -3,11 +3,15 @@ package com.sandboni.core.engine.finder.bcel.visitors;
 import org.apache.bcel.classfile.*;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class AnnotationUtils {
+    private static final String[] IGNORE_ANNOTATIONS = {Annotations.TEST.IGNORE.getDesc(), Annotations.TEST.DISABLED.getDesc()};
+    private static final String[] BEFORE_ANNOTATIONS = {Annotations.TEST.BEFORE.getDesc(), Annotations.TEST.BEFORE_EACH.getDesc()};
+    private static final String[] AFTER_ANNOTATIONS = {Annotations.TEST.AFTER.getDesc(), Annotations.TEST.AFTER_EACH.getDesc()};
 
     private AnnotationUtils() {
     }
@@ -59,6 +63,18 @@ public class AnnotationUtils {
         String result = e.stringifyValue();
         // strings are stored as arrays of chars: [xxxx]
         return result.substring(1, result.length() - 1);
+    }
+
+    public static boolean isIgnore(JavaClass jc, Supplier<AnnotationEntry[]> getAnnotationEntries) {
+        return Objects.nonNull(getAnnotation(jc.getConstantPool(), getAnnotationEntries, IGNORE_ANNOTATIONS));
+    }
+
+    public static boolean isBefore(JavaClass jc, Supplier<AnnotationEntry[]> getAnnotationEntries) {
+        return Objects.nonNull(getAnnotation(jc.getConstantPool(), getAnnotationEntries, BEFORE_ANNOTATIONS));
+    }
+
+    public static boolean isAfter(JavaClass jc, Supplier<AnnotationEntry[]> getAnnotationEntries) {
+        return Objects.nonNull(getAnnotation(jc.getConstantPool(), getAnnotationEntries, AFTER_ANNOTATIONS));
     }
 
     public static class SpringAnnotations {

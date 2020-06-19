@@ -55,8 +55,8 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
             new SpringMockMvcMethodVisitor(method, javaClass, context).start();
             testMethods.add(formatMethod(method));
         }
-        boolean initMethod = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, Annotations.TEST.BEFORE.getDesc()) != null ||
-                getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, Annotations.TEST.AFTER.getDesc()) != null;
+        boolean initMethod = AnnotationUtils.isBefore(javaClass, method::getAnnotationEntries) ||
+                AnnotationUtils.isAfter(javaClass, method::getAnnotationEntries);
         if (initMethod) {
             initMethods.put(formatMethod(method), method.isStatic() ? LinkType.STATIC_CALL : LinkType.METHOD_CALL);
         }
@@ -65,8 +65,8 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     @Override
     public synchronized void visitJavaClass(JavaClass jc) {
         setUp();
-        this.ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
-        AnnotationEntry runWithAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.RUN_WITH.getDesc());
+        this.ignore = AnnotationUtils.isIgnore(jc, jc::getAnnotationEntries);
+        AnnotationEntry runWithAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.RUN_WITH.getDesc(), Annotations.TEST.EXTEND_WITH.getDesc());
         if (Objects.nonNull(runWithAnnotation) && !visitRunWithAnnotation(runWithAnnotation, jc)) return;
 
         this.alwaysRunClass = isAlwaysRunAnnotation(jc);
@@ -103,7 +103,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
      *
      * @param runWithAnnotation
      * @param jc
-     * @return a boolean indication wather we should continue processing the class
+     * @return a boolean indication weather we should continue processing the class
      */
     private boolean visitRunWithAnnotation(AnnotationEntry runWithAnnotation, JavaClass jc) {
         String value = AnnotationUtils.getAnnotationParameter(runWithAnnotation, VALUE);

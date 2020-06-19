@@ -7,8 +7,6 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
 
-import java.util.Objects;
-
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotation;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.getRelativeFileName;
@@ -23,9 +21,9 @@ abstract class CallerFieldOrMethodVisitor extends MethodVisitorBase {
         cp = new ConstantPoolGen(jc.getConstantPool());
         boolean testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, ALL_TEST_PACKAGES) != null;
 
-        boolean ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
+        boolean ignore = AnnotationUtils.isIgnore(jc, jc::getAnnotationEntries);
         if (!ignore)
-            ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
+            ignore = AnnotationUtils.isIgnore(jc, m::getAnnotationEntries);
 
         if (testMethod){
             currentMethodVertex = new TestVertex.Builder(jc.getClassName(), formatMethod(m.getName(), m.getArgumentTypes()), context.getCurrentLocation())

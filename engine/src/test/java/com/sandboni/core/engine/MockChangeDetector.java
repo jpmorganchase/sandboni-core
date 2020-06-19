@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 public class MockChangeDetector implements ChangeDetector {
 
     public static final String PACKAGE_NAME = "com.sandboni.core.engine.scenario";
+    public static final String JUNIT5 = "junit5";
     public static final String LAMBDA_PACKAGE_NAME = "com.sandboni.core.engine.scenario.lambda";
     public static final String LAMBDA_PACKAGE_TEST_NAME = "com.sandboni.core.engine.scenario.tests";
     public static final String TEST_LOCATION = "./target/test-classes";

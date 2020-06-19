@@ -10,13 +10,15 @@ public class RunWithAnnotationProcessorFactory {
 
     private static final String CUCUMBER_RUNNER_CLASS = "cucumber/api/junit/Cucumber";
 
-    private final static Map<String, Supplier<RunWithAnnotationProcessor>> map = new HashMap<>();
+    private static final Map<String, Supplier<RunWithAnnotationProcessor>> map = new HashMap<>();
 
     private static final String DEFAULT_IMPL = "Default";
 
     static {
         map.put(CUCUMBER_RUNNER_CLASS, CucumberAnnotationProcessor::new);
+        //todo add support for cucumber with JUnit 5
         map.put(RUN_WITH_VALUE_SUITE.getDesc(), SuiteAnnotationProcessor::new);
+        //todo add support for test suite with JUnit 5
         map.put(DEFAULT_IMPL, RunWithAnnotationProcessorDefaultImpl::new);
     }
 

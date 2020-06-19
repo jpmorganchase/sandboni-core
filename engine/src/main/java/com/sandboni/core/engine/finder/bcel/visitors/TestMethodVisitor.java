@@ -7,8 +7,6 @@ import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 
-import java.util.Objects;
-
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotation;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
 import static com.sandboni.core.engine.finder.bcel.visitors.TestClassVisitor.ALL_TEST_PACKAGES;
@@ -29,7 +27,7 @@ public class TestMethodVisitor extends MethodVisitorBase {
         super(m, jc, c);
         this.testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, ALL_TEST_PACKAGES) != null;
         this.ignore = testMethod &&
-                (ignore || Objects.nonNull(getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc())));
+                (ignore || AnnotationUtils.isIgnore(javaClass, method::getAnnotationEntries));
         this.isAlwaysRun = testMethod &&
                 (isAlwaysRunClass || getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, context.getAlwaysRunAnnotation()) != null);
     }
