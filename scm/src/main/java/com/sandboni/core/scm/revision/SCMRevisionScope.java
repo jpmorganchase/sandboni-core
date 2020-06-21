@@ -46,9 +46,6 @@ public class SCMRevisionScope implements RevisionScope<ObjectId> {
             if (to == null) {
                 throw new SourceControlRuntimeException(ErrorMessages.TO_CANNOT_BE_NULL);
             }
-            if (from.equals(to)) {
-                throw new SourceControlRuntimeException(ErrorMessages.REVISIONS_CANNOT_BE_SAME);
-            }
         }
     }
 }

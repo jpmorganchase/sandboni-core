@@ -60,7 +60,7 @@ public class GitDiffRunner {
         return line.startsWith(NEW_DIFF_PREFIX);
     }
 
-    private static String[] buildDiffCommand(RevisionScope<ObjectId> revisionScope) {
+    static String[] buildDiffCommand(RevisionScope<ObjectId> revisionScope) {
         ObjectId fromRevision = revisionScope.getFrom();
         ObjectId toRevision = revisionScope.getTo();
 
@@ -69,16 +69,20 @@ public class GitDiffRunner {
         command.add("git");
         command.add("diff");
         command.add("-U1");
-        command.add(fromRevision.getName());
+        command.add(toRevision.equals(fromRevision)? fromRevision.getName() + '~' : fromRevision.getName());
         if (!toRevision.equals(ObjectId.zeroId())) {
             command.add(toRevision.getName());
         }
-        // filter only ".java" and ".feature" files
-        command.add("--");
-        command.add("\"**/*" + FileExtensions.JAVA.extension() + "\"");
-        command.add("\"**/*" + FileExtensions.FEATURE.extension() + "\"");
+
+        addFileTypeFilters(command);
 
         return command.toArray(new String[0]);
     }
 
+    private static void addFileTypeFilters(List<String> command) {
+        // filter only ".java" and ".feature" files
+        command.add("--");
+        command.add("\"**/*" + FileExtensions.JAVA.extension() + "\"");
+        command.add("\"**/*" + FileExtensions.FEATURE.extension() + "\"");
+    }
 }
