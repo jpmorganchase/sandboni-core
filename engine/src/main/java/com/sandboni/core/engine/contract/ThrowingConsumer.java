@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 // http://codingjunkie.net/functional-iterface-exceptions/
 
 @FunctionalInterface
-@SuppressWarnings("squid:S00112")
+@SuppressWarnings(value = {"squid:S00112","FunctionalInterfaceMethodChanged"})
 public interface ThrowingConsumer<T> extends Consumer<T> {
 
     @Override

@@ -8,7 +8,7 @@ import java.util.function.BiConsumer;
 // http://codingjunkie.net/functional-iterface-exceptions/
 
 @FunctionalInterface
-@SuppressWarnings("squid:S00112")
+@SuppressWarnings(value = {"squid:S00112", "FunctionalInterfaceMethodChanged"})
 public interface ThrowingBiConsumer<T,U> extends BiConsumer<T,U> {
 
     @Override
