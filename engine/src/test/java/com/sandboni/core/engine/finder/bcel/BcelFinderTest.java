@@ -683,4 +683,14 @@ public class BcelFinderTest extends FinderTestBase {
         testCallerVisitor(lambdaToInterface, interfaceToLambda, testToInterfaceCall);
     }
 
+    // This test must pass when Sandboni is compiled with Java 11
+    @Ignore
+    @Test
+    public void testStringConcatenation() {
+        Link stringConcat = newLink(new Vertex.Builder("com.sandboni.core.engine.scenario.string.StringConcatenation", "basicStringConcatenation()").build(),
+                new Vertex.Builder("java.lang.invoke.StringConcatFactory", "makeConcatWithConstants(java.lang.invoke.MethodHandles$Lookup,java.lang.String,java.lang.invoke.MethodType,java.lang.String,java.lang.Object[])").build(),
+                LinkType.DYNAMIC_CALL);
+
+        testImplementingVisitor(stringConcat);
+    }
 }
