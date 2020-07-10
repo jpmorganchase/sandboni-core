@@ -80,6 +80,20 @@ public class CallerMethodVisitor extends CallerFieldOrMethodVisitor {
         if (bootstrapMethods.isPresent()) {
 
             BootstrapMethod bootstrapMethod = bootstrapMethods.get().getBootstrapMethods()[constantInvokeDynamic.getBootstrapMethodAttrIndex()];
+            if (cp.getConstant(bootstrapMethod.getBootstrapMethodRef()) instanceof ConstantMethodHandle) {
+                // already a Method handle, need to create a link
+                ConstantMethodHandle bootConstMethodHandle = (ConstantMethodHandle) cp.getConstant(bootstrapMethod.getBootstrapMethodRef());
+                if (cp.getConstant(bootConstMethodHandle.getReferenceIndex()) instanceof ConstantMethodref) {
+                    // reducing scope to ConstantMethodref only to avoid create unexpected links
+                    ConstantMethodref bootConstMethodRef = (ConstantMethodref) cp.getConstant(bootConstMethodHandle.getReferenceIndex());
+                    String className = ClassUtils.getFormattedClassNameFromMethodCall(cp.getConstantPool(), bootConstMethodRef);
+                    String methodName = formatMethodName(getMethodNameAndType(cp.getConstantPool(), (ConstantNameAndType)cp.getConstant(bootConstMethodRef.getNameAndTypeIndex())));
+                    addLink(LinkFactory.createInstance(
+                            context.getApplicationId(), currentMethodVertex,
+                            new Vertex.Builder(className, methodName).build(),
+                            LinkType.DYNAMIC_CALL));
+                }
+            }
             int[] bootstrapMethodArguments = bootstrapMethod.getBootstrapArguments();
             for (int a : bootstrapMethodArguments) {
                 if (cp.getConstant(a) instanceof ConstantMethodHandle) {
@@ -101,8 +115,6 @@ public class CallerMethodVisitor extends CallerFieldOrMethodVisitor {
             }
         }
     }
-
-
 
     private boolean isInvokerInterfaceController(String className) {
         try {
