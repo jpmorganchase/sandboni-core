@@ -116,6 +116,10 @@ public class ClassUtils {
         return result;
     }
 
+    static String getFormattedClassNameFromMethodCall(ConstantPool cp, ConstantMethodref constantMethodref) {
+        return getClassNameFromMethodCall(cp, constantMethodref).replace('/', '.');
+    }
+
     static String getClassNameFromMethodCall(ConstantPool obj, ConstantMethodref methodRef) {
             int referencedClassIdx = methodRef.getClassIndex();
             int referencedClassNameIdx = ((ConstantClass) obj.getConstant(referencedClassIdx)).getNameIndex();
