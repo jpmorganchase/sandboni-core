@@ -21,11 +21,11 @@ public class SCMChangeBuilder{
 
     private static final Logger log = LoggerFactory.getLogger(SCMChangeBuilder.class);
 
-    private String path;
-    private Set<Integer> changedLines;
-    private ChangeType changeType;
-    private String fileContent;
-    private String repository = "";
+    public String path;
+    public Set<Integer> changedLines;
+    public ChangeType changeType;
+    public String fileContent;
+    public String repository = "";
 
     private Optional<FileExtensions> getFileExt(String filePath){
         Optional tmp = FileUtil.getExtension(filePath);
