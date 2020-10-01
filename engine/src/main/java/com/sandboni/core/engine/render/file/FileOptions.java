@@ -34,11 +34,11 @@ public class FileOptions {
 
     public static class FileOptionsBuilder {
 
-        public FileType type;
+        private FileType type;
 
-        public String name;
+        private String name;
 
-        public String attributes;
+        private String attributes;
 
         public FileOptionsBuilder with(Consumer<FileOptionsBuilder> builderFunction) {
             builderFunction.accept(this);

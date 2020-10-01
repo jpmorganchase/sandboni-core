@@ -20,13 +20,13 @@ public class TestSuiteConnector implements Connector {
         Set<Vertex> tests = context.getLinks().filter(l -> l.getLinkType() == LinkType.ENTRY_POINT).map(Link::getCallee).collect(Collectors.toSet());
         Set<Vertex> allTestSuiteVertices = context.getLinks().filter(l -> l.getLinkType() == LinkType.TEST_SUITE).map(Link::getCallee).collect(Collectors.toSet());
         // connect test suite to relevant test (if applicable):
-        tests.parallelStream().forEach(t -> {
-            // check if we have a related suite class
-            allTestSuiteVertices.stream().filter(tsv -> tsv instanceof TestSuiteVertex && ((TestSuiteVertex)tsv).getRelatedTestClasses().contains(t.getActor())).forEach(ts -> {
-                // create a link: testSuite -> testVertex, type:TEST_SUITE
-                context.addLink(LinkFactory.createInstance(context.getApplicationId(), ts, t, LinkType.TEST_SUITE));
-            });
-        });
+        tests.parallelStream()
+                // check if we have a related suite class
+                .forEach(t -> allTestSuiteVertices.stream()
+                    .filter(tsv -> tsv instanceof TestSuiteVertex && ((TestSuiteVertex)tsv).getRelatedTestClasses().contains(t.getActor()))
+                     // create a link: testSuite -> testVertex, type:TEST_SUITE
+                     .forEach(ts -> context.addLink(LinkFactory.createInstance(context.getApplicationId(), ts, t, LinkType.TEST_SUITE)))
+        );
     }
 
     @Override

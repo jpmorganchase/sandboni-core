@@ -22,11 +22,11 @@ import java.util.function.Consumer;
 
 public class ProcessorBuilder implements BuilderPattern<Processor, ProcessorBuilder>{
 
-    public Arguments arguments;
-    public GitInterface gitDetector;
-    public Finder[] finders;
-    public Connector[] connectors;
-    public ScopeFilter<ChangeScope<Change>, Set<File>> scopeFilter;
+    private Arguments arguments;
+    private GitInterface gitDetector;
+    private Finder[] finders;
+    private Connector[] connectors;
+    private ScopeFilter<ChangeScope<Change>, Set<File>> scopeFilter;
 
     @Override
     public ProcessorBuilder with(
