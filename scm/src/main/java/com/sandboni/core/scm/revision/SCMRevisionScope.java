@@ -26,8 +26,8 @@ public class SCMRevisionScope implements RevisionScope<ObjectId> {
     }
 
     public static class RevisionScopeBuilder {
-        public ObjectId from;
-        public ObjectId to;
+        private ObjectId from;
+        private ObjectId to;
 
         public RevisionScopeBuilder with(Consumer<RevisionScopeBuilder> function){
             function.accept(this);
