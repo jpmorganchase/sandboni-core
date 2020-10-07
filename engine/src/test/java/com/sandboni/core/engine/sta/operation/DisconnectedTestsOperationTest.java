@@ -4,11 +4,13 @@ import com.sandboni.core.engine.sta.graph.vertex.CucumberVertex;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 import org.junit.Test;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Set;
 
 import static org.junit.Assert.*;
 
+@DirtiesContext
 public class DisconnectedTestsOperationTest extends GraphOperationsTest {
 
     @Test

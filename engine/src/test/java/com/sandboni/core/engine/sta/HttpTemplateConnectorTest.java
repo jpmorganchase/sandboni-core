@@ -84,6 +84,18 @@ public class HttpTemplateConnectorTest {
     }
 
     @Test
+    public void testIsMatchTrivialCase_nullCalleeAction() {
+        HttpTemplateConnector connector = new HttpTemplateConnector();
+        Assert.assertFalse(connector.isMatch("/action", null));
+    }
+
+    @Test
+    public void testIsMatchTrivialCase_nullCallerAction() {
+        HttpTemplateConnector connector = new HttpTemplateConnector();
+        Assert.assertFalse(connector.isMatch(null, "/action"));
+    }
+
+    @Test
     public void testIsProceed(){
         Connector connector = new HttpTemplateConnector();
         Assert.assertTrue(connector.proceed(setupContext("/segment2/{value}", "/segment2/{param}")));
