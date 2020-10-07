@@ -70,6 +70,11 @@ public class HttpTemplateConnector implements Connector {
     // so we use some heuristics here
     public boolean isMatch(String callerTemplate, String calleeTemplate) {
 
+        if (calleeTemplate == null || callerTemplate == null){
+            log.trace("HTTP_CONNECTOR:IS_MATCH:NULL_ACTION:caller={}, callee={}", callerTemplate, calleeTemplate);
+            return false;
+        }
+
         // this trivial case which doesn't need any extra dependency created
         if (callerTemplate.endsWith(calleeTemplate)) {
             return true;
