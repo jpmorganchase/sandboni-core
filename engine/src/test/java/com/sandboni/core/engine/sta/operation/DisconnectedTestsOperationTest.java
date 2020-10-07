@@ -10,7 +10,6 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-@DirtiesContext
 public class DisconnectedTestsOperationTest extends GraphOperationsTest {
 
     @Test
