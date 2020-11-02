@@ -10,7 +10,7 @@ public class RunWithAnnotationProcessorFactory {
 
     private static final String CUCUMBER_RUNNER_CLASS = "cucumber/api/junit/Cucumber";
 
-    private final static Map<String, Supplier<RunWithAnnotationProcessor>> map = new HashMap<>();
+    private static final Map<String, Supplier<RunWithAnnotationProcessor>> map = new HashMap<>();
 
     private static final String DEFAULT_IMPL = "Default";
 
@@ -23,7 +23,7 @@ public class RunWithAnnotationProcessorFactory {
 
     public RunWithAnnotationProcessor getProcessor(String runWithAnnotationValue) {
         Supplier<RunWithAnnotationProcessor> processorSupplier = map.get(runWithAnnotationValue);
-        if(processorSupplier != null) {
+        if (processorSupplier != null) {
             return processorSupplier.get();
         } else {
             return map.get(DEFAULT_IMPL).get();

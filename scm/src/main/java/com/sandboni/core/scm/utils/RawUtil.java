@@ -43,15 +43,19 @@ public final class RawUtil {
         final Set<String> keys = new HashSet<>();
         String[] lines = text.split(LINE_SEPARATOR);
         for (Integer lineNumber : changedLines) {
-            if (lineNumber > lines.length) continue; //AN:we can't guarantee the line num's order
-
-            String line = lines[lineNumber - 1];
-            if (line.startsWith("#") || line.startsWith("!")) continue;
-            int keylength = line.indexOf('=');
-            if ( keylength > 0)
-                keys.add(line.substring(0, keylength));
+            populateKeys(keys, lines, lineNumber);
         }
         return keys;
+    }
+
+    private static void populateKeys(Set<String> keys, String[] lines, Integer lineNumber) {
+        if (lineNumber > lines.length) return;
+
+        String line = lines[lineNumber - 1];
+        if (line.startsWith("#") || line.startsWith("!")) return;
+        int keylength = line.indexOf('=');
+        if ( keylength > 0)
+            keys.add(line.substring(0, keylength));
     }
 
     private static String removeSourceSet(String path) {

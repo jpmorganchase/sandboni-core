@@ -35,9 +35,7 @@ public class DirectoryScanner implements LocationScanner {
 
         Map<String, Set<File>> locationFiles = new HashMap<>();
         Collection<Map<String, Set<File>>> locationToFilesFound = getDirectoryFinder(consumer).execute(allLocations);
-        locationToFilesFound.forEach(map -> {
-            map.forEach(locationFiles::put);
-        });
+        locationToFilesFound.forEach(map -> map.forEach(locationFiles::put));
 
         logger.debug("[{}] {} Finished traversing locations in {} milliseconds", Thread.currentThread().getName(), scannerName, elapsedTime(start));
 
