@@ -8,23 +8,26 @@ import com.sandboni.core.engine.sta.graph.LinkFactory;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 
 import java.util.*;
 
-import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotation;
-import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotationParameter;
+import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.*;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
 
 /**
  * Visit Java Test classes.
  * Note: This class is not thread safe.
  */
+@Slf4j
 public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
-    static final String JUNIT_PACKAGE = "org/junit/Test";
-    static final String TESTING_PACKAGE = "org/testing/annotations/Test";
+    private static final String JUNIT_PACKAGE = "org/junit/Test";
+    private static final String TESTING_PACKAGE = "org/testing/annotations/Test";
+    private static final String JUNIT_JUPITER_PACKAGE = "org/junit/jupiter/api/Test";
+    static final String[] ALL_TEST_PACKAGES = {JUNIT_PACKAGE, TESTING_PACKAGE, JUNIT_JUPITER_PACKAGE};
 
     private static final String VALUE = "value";
 
@@ -44,7 +47,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
 
     @Override
     public void visitMethod(Method method) {
-        boolean testMethod = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
+        boolean testMethod = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, ALL_TEST_PACKAGES) != null;
         if (testMethod) {
             new TestMethodVisitor(method, javaClass, context, ignore, alwaysRunClass).start();
             new TestHttpMethodVisitor(method, javaClass, context).start();
@@ -53,8 +56,8 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
             new SpringMockMvcMethodVisitor(method, javaClass, context).start();
             testMethods.add(formatMethod(method));
         }
-        boolean initMethod = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, Annotations.TEST.BEFORE.getDesc()) != null ||
-                getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, Annotations.TEST.AFTER.getDesc()) != null;
+        boolean initMethod = AnnotationUtils.isBefore(javaClass, method::getAnnotationEntries) ||
+                AnnotationUtils.isAfter(javaClass, method::getAnnotationEntries);
         if (initMethod) {
             initMethods.put(formatMethod(method), method.isStatic() ? LinkType.STATIC_CALL : LinkType.METHOD_CALL);
         }
@@ -63,8 +66,10 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     @Override
     public synchronized void visitJavaClass(JavaClass jc) {
         setUp();
-        this.ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
-        AnnotationEntry runWithAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.RUN_WITH.getDesc());
+        this.ignore = AnnotationUtils.isIgnore(jc, jc::getAnnotationEntries);
+        AnnotationEntry runWithAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries,
+                Annotations.TEST.RUN_WITH.getDesc(), Annotations.TEST.EXTEND_WITH.getDesc());
+
         if (Objects.nonNull(runWithAnnotation) && !visitRunWithAnnotation(runWithAnnotation, jc)) return;
 
         this.alwaysRunClass = isAlwaysRunAnnotation(jc);
@@ -88,7 +93,9 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
             return true;
         }
 
-        AnnotationEntry categoryAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.CATEGORY.getDesc());
+        AnnotationEntry categoryAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries,
+                Annotations.TEST.CATEGORY.getDesc(), Annotations.TEST.TAG.getDesc());
+
         if (Objects.nonNull(categoryAnnotation)) {
             String categoryAnnotationValue = getAnnotationParameter(categoryAnnotation, VALUE);
             return Objects.nonNull(categoryAnnotationValue) && categoryAnnotationValue.endsWith(context.getAlwaysRunAnnotation());
@@ -101,7 +108,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
      *
      * @param runWithAnnotation
      * @param jc
-     * @return a boolean indication wather we should continue processing the class
+     * @return a boolean indication weather we should continue processing the class
      */
     private boolean visitRunWithAnnotation(AnnotationEntry runWithAnnotation, JavaClass jc) {
         String value = AnnotationUtils.getAnnotationParameter(runWithAnnotation, VALUE);
