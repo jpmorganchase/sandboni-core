@@ -226,12 +226,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <excludes>
-                        <!--junit 4.13.1 is excluded from CVE-2020-15250, but is incorrectly counted as a vulnerability-->
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                        <version>${junit.version}</version>
-                    </excludes>
                     <format>HTML</format>
                     <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
                     <suppressionFile>${owasp.suppressionFile}</suppressionFile>
