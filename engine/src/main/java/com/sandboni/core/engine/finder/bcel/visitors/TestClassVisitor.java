@@ -47,7 +47,7 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
 
     @Override
     public void visitMethod(Method method) {
-        boolean testMethod = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, ALL_TEST_PACKAGES) != null;
+        boolean testMethod = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, ALL_TEST_PACKAGES).isPresent();
         if (testMethod) {
             new TestMethodVisitor(method, javaClass, context, ignore, alwaysRunClass).start();
             new TestHttpMethodVisitor(method, javaClass, context).start();
@@ -67,10 +67,10 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     public synchronized void visitJavaClass(JavaClass jc) {
         setUp();
         this.ignore = AnnotationUtils.isIgnore(jc, jc::getAnnotationEntries);
-        AnnotationEntry runWithAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries,
+        Optional<AnnotationEntry> runWithAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries,
                 Annotations.TEST.RUN_WITH.getDesc(), Annotations.TEST.EXTEND_WITH.getDesc());
 
-        if (Objects.nonNull(runWithAnnotation) && !visitRunWithAnnotation(runWithAnnotation, jc)) return;
+        if (runWithAnnotation.isPresent() && !visitRunWithAnnotation(runWithAnnotation.get(), jc)) return;
 
         this.alwaysRunClass = isAlwaysRunAnnotation(jc);
 
@@ -88,16 +88,16 @@ public class TestClassVisitor extends ClassVisitorBase implements ClassVisitor {
     }
 
     private boolean isAlwaysRunAnnotation(JavaClass jc) {
-        boolean alwaysRunAnnotation = Objects.nonNull(getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, context.getAlwaysRunAnnotation()));
+        boolean alwaysRunAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, context.getAlwaysRunAnnotation()).isPresent();
         if (alwaysRunAnnotation) {
             return true;
         }
 
-        AnnotationEntry categoryAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries,
+        Optional<AnnotationEntry> categoryAnnotation = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries,
                 Annotations.TEST.CATEGORY.getDesc(), Annotations.TEST.TAG.getDesc());
 
-        if (Objects.nonNull(categoryAnnotation)) {
-            String categoryAnnotationValue = getAnnotationParameter(categoryAnnotation, VALUE);
+        if (categoryAnnotation.isPresent()) {
+            String categoryAnnotationValue = getAnnotationParameter(categoryAnnotation.get(), VALUE);
             return Objects.nonNull(categoryAnnotationValue) && categoryAnnotationValue.endsWith(context.getAlwaysRunAnnotation());
         }
 

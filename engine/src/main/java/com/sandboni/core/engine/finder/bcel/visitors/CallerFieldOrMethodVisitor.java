@@ -20,7 +20,7 @@ abstract class CallerFieldOrMethodVisitor extends MethodVisitorBase {
         super(m, jc, c);
         cp = new ConstantPoolGen(jc.getConstantPool());
 
-        boolean testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, ALL_TEST_PACKAGES) != null;
+        boolean testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, ALL_TEST_PACKAGES).isPresent();
 
         boolean ignore = AnnotationUtils.isIgnore(jc, jc::getAnnotationEntries);
 

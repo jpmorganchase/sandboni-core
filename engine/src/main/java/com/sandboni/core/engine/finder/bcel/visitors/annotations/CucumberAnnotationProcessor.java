@@ -9,7 +9,7 @@ import com.sandboni.core.engine.sta.graph.vertex.TestVertex;
 import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.JavaClass;
 
-import java.util.Objects;
+import java.util.Optional;
 
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotationParameter;
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.CUCUMBER_RUNNER_VERTEX;
@@ -22,9 +22,9 @@ public class CucumberAnnotationProcessor implements RunWithAnnotationProcessor {
     @Override
     public boolean process(JavaClass jc, Context context) {
         TestVertex.Builder runnerBuilder = new TestVertex.Builder(jc.getClassName(), RUN_WITH, context.getCurrentLocation());
-        AnnotationEntry cucumberOptionsAnnotation = AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.CUCUMBER_OPTIONS.getDesc());
-        if (Objects.nonNull(cucumberOptionsAnnotation)) {
-            String features = getAnnotationParameter(cucumberOptionsAnnotation, FEATURES);
+        Optional<AnnotationEntry> cucumberOptionsAnnotation = AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.CUCUMBER_OPTIONS.getDesc());
+        if (cucumberOptionsAnnotation.isPresent()) {
+            String features = getAnnotationParameter(cucumberOptionsAnnotation.get(), FEATURES);
             runnerBuilder.withRunWithOptions(features);
         }
 

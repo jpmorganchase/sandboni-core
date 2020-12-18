@@ -105,8 +105,7 @@ public class Processor {
         return (!isRunAllExternalTests() || !isIntegrationStage())
                 && (arguments.isRunSelectiveMode()
                 || (ChangeScopeAnalyzer.analyzeConfigurationFiles(changeScope, getBuildFiles()))
-                && (arguments.isIgnoreUnsupportedFiles()
-                || ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles())));
+                && (arguments.isIgnoreUnsupportedFiles() || ChangeScopeAnalyzer.onlySupportedFiles(changeScope, getSupportedFiles())));
     }
 
     private boolean isRunAllExternalTests() {

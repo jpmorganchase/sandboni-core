@@ -3,7 +3,6 @@ package com.sandboni.core.engine.finder.bcel.visitors;
 import org.apache.bcel.classfile.*;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -16,10 +15,10 @@ public class AnnotationUtils {
     private AnnotationUtils() {
     }
 
-    public static AnnotationEntry getAnnotation(ConstantPool constantPool, Supplier<AnnotationEntry[]> annotationSupplier, String... annotationName) {
+    public static Optional<AnnotationEntry> getAnnotation(ConstantPool constantPool, Supplier<AnnotationEntry[]> annotationSupplier, String... annotationName) {
         return Arrays.stream(annotationSupplier.get())
                 .filter(e -> Arrays.stream(annotationName).anyMatch(getTypeSignature(constantPool, e.getTypeIndex())::contains))
-                .findFirst().orElse(null);
+                .findFirst();
     }
 
     public static String getTypeSignature(ConstantPool constantPool, int typeIndex) {
@@ -28,9 +27,8 @@ public class AnnotationUtils {
     }
 
     public static String getAnnotationParameter(ConstantPool constantPool, Supplier<AnnotationEntry[]> annotationSupplier, String annotationName, String... parameterNames) {
-        AnnotationEntry annotation = getAnnotation(constantPool, annotationSupplier, annotationName);
-
-        return annotation == null ? "" : getAnnotationParameter(annotation, parameterNames);
+        Optional<AnnotationEntry> annotation = getAnnotation(constantPool, annotationSupplier, annotationName);
+        return annotation.isPresent() ? getAnnotationParameter(annotation.get(), parameterNames) : "";
     }
 
     public static String getAnnotationParameter(AnnotationEntry annotationEntry, String... parameters) {
@@ -66,15 +64,15 @@ public class AnnotationUtils {
     }
 
     static boolean isIgnore(JavaClass jc, Supplier<AnnotationEntry[]> getAnnotationEntries) {
-        return Objects.nonNull(getAnnotation(jc.getConstantPool(), getAnnotationEntries, IGNORE_ANNOTATIONS));
+        return getAnnotation(jc.getConstantPool(), getAnnotationEntries, IGNORE_ANNOTATIONS).isPresent();
     }
 
     static boolean isBefore(JavaClass jc, Supplier<AnnotationEntry[]> getAnnotationEntries) {
-        return Objects.nonNull(getAnnotation(jc.getConstantPool(), getAnnotationEntries, BEFORE_ANNOTATIONS));
+        return getAnnotation(jc.getConstantPool(), getAnnotationEntries, BEFORE_ANNOTATIONS).isPresent();
     }
 
     static boolean isAfter(JavaClass jc, Supplier<AnnotationEntry[]> getAnnotationEntries) {
-        return Objects.nonNull(getAnnotation(jc.getConstantPool(), getAnnotationEntries, AFTER_ANNOTATIONS));
+        return getAnnotation(jc.getConstantPool(), getAnnotationEntries, AFTER_ANNOTATIONS).isPresent();
     }
 
     public static class SpringAnnotations {
