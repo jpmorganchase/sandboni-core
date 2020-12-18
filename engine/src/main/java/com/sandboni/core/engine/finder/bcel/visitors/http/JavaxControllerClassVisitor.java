@@ -1,6 +1,6 @@
 package com.sandboni.core.engine.finder.bcel.visitors.http;
 
-import com.sandboni.core.engine.finder.bcel.ClassVisitor;
+import com.sandboni.core.engine.finder.bcel.visitors.ClassVisitor;
 import com.sandboni.core.engine.finder.bcel.visitors.Annotations;
 import com.sandboni.core.engine.finder.bcel.visitors.ClassVisitorBase;
 import com.sandboni.core.engine.sta.Context;

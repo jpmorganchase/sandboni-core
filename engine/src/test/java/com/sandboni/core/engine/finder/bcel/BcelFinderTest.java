@@ -2,12 +2,10 @@ package com.sandboni.core.engine.finder.bcel;
 
 import com.sandboni.core.engine.FinderTestBase;
 import com.sandboni.core.engine.PoCDiffChangeDetector;
-import com.sandboni.core.engine.contract.Finder;
+import com.sandboni.core.engine.sta.Finder;
 import com.sandboni.core.engine.contract.HttpConsts;
 import com.sandboni.core.engine.exception.ParseRuntimeException;
 import com.sandboni.core.engine.finder.bcel.visitors.*;
-import com.sandboni.core.engine.finder.bcel.visitors.http.JavaxControllerClassVisitor;
-import com.sandboni.core.engine.finder.bcel.visitors.http.SpringControllerClassVisitor;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;

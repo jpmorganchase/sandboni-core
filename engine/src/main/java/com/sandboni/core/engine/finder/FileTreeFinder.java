@@ -1,6 +1,6 @@
 package com.sandboni.core.engine.finder;
 
-import com.sandboni.core.engine.contract.Finder;
+import com.sandboni.core.engine.sta.Finder;
 import com.sandboni.core.engine.contract.ThrowingBiConsumer;
 import com.sandboni.core.engine.finder.scanner.DirectoryScanner;
 import com.sandboni.core.engine.finder.scanner.FileConsumer;

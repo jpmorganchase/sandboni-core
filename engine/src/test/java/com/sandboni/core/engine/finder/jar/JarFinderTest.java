@@ -1,7 +1,7 @@
 package com.sandboni.core.engine.finder.jar;
 
 import com.sandboni.core.engine.FinderTestBase;
-import com.sandboni.core.engine.contract.Finder;
+import com.sandboni.core.engine.sta.Finder;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;

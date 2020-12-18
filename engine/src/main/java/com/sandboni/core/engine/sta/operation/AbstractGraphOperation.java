@@ -1,5 +1,7 @@
 package com.sandboni.core.engine.sta.operation;
 
+import com.sandboni.core.engine.sta.GraphOperation;
+import com.sandboni.core.engine.sta.OperationResult;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
 
 import java.util.Map;

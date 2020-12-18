@@ -2,8 +2,8 @@ package com.sandboni.core.engine.sta.executor;
 
 import com.sandboni.core.engine.sta.graph.Edge;
 import com.sandboni.core.engine.sta.graph.vertex.Vertex;
-import com.sandboni.core.engine.sta.operation.GraphOperation;
-import com.sandboni.core.engine.sta.operation.OperationResult;
+import com.sandboni.core.engine.sta.GraphOperation;
+import com.sandboni.core.engine.sta.OperationResult;
 import org.jgrapht.Graph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

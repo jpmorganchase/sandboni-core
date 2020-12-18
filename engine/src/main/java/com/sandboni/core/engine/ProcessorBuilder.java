@@ -1,6 +1,6 @@
 package com.sandboni.core.engine;
 
-import com.sandboni.core.engine.contract.Finder;
+import com.sandboni.core.engine.sta.Finder;
 import com.sandboni.core.engine.filter.ChangeScopeFilter;
 import com.sandboni.core.engine.filter.ScopeFilter;
 import com.sandboni.core.engine.finder.jar.JarFinder;

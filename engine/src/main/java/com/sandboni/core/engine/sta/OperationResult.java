@@ -1,4 +1,4 @@
-package com.sandboni.core.engine.sta.operation;
+package com.sandboni.core.engine.sta;
 
 public interface OperationResult<T> {
 

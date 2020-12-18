@@ -1,6 +1,6 @@
 package com.sandboni.core.engine.sta.graph.vertex;
 
-import com.sandboni.core.engine.finder.ExtensionType;
+import com.sandboni.core.engine.common.ExtensionType;
 
 public class TestVertexHandler implements VertexHandler{
 

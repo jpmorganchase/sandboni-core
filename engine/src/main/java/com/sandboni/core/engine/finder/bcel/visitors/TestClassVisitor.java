@@ -1,6 +1,5 @@
 package com.sandboni.core.engine.finder.bcel.visitors;
 
-import com.sandboni.core.engine.finder.bcel.ClassVisitor;
 import com.sandboni.core.engine.finder.bcel.visitors.annotations.RunWithAnnotationProcessorFactory;
 import com.sandboni.core.engine.finder.bcel.visitors.http.JavaxControllerMethodVisitor;
 import com.sandboni.core.engine.finder.bcel.visitors.http.SpringControllerMethodVisitor;

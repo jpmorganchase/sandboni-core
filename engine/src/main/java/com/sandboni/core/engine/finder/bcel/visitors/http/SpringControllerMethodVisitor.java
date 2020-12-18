@@ -18,7 +18,7 @@ import java.util.Set;
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotation;
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotationParameter;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
-import static com.sandboni.core.engine.finder.bcel.visitors.http.HttpLinkHelper.addHttpLinks;
+import static com.sandboni.core.engine.finder.bcel.visitors.HttpLinkHelper.addHttpLinks;
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.SpringAnnotations.*;
 
 

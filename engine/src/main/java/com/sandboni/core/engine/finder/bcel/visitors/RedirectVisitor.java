@@ -8,7 +8,7 @@ import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.LDC;
 
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
-import static com.sandboni.core.engine.finder.bcel.visitors.http.HttpLinkHelper.addHttpLinks;
+import static com.sandboni.core.engine.finder.bcel.visitors.HttpLinkHelper.addHttpLinks;
 
 public class RedirectVisitor extends MethodVisitorBase {
     private final ConstantPoolGen cp;
