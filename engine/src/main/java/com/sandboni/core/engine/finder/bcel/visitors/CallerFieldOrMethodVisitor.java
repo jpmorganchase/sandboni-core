@@ -22,10 +22,7 @@ abstract class CallerFieldOrMethodVisitor extends MethodVisitorBase {
 
         boolean testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, ALL_TEST_PACKAGES).isPresent();
 
-        boolean ignore = AnnotationUtils.isIgnore(jc, jc::getAnnotationEntries);
-
-        if (!ignore)
-            ignore = AnnotationUtils.isIgnore(jc, m::getAnnotationEntries);
+        boolean ignore = AnnotationUtils.isIgnore(jc, jc::getAnnotationEntries) || AnnotationUtils.isIgnore(jc, m::getAnnotationEntries);
 
         if (testMethod){
             currentMethodVertex = new TestVertex.Builder(jc.getClassName(), formatMethod(m.getName(), m.getArgumentTypes()), context.getCurrentLocation())
