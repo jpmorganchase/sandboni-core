@@ -28,7 +28,7 @@ public class AnnotationUtils {
 
     public static String getAnnotationParameter(ConstantPool constantPool, Supplier<AnnotationEntry[]> annotationSupplier, String annotationName, String... parameterNames) {
         Optional<AnnotationEntry> annotation = getAnnotation(constantPool, annotationSupplier, annotationName);
-        return annotation.isPresent() ? getAnnotationParameter(annotation.get(), parameterNames) : "";
+        return annotation.map(value -> getAnnotationParameter(value, parameterNames)).orElse("");
     }
 
     public static String getAnnotationParameter(AnnotationEntry annotationEntry, String... parameters) {
