@@ -9,6 +9,7 @@ import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotation;
@@ -30,12 +31,10 @@ public class JavaxControllerClassVisitor extends ClassVisitorBase implements Cla
     @Override
     public Stream<Link> start(JavaClass jc, Context c) {
         controllerPath = null;
-        AnnotationEntry path = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.JAVAX.PATH.getDesc(), Annotations.JAVAX.OPTIONS.getDesc());
+        Optional<AnnotationEntry> path = getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.JAVAX.PATH.getDesc(), Annotations.JAVAX.OPTIONS.getDesc());
 
-        if (path != null) {
-            controllerPath = path.getAnnotationType().contains(Annotations.JAVAX.PATH.getDesc()) ?
-                    getAnnotationParameter(path, "value") : "";
-        }
+        path.ifPresent(annotationEntry -> controllerPath = annotationEntry.getAnnotationType().contains(Annotations.JAVAX.PATH.getDesc()) ?
+                getAnnotationParameter(annotationEntry, "value") : "");
         return super.start(jc, c);
     }
 }
