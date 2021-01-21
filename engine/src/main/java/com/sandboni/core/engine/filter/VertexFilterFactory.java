@@ -1,12 +1,12 @@
 package com.sandboni.core.engine.filter;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 
 public class VertexFilterFactory {
 
     public enum VertexFilterTypes {REFLECTION_SRC}
 
-    private static HashMap<VertexFilterTypes, VertexFilter> filters = new HashMap<>();
+    private static EnumMap<VertexFilterTypes, VertexFilter> filters = new EnumMap<>(VertexFilterTypes.class);
 
     static {
         filters.put(VertexFilterTypes.REFLECTION_SRC, new ReflectionSrcVertexFilter());

@@ -13,6 +13,7 @@ import org.apache.bcel.classfile.Method;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotation;
@@ -32,14 +33,14 @@ public class SpringControllerMethodVisitor extends MethodVisitorBase {
     }
 
     public void start() {
-        AnnotationEntry requestMapping = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, getAvailableRequestMappingAnnotations());
+        Optional<AnnotationEntry> requestMapping = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, getAvailableRequestMappingAnnotations());
 
-        if (requestMapping != null) {
-            String valueAnnotation = getAnnotationParameter(requestMapping, "value", "path");
+        if (requestMapping.isPresent()) {
+            String valueAnnotation = getAnnotationParameter(requestMapping.get(), "value", "path");
             if (valueAnnotation != null) {
                 String[] requestUrls = valueAnnotation.split(",");
                 for (String requestUrl : requestUrls) {
-                    String requestMethod = getRequestMethod(requestMapping, javaClass.getConstantPool());
+                    String requestMethod = getRequestMethod(requestMapping.get(), javaClass.getConstantPool());
                     Set<String> requestMethods;
                     if (!requestMethod.isEmpty()){
                         requestMethods  = new HashSet<>(Collections.singletonList(requestMethod));

@@ -7,6 +7,7 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,14 +28,14 @@ public class AnnotationValueHandler {
      */
     public static void handlePathAnnotation(JavaClass javaClass, Method method, String parentPath, Context context, boolean controllerSide) {
         //checking @Path - handle multiple urls
-        AnnotationEntry path = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, Annotations.JAVAX.PATH.getDesc());
-        if (path != null) {
-            String value = getAnnotationParameter(path, "value");  //might contains multiple urls divided by '|': '/abc,/fgh,/ijk/'
+        Optional<AnnotationEntry> path = getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, Annotations.JAVAX.PATH.getDesc());
+        if (path.isPresent()) {
+            String value = getAnnotationParameter(path.get(), "value");  //might contains multiple urls divided by '|': '/abc,/fgh,/ijk/'
 
             Arrays.stream(value.split(",")).forEach(s -> {
                 String methodPath = parentPath + s;
                 Set<String> requestMethods = HttpConsts.getHttpVerb().stream()
-                        .filter(m -> getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, "/" + m + ";") != null)
+                        .filter(m -> getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, "/" + m + ";").isPresent())
                         .collect(Collectors.toSet());
 
                 addHttpLinks(requestMethods, context, methodPath, javaClass.getClassName(), formatMethod(method), controllerSide);
