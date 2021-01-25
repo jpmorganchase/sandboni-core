@@ -7,10 +7,13 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ConstantPoolGen;
 
+import java.util.Objects;
+
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotation;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.getRelativeFileName;
-import static com.sandboni.core.engine.finder.bcel.visitors.TestClassVisitor.ALL_TEST_PACKAGES;
+import static com.sandboni.core.engine.finder.bcel.visitors.TestClassVisitor.JUNIT_PACKAGE;
+import static com.sandboni.core.engine.finder.bcel.visitors.TestClassVisitor.TESTING_PACKAGE;
 
 abstract class CallerFieldOrMethodVisitor extends MethodVisitorBase {
     final Vertex currentMethodVertex;
@@ -19,10 +22,11 @@ abstract class CallerFieldOrMethodVisitor extends MethodVisitorBase {
     CallerFieldOrMethodVisitor(Method m, JavaClass jc, Context c) {
         super(m, jc, c);
         cp = new ConstantPoolGen(jc.getConstantPool());
+        boolean testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, JUNIT_PACKAGE, TESTING_PACKAGE) != null;
 
-        boolean testMethod = getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, ALL_TEST_PACKAGES).isPresent();
-
-        boolean ignore = AnnotationUtils.isIgnore(jc, jc::getAnnotationEntries) || AnnotationUtils.isIgnore(jc, m::getAnnotationEntries);
+        boolean ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), jc::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
+        if (!ignore)
+            ignore = Objects.nonNull(AnnotationUtils.getAnnotation(jc.getConstantPool(), m::getAnnotationEntries, Annotations.TEST.IGNORE.getDesc()));
 
         if (testMethod){
             currentMethodVertex = new TestVertex.Builder(jc.getClassName(), formatMethod(m.getName(), m.getArgumentTypes()), context.getCurrentLocation())

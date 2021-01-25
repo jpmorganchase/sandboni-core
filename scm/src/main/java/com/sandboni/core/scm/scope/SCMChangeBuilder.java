@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 public class SCMChangeBuilder{
 
@@ -28,25 +28,25 @@ public class SCMChangeBuilder{
     public String repository = "";
 
     private Optional<FileExtensions> getFileExt(String filePath){
-        Optional<String> tmp = FileUtil.getExtension(filePath);
+        Optional tmp = FileUtil.getExtension(filePath);
         if (!tmp.isPresent())
             return Optional.empty();
 
-        String ext = tmp.get();
+        String ext = tmp.get().toString();
         FileExtensions fe = FileExtensions.fromText(ext);
 
         if (Objects.isNull(fe)) return Optional.empty();
         return Optional.of(fe);
     }
 
-    private final Predicate<String> isPropertyFile = filePath -> {
+    private final Function<String, Boolean> isPropertyFile = filePath -> {
         Optional<FileExtensions> extensions = getFileExt(filePath);
         return extensions.map(fileExtensions ->
                 fileExtensions.in(FileExtensions.PROPERTIES, FileExtensions.PROPS, FileExtensions.YML))
                 .orElse(false);
     };
 
-    private final Predicate<String> isBuildFile = filePath ->
+    private final Function<String, Boolean> isBuildFile = filePath ->
             filePath.toLowerCase().endsWith(FileNames.POM.fileName());
 
     public SCMChangeBuilder with(Consumer<SCMChangeBuilder> function){
@@ -59,10 +59,10 @@ public class SCMChangeBuilder{
 
         if (changeType == ChangeType.DELETE) {
             change = new SCMChange(path, changedLines, changeType);
-        } else if (isPropertyFile.test(path)){
+        } else if (isPropertyFile.apply(path)){
             Set<String> keys = RawUtil.grepKeys(fileContent, changedLines);
             change = new SCMChangeInProperties(path, changedLines, keys, changeType);
-        } else if (isBuildFile.test(path)) {
+        } else if (isBuildFile.apply(path)) {
             MavenXpp3Reader reader = new MavenXpp3Reader();
             Model model = null;
             try {

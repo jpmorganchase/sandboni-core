@@ -15,15 +15,8 @@
         <cve>CVE-2005-0366</cve>
     </suppress>
     <suppress>
-        <!--junit 4.13.1 is excluded from CVE-2020-15250, but is incorrectly flagged as a vulnerability-->
-        <notes><![CDATA[file name: junit-4.13.1.jar]]></notes>
-        <filePath regex="true">.*junit.*</filePath>
-        <cve>CVE-2020-15250</cve>
-    </suppress>
-    <suppress>
         <notes><![CDATA[file name: bcprov-jdk15on-1.51.jar]]></notes>
         <filePath regex="true">.*bcprov-jdk15on.*</filePath>
-        <cve>CVE-2020-26939</cve>
         <cve>CVE-2016-1000338</cve>
         <cve>CVE-2016-1000339</cve>
         <cve>CVE-2016-1000345</cve>

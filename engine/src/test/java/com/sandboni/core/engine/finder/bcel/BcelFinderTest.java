@@ -5,7 +5,9 @@ import com.sandboni.core.engine.PoCDiffChangeDetector;
 import com.sandboni.core.engine.contract.Finder;
 import com.sandboni.core.engine.contract.HttpConsts;
 import com.sandboni.core.engine.exception.ParseRuntimeException;
-import com.sandboni.core.engine.finder.bcel.visitors.MethodUtils;
+import com.sandboni.core.engine.finder.bcel.visitors.*;
+import com.sandboni.core.engine.finder.bcel.visitors.http.JavaxControllerClassVisitor;
+import com.sandboni.core.engine.finder.bcel.visitors.http.SpringControllerClassVisitor;
 import com.sandboni.core.engine.sta.Context;
 import com.sandboni.core.engine.sta.graph.Link;
 import com.sandboni.core.engine.sta.graph.LinkType;
@@ -20,18 +22,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.sandboni.core.engine.MockChangeDetector.*;
-import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.CUCUMBER_RUNNER_VERTEX;
-import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.END_VERTEX;
-import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.START_VERTEX;
+import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.*;
 
 public class BcelFinderTest extends FinderTestBase {
     private static final String CALLER_ACTOR_VERTEX = PACKAGE_NAME + ".Caller";
-    private final String PLAIN_JUNIT5_TEST_ACTOR_VERTEX = PACKAGE_NAME + "." + JUNIT5 + ".PlainJUnit5Test";
-    private final String CALLEE_ACTOR_VERTEX = PACKAGE_NAME + ".Callee";
-    private final String DO_OTHER_STUFF_ACTOR_VERTEX = PACKAGE_NAME + ".DoOtherStuff";
-    private final String PLAIN_TEST_ACTOR_VERTEX = PACKAGE_NAME + ".PlainTest";
-    private final String EMPTY_TEST_ACTOR_VERTEX = PACKAGE_NAME + ".EmptyTest";
-    private final String HTTP_TEST_ACTOR_VERTEX = PACKAGE_NAME + ".HttpTest";
 
     private void testVisitor(Link[] expectedLinks) {
         Finder f = new BcelFinder();
@@ -76,7 +70,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test
     public void testExplicitCall() {
         Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "explicitCall()").build(),
-                new Vertex.Builder(CALLEE_ACTOR_VERTEX, "doStuff()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "doStuff()").build(),
                 LinkType.METHOD_CALL);
         testCallerVisitor(expectedLink);
     }
@@ -84,7 +78,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test
     public void testExplicitStaticCall() {
         Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "explicitStaticCall()").build(),
-                new Vertex.Builder(CALLEE_ACTOR_VERTEX, "doStuffStatic()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "doStuffStatic()").build(),
                 LinkType.STATIC_CALL);
         testCallerVisitor(expectedLink);
     }
@@ -92,22 +86,22 @@ public class BcelFinderTest extends FinderTestBase {
     @Test
     public void testInterfaceCall() {
         Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "interfaceCall(" + PACKAGE_NAME + ".DoOtherStuff)").build(),
-                new Vertex.Builder(DO_OTHER_STUFF_ACTOR_VERTEX, "doStuffViaInterface()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".DoOtherStuff", "doStuffViaInterface()").build(),
                 LinkType.INTERFACE_CALL);
         testCallerVisitor(expectedLink);
     }
 
     @Test
     public void testDefaultInterfaceCall() {
-        Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "interfaceDefaultCall(" + PACKAGE_NAME + ".DoOtherStuff)").build(),
-                new Vertex.Builder(DO_OTHER_STUFF_ACTOR_VERTEX, "doStuffDefault()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "interfaceDefaultCall(" + PACKAGE_NAME + ".DoOtherStuff)").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".DoOtherStuff", "doStuffDefault()").build(),
                 LinkType.INTERFACE_CALL);
         testCallerVisitor(expectedLink);
     }
 
     @Test
     public void testThreadRunCall() {
-        Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "threadRunReference()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "threadRunReference()").build(),
                 new Vertex.Builder("java.lang.Runnable", "run()").build(),
                 LinkType.INTERFACE_CALL);
         testCallerVisitor(expectedLink);
@@ -115,51 +109,51 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testInterfaceImpl() {
-        Link expectedLink1 = newLink(new Vertex.Builder(DO_OTHER_STUFF_ACTOR_VERTEX, "doStuffViaInterface()").build(),
-                new Vertex.Builder(CALLEE_ACTOR_VERTEX, "doStuffViaInterface()").build(), LinkType.INTERFACE_IMPL);
+        Link expectedLink1 = newLink(new Vertex.Builder(PACKAGE_NAME + ".DoOtherStuff", "doStuffViaInterface()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "doStuffViaInterface()").build(), LinkType.INTERFACE_IMPL);
 
         Link expectedLink2 = newLink(new Vertex.Builder(PACKAGE_NAME + ".DoStuffBase", "doStuffViaInterface()").build(),
-                new Vertex.Builder(CALLEE_ACTOR_VERTEX, "doStuffViaInterface()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "doStuffViaInterface()").build(),
                 LinkType.INTERFACE_IMPL);
         testImplementingVisitor(expectedLink1, expectedLink2);
     }
 
     @Test
     public void testGenericReference() {
-        Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "genericReference(java.util.List)").build(),
-                new Vertex.Builder(CALLEE_ACTOR_VERTEX, "toString()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "genericReference(java.util.List)").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "toString()").build(),
                 LinkType.METHOD_CALL);
         testCallerVisitor(expectedLink);
     }
 
     @Test
     public void testFieldImplGet() {
-        Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "instanceFieldReferenceGet()").build(),
-                new Vertex.Builder(CALLEE_ACTOR_VERTEX, "value").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "instanceFieldReferenceGet()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "value").build(),
                 LinkType.FIELD_GET);
         testCallerVisitor(expectedLink);
     }
 
     @Test
     public void testFieldImplPut() {
-        Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "instanceFieldReferencePut()").build(),
-                new Vertex.Builder(CALLEE_ACTOR_VERTEX, "value").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "instanceFieldReferencePut()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "value").build(),
                 LinkType.FIELD_PUT);
         testCallerVisitor(expectedLink);
     }
 
     @Test
     public void testStaticImplGet() {
-        Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "staticFieldReferenceGet()").build(),
-                new Vertex.Builder(CALLEE_ACTOR_VERTEX, "valueStatic").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "staticFieldReferenceGet()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "valueStatic").build(),
                 LinkType.STATIC_GET);
         testCallerVisitor(expectedLink);
     }
 
     @Test
     public void testStaticImplPut() {
-        Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "staticFieldReferencePut()").build(),
-                new Vertex.Builder(CALLEE_ACTOR_VERTEX, "valueStatic").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "staticFieldReferencePut()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "valueStatic").build(),
                 LinkType.STATIC_PUT);
         testCallerVisitor(expectedLink);
     }
@@ -167,7 +161,7 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testImplicitExecutorServiceExecuteLink(){
-        Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "testExecutorServiceExecute()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "testExecutorServiceExecute()").build(),
                 new Vertex.Builder("java.lang.Runnable", "run()").build(),
                 LinkType.INTERFACE_CALL);
         testCallerVisitor(expectedLink);
@@ -175,7 +169,7 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testImplicitExecutorServiceSubmitLink(){
-        Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "testExecutorServiceSubmit()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "testExecutorServiceSubmit()").build(),
                 new Vertex.Builder("java.lang.Runnable", "run()").build(),
                 LinkType.INTERFACE_CALL);
         testCallerVisitor(expectedLink);
@@ -183,7 +177,7 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testOnlyMethodAnnotatedWithPath(){
-        Link expectedLink = newLink(new Vertex.Builder(HTTP_TEST_ACTOR_VERTEX, "testJavaxOnlyMethodAnnotated()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".HttpTest", "testJavaxOnlyMethodAnnotated()").build(),
                 new Vertex.Builder("TRACE http://localhost/*", "/basic-quote-requests/annotation-only-method")
                         .markSpecial()
                         .build()
@@ -193,122 +187,90 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testTestMethodDetection() {
-        TestVertex tv = new TestVertex.Builder(PLAIN_TEST_ACTOR_VERTEX, "testExplicitCall()",null).withIgnore(true).build();
+        TestVertex tv = new TestVertex.Builder(PACKAGE_NAME + ".PlainTest", "testExplicitCall()",null).withIgnore(true).build();
         Link expectedLink = newLink(START_VERTEX, tv, LinkType.ENTRY_POINT);
-        TestVertex tvJunit5 = new TestVertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, "testExplicitCall()",null).withIgnore(true).build();
-        Link expectedJUnit5Link = newLink(START_VERTEX, tvJunit5, LinkType.ENTRY_POINT);
-        testTestClassVisitor(expectedLink, expectedJUnit5Link);
+        testTestClassVisitor(expectedLink);
     }
 
     @Test
     public void testIgnoredMethodDetection() {
-        TestVertex tv = new TestVertex.Builder(EMPTY_TEST_ACTOR_VERTEX, "testIgnoredMethod()", null).withIgnore(true).build();
+        TestVertex tv = new TestVertex.Builder(PACKAGE_NAME + ".EmptyTest", "testIgnoredMethod()", null).withIgnore(true).build();
         Link expectedLink = newLink(START_VERTEX, tv, LinkType.ENTRY_POINT);
         testTestClassVisitor(expectedLink);
     }
 
     @Test
     public void testNotIgnoredMethodDetection() {
-        TestVertex tv = new TestVertex.Builder(EMPTY_TEST_ACTOR_VERTEX, "testNotIgnoredMethod()", null).build();
+        TestVertex tv = new TestVertex.Builder(PACKAGE_NAME + ".EmptyTest", "testNotIgnoredMethod()", null).build();
         Link expectedLink = newLink(START_VERTEX, tv, LinkType.ENTRY_POINT);
         testTestClassVisitor(expectedLink);
     }
 
     @Test
     public void testTestIgnoredMethodAndClassDetection() {
-        TestVertex tv = new TestVertex.Builder(PLAIN_TEST_ACTOR_VERTEX, "testIgnoredCall()", null).withIgnore(true).build();
+        TestVertex tv = new TestVertex.Builder(PACKAGE_NAME + ".PlainTest", "testIgnoredCall()", null).withIgnore(true).build();
         Link expectedLink = newLink(START_VERTEX, tv, LinkType.ENTRY_POINT);
-        TestVertex tvJunit5 = new TestVertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, "testIgnoredCall()", null).withIgnore(true).build();
-        Link expectedLinkJunit5 = newLink(START_VERTEX, tvJunit5, LinkType.ENTRY_POINT);
-        testTestClassVisitor(expectedLink, expectedLinkJunit5);
+        testTestClassVisitor(expectedLink);
     }
 
     @Test
     public void testConstructorCallDetection() {
-        Link expectedLink = newLink(new TestVertex.Builder(PLAIN_TEST_ACTOR_VERTEX, "testExplicitCall()",null).build(),
-                new Vertex.Builder(PLAIN_TEST_ACTOR_VERTEX, MethodUtils.INIT).build(),
+        Link expectedLink = newLink(new TestVertex.Builder(PACKAGE_NAME + ".PlainTest", "testExplicitCall()",null).build(),
+                new Vertex.Builder(PACKAGE_NAME + ".PlainTest", MethodUtils.INIT).build(),
                 LinkType.METHOD_CALL);
-        Link expectedLinkJUnit5 = newLink(new TestVertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, "testExplicitCall()",null).build(),
-                new Vertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, MethodUtils.INIT).build(),
-                LinkType.METHOD_CALL);
-        testTestClassVisitor(expectedLink, expectedLinkJUnit5);
+        testTestClassVisitor(expectedLink);
     }
     @Test
     public void testStaticConstructorCallDetection() {
-        Link expectedLink = newLink(new TestVertex.Builder(PLAIN_TEST_ACTOR_VERTEX, "testExplicitCall()", null).build(),
-                new Vertex.Builder(PLAIN_TEST_ACTOR_VERTEX, MethodUtils.CLINIT).build(),
+        Link expectedLink = newLink(new TestVertex.Builder(PACKAGE_NAME + ".PlainTest", "testExplicitCall()", null).build(),
+                new Vertex.Builder(PACKAGE_NAME + ".PlainTest", MethodUtils.CLINIT).build(),
                 LinkType.STATIC_CALL);
-
-        Link expectedLinkJUnit5 = newLink(new TestVertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, "testExplicitCall()", null).build(),
-                new Vertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, MethodUtils.CLINIT).build(),
-                LinkType.STATIC_CALL);
-        testTestClassVisitor(expectedLink, expectedLinkJUnit5);
-    }
-
-    @Test
-    public void testStaticNestedTestCallDetection() {
-        Link expectedLinkJUnit5 = newLink(new TestVertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX + "$ATest", "testMethodAFromNested()", null).build(),
-                new Vertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX  + "$ATest" , MethodUtils.CLINIT).build(),
-                LinkType.STATIC_CALL);
-        testTestClassVisitor(expectedLinkJUnit5);
+        testTestClassVisitor(expectedLink);
     }
 
     @Test
     public void testBeforeMethodsDetection() {
-        Link expectedLink = newLink(new TestVertex.Builder(PLAIN_TEST_ACTOR_VERTEX, "testExplicitCall()", null).build(),
-                new Vertex.Builder(PLAIN_TEST_ACTOR_VERTEX, "before()").build(),
+        Link expectedLink = newLink(new TestVertex.Builder(PACKAGE_NAME + ".PlainTest", "testExplicitCall()", null).build(),
+                new Vertex.Builder(PACKAGE_NAME + ".PlainTest", "before()").build(),
                 LinkType.METHOD_CALL);
-        Link expectedLinkJUnit5 = newLink(new TestVertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, "testExplicitCall()", null).build(),
-                new Vertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, "before()").build(),
-                LinkType.METHOD_CALL);
-        testTestClassVisitor(expectedLink, expectedLinkJUnit5);
+        testTestClassVisitor(expectedLink);
     }
 
     @Test
     public void testAfterMethodsDetection() {
-        Link expectedLink = newLink(new TestVertex.Builder(PLAIN_TEST_ACTOR_VERTEX, "testExplicitCall()", null).build(),
-                new Vertex.Builder(PLAIN_TEST_ACTOR_VERTEX, "after()").build(),
+        Link expectedLink = newLink(new TestVertex.Builder(PACKAGE_NAME + ".PlainTest", "testExplicitCall()", null).build(),
+                new Vertex.Builder(PACKAGE_NAME + ".PlainTest", "after()").build(),
                 LinkType.METHOD_CALL);
-        Link expectedLinkJUnit5 = newLink(new TestVertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, "testExplicitCall()", null).build(),
-                new Vertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, "after()").build(),
-                LinkType.METHOD_CALL);
-        testTestClassVisitor(expectedLink, expectedLinkJUnit5);
+        testTestClassVisitor(expectedLink);
     }
 
     @Test
     public void testBeforeClassMethodsDetection() {
-        Link expectedLink = newLink(new TestVertex.Builder(PLAIN_TEST_ACTOR_VERTEX, "testExplicitCall()", null).build(),
-                new Vertex.Builder(PLAIN_TEST_ACTOR_VERTEX, "beforeClass()").build(),
+        Link expectedLink = newLink(new TestVertex.Builder(PACKAGE_NAME + ".PlainTest", "testExplicitCall()", null).build(),
+                new Vertex.Builder(PACKAGE_NAME + ".PlainTest", "beforeClass()").build(),
                 LinkType.STATIC_CALL);
-        Link expectedLinkJUnit5 = newLink(new TestVertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, "testExplicitCall()", null).build(),
-                new Vertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, "beforeClass()").build(),
-                LinkType.STATIC_CALL);
-        testTestClassVisitor(expectedLink, expectedLinkJUnit5);
+        testTestClassVisitor(expectedLink);
     }
 
     @Test
     public void testAfterClassMethodsDetection() {
         Link expectedLink = newLink(
-                new TestVertex.Builder(PLAIN_TEST_ACTOR_VERTEX, "testExplicitCall()", null).build(),
-                new Vertex.Builder(PLAIN_TEST_ACTOR_VERTEX, "afterClass()").build(),
+                new TestVertex.Builder(PACKAGE_NAME + ".PlainTest", "testExplicitCall()", null).build(),
+                new Vertex.Builder(PACKAGE_NAME + ".PlainTest", "afterClass()").build(),
                 LinkType.STATIC_CALL);
-        Link expectedLinkJUnit5 = newLink(
-                new TestVertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, "testExplicitCall()", null).build(),
-                new Vertex.Builder(PLAIN_JUNIT5_TEST_ACTOR_VERTEX, "afterClass()").build(),
-                LinkType.STATIC_CALL);
-        testTestClassVisitor(expectedLink, expectedLinkJUnit5);
+        testTestClassVisitor(expectedLink);
     }
     @Test
     public void testOverriddenMethodDetection() {
         Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".CallerBase", "doSuperStuff()").build(),
-                new Vertex.Builder(CALLER_ACTOR_VERTEX, "doSuperStuff()").build()
+                new Vertex.Builder(PACKAGE_NAME + ".Caller", "doSuperStuff()").build()
                 , LinkType.OVERRIDDEN);
         testInheritanceVisitor(expectedLink);
     }
 
     @Test
     public void testInheritedMethodDetection() {
-        Link expectedLink = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "doSuperStuffCaller()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "doSuperStuffCaller()").build(),
                 new Vertex.Builder(PACKAGE_NAME + ".CallerBase", "doSuperStuffCaller()").build(),
                 LinkType.FORWARD_TO);
         testInheritanceVisitor(expectedLink);
@@ -316,7 +278,7 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testInheritedInterfaceMethodDetection() {
-        Link expectedLink = newLink(new Vertex.Builder(DO_OTHER_STUFF_ACTOR_VERTEX, "doStuffViaInterfaceSuper()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".DoOtherStuff", "doStuffViaInterfaceSuper()").build(),
                 new Vertex.Builder(PACKAGE_NAME + ".DoStuffSuper", "doStuffViaInterfaceSuper()").build(),
                 LinkType.FORWARD_TO);
         testInheritanceVisitor(expectedLink);
@@ -331,7 +293,7 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testHttpCallTestMethodDetection() {
-        Link expectedLink = newLink(new Vertex.Builder(HTTP_TEST_ACTOR_VERTEX, "testHttpVerbCall()").build(),
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".HttpTest", "testHttpVerbCall()").build(),
                 getGetHttpVertex("GET", "/scenario/explicitCall"),
                 LinkType.HTTP_REQUEST);
         testTestClassVisitor(expectedLink);
@@ -340,7 +302,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test
     public void testSpringAnnotationMapDetection() {
         Link expectedLink = newLink(
-                new Vertex.Builder(HTTP_TEST_ACTOR_VERTEX, "testDisconnectedSpringAnnotationMap()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".HttpTest", "testDisconnectedSpringAnnotationMap()").build(),
                 new Vertex.Builder("GET" + " " + HttpConsts.HTTP_LOCALHOST, "/scenario/annotation")
                         .markSpecial()
                         .build(),
@@ -351,7 +313,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test
     public void testSpringAnnotationNoMethodDetectionGet() {
         Link expectedLink = newLink(
-                new Vertex.Builder(HTTP_TEST_ACTOR_VERTEX, "testAnnotationNoMethodMapCall()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".HttpTest", "testAnnotationNoMethodMapCall()").build(),
                 new Vertex.Builder("GET" + " " + HttpConsts.HTTP_LOCALHOST, "/scenario/annotation-no-method")
                         .markSpecial()
                         .build(),
@@ -362,7 +324,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test
     public void testSpringAnnotationNoMethodDetectionPost() {
         Link expectedLink = newLink(
-                new Vertex.Builder(HTTP_TEST_ACTOR_VERTEX, "testAnnotationNoMethodMapCall()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".HttpTest", "testAnnotationNoMethodMapCall()").build(),
                 new Vertex.Builder("POST" + " " + HttpConsts.HTTP_LOCALHOST, "/scenario/annotation-no-method")
                         .markSpecial()
                         .build(),
@@ -373,7 +335,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test
     public void testSpringAnnotationNoMethodDetectionPatch() {
         Link expectedLink = newLink(
-                new Vertex.Builder(HTTP_TEST_ACTOR_VERTEX, "testAnnotationNoMethodMapCall()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".HttpTest", "testAnnotationNoMethodMapCall()").build(),
                 new Vertex.Builder("PATCH" + " " + HttpConsts.HTTP_LOCALHOST, "/scenario/annotation-no-method")
                         .markSpecial()
                         .build(),
@@ -384,7 +346,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test
     public void testSpringAnnotationNoMethodDetectionPut() {
         Link expectedLink = newLink(
-                new Vertex.Builder(HTTP_TEST_ACTOR_VERTEX, "testAnnotationNoMethodMapCall()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".HttpTest", "testAnnotationNoMethodMapCall()").build(),
                 new Vertex.Builder("PUT" + " " + HttpConsts.HTTP_LOCALHOST, "/scenario/annotation-no-method")
                         .markSpecial()
                         .build(),
@@ -395,7 +357,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test
     public void testSpringAnnotationNoMethodDetectionDelete() {
         Link expectedLink = newLink(
-                new Vertex.Builder(HTTP_TEST_ACTOR_VERTEX, "testAnnotationNoMethodMapCall()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".HttpTest", "testAnnotationNoMethodMapCall()").build(),
                 new Vertex.Builder("DELETE" + " " + HttpConsts.HTTP_LOCALHOST, "/scenario/annotation-no-method")
                         .markSpecial()
                         .build(),
@@ -406,7 +368,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test
     public void testSpringAnnotationNoMethodDetectionTrace() {
         Link expectedLink = newLink(
-                new Vertex.Builder(HTTP_TEST_ACTOR_VERTEX, "testAnnotationNoMethodMapCall()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".HttpTest", "testAnnotationNoMethodMapCall()").build(),
                 new Vertex.Builder("TRACE" + " " + HttpConsts.HTTP_LOCALHOST, "/scenario/annotation-no-method").markSpecial().build(),
                 LinkType.HTTP_REQUEST);
         testTestClassVisitor(expectedLink);
@@ -415,7 +377,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test
     public void testJavaxAnnotationMapDetection() {
         Link expectedLink = newLink(
-                new Vertex.Builder(HTTP_TEST_ACTOR_VERTEX, "testDisconnectedJavaxAnnotationMap()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".HttpTest", "testDisconnectedJavaxAnnotationMap()").build(),
                 new Vertex.Builder("PUT" + " " + HttpConsts.HTTP_LOCALHOST, "/basic-quote-requests/annotation").markSpecial().build(),
                 LinkType.HTTP_REQUEST);
         testTestClassVisitor(expectedLink);
@@ -549,23 +511,24 @@ public class BcelFinderTest extends FinderTestBase {
 
     @Test
     public void testReferenceInLambdaDetection() {
-        Link expectedLink1 = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "referenceInLambdaSimple()").build(),
-                new Vertex.Builder(CALLER_ACTOR_VERTEX, "lambda$referenceInLambdaSimple$0(java.lang.String)").build(),
+        Link expectedLink1 = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "referenceInLambdaSimple()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Caller", "lambda$referenceInLambdaSimple$0(java.lang.String)").build(),
                 LinkType.DYNAMIC_CALL);
-        Link expectedLink2 = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "lambda$referenceInLambdaSimple$0(java.lang.String)").build(),
-                new Vertex.Builder(CALLEE_ACTOR_VERTEX, "toString()").build(),
+
+        Link expectedLink2 = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "lambda$referenceInLambdaSimple$0(java.lang.String)").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "toString()").build(),
                 LinkType.METHOD_CALL);
         testCallerVisitor(expectedLink1, expectedLink2);
     }
 
     @Test
     public void testReferenceInLambdaWithClass() {
-        Link expectedLink1 = newLink(new Vertex.Builder(CALLER_ACTOR_VERTEX, "referenceInLambdaWithClass()").build(),
+        Link expectedLink1 = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller", "referenceInLambdaWithClass()").build(),
                 new Vertex.Builder(PACKAGE_NAME + ".Caller$1", "test(java.lang.String)").build(),
                 LinkType.METHOD_CALL);
 
         Link expectedLink2 = newLink(new Vertex.Builder(PACKAGE_NAME + ".Caller$1", "test(java.lang.String)").build(),
-                new Vertex.Builder(CALLEE_ACTOR_VERTEX, "toString()").build(),
+                new Vertex.Builder(PACKAGE_NAME + ".Callee", "toString()").build(),
                 LinkType.METHOD_CALL);
         testCallerVisitor(expectedLink1, expectedLink2);
     }
@@ -573,7 +536,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Ignore("This will fail because we do not have enough info for metadata (i.e. variable) changes")
     @Test
     public void testAffectedFieldDetection() {
-        Link expectedLink = newLink(new Vertex.Builder(CALLEE_ACTOR_VERTEX, "value").build(), END_VERTEX, LinkType.EXIT_POINT);
+        Link expectedLink = newLink(new Vertex.Builder(PACKAGE_NAME + ".Callee", "value").build(), END_VERTEX, LinkType.EXIT_POINT);
         testAffectedVisitor(expectedLink);
     }
 
@@ -595,7 +558,7 @@ public class BcelFinderTest extends FinderTestBase {
     @Test(expected = AssertionError.class)
     public void testNoConstructorCall() {
         Link expectedLink = newLink(new Vertex.Builder( PACKAGE_NAME + ".BasicScenario", MethodUtils.INIT).build(),
-                new Vertex.Builder(CALLEE_ACTOR_VERTEX, MethodUtils.INIT).build(),
+                new Vertex.Builder(  PACKAGE_NAME + ".Callee", MethodUtils.INIT).build(),
                 LinkType.SPECIAL_CALL);
         testCallerVisitor(expectedLink);
     }

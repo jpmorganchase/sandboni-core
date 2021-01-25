@@ -17,7 +17,7 @@ public class PathFilter implements SourceControlFilter {
         if (locationsToScan == null)
             throw new SourceControlException("Please provide at least one path you want git to inspect");
 
-        this.pathsToScan = new HashSet<>(locationsToScan.length, 0.6f);
+        this.pathsToScan = new HashSet(locationsToScan.length, 0.6f);
         Arrays.stream(locationsToScan).forEach(l->pathsToScan.add(org.eclipse.jgit.treewalk.filter.PathFilter.create(l)));
     }
 

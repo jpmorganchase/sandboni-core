@@ -50,7 +50,7 @@ public class FileWriterEngine {
         } else if (type == FileType.PROPERTIES) {
             return new PropertiesFileStrategy<>((Map<String, Object>) result, new PropertiesFileRenderer<>(), fileOptions);
         } else { // type == FileType.XML
-            return new XMLFileStrategy<>((Collection<Object>) result, new XMLFileRenderer<>(), fileOptions);
+            return new XMLFileStrategy<>((Collection<Object>) result, new XMLFileRenderer(), fileOptions);
         }
     }
 }

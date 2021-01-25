@@ -9,8 +9,6 @@ import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 
-import java.util.Optional;
-
 import static com.sandboni.core.engine.finder.bcel.visitors.AnnotationUtils.getAnnotationParameter;
 import static com.sandboni.core.engine.finder.bcel.visitors.MethodUtils.formatMethod;
 import static com.sandboni.core.engine.sta.graph.vertex.VertexInitTypes.CUCUMBER_VERTEX;
@@ -22,9 +20,9 @@ public class CucumberMethodVisitor extends CallerFieldOrMethodVisitor {
 
     @Override
     public void visitInstructions(Method method) {
-        Optional<AnnotationEntry> annotation = AnnotationUtils.getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, CucumberFeatureFinder.getCucumberSteps().toArray(new String[0]));
-        if (annotation.isPresent()) {
-            String cucumberText = getAnnotationParameter(annotation.get(), "value");
+        AnnotationEntry annotation = AnnotationUtils.getAnnotation(javaClass.getConstantPool(), method::getAnnotationEntries, CucumberFeatureFinder.getCucumberSteps().toArray(new String[0]));
+        if (annotation != null) {
+            String cucumberText = getAnnotationParameter(annotation, "value");
             if (cucumberText != null && !cucumberText.isEmpty()) {
                 super.addLink(LinkFactory.createInstance(
                         context.getApplicationId(),

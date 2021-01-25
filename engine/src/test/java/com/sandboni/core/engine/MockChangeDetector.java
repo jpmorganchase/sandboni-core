@@ -12,7 +12,6 @@ public class MockChangeDetector implements ChangeDetector {
     public static final String LAMBDA_PACKAGE_NAME = "com.sandboni.core.engine.scenario.lambda";
     public static final String LAMBDA_PACKAGE_TEST_NAME = "com.sandboni.core.engine.scenario.tests";
     public static final String TEST_LOCATION = "./target/test-classes";
-    public static final String JUNIT5 = "junit5";
 
     @Override
     public ChangeScope<Change> getChanges(String fromChangeId, String toChangeId) {
