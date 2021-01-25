@@ -1,0 +1,110 @@
+diff --git a/engine/src/main/java/com/sandboni/core/engine/Application.java b/engine/src/main/java/com/sandboni/core/engine/Application.java
+index 47a0edb..105740c 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/Application.java
++++ b/engine/src/main/java/com/sandboni/core/engine/Application.java
+@@ -40,7 +40,7 @@ public class Application {
+         log.info("Disconnected tests to execute: {}", disconnectedTests);
+         log.info("Related test suites: {}", testSuites);
+ 
+-        log.info("Sandboni execution: {} milliseconds", TimeUtils.elapsedTime(start));
++        log.debug("Sandboni execution: {} milliseconds", TimeUtils.elapsedTime(start));
+     }
+ 
+     //synchronized was added because of SonarQube demand
+diff --git a/engine/src/main/java/com/sandboni/core/engine/Processor.java b/engine/src/main/java/com/sandboni/core/engine/Processor.java
+index 5267c07..7ee070f 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/Processor.java
++++ b/engine/src/main/java/com/sandboni/core/engine/Processor.java
+@@ -122,7 +122,7 @@ public class Processor {
+         long start = System.nanoTime();
+         try {
+             ChangeScope<Change> changes = changeDetector.getChanges(arguments.getFromChangeId(), arguments.getToChangeId());
+-            log.info("[{}] Change scope retrieved in {} milliseconds", Thread.currentThread().getName(), elapsedTime(start));
++            log.debug("[{}] Change scope retrieved in {} milliseconds", Thread.currentThread().getName(), elapsedTime(start));
+             return changes;
+         } catch (SourceControlException e) {
+             throw new ParseRuntimeException(e);
+diff --git a/engine/src/main/java/com/sandboni/core/engine/sta/Builder.java b/engine/src/main/java/com/sandboni/core/engine/sta/Builder.java
+index 8d63369..db8a7e0 100644
+--- a/engine/src/main/java/com/sandboni/core/engine/sta/Builder.java
++++ b/engine/src/main/java/com/sandboni/core/engine/sta/Builder.java
+@@ -43,7 +43,7 @@ public class Builder {
+         context.getLinks().sequential().forEach(l -> add(graph, l.getCallee(), l.getCaller(), l.getLinkType()));
+         Instant finish = Instant.now();
+ 
+-        log.info("Build Graph execution total time: {}", Duration.between(start, finish).toMillis());
++        log.debug("Build Graph execution total time: {}", Duration.between(start, finish).toMillis());
+ 
+         // Cleaning cache of not longer needed Vertex
+         LinkFactory.clear(context.getApplicationId());
+diff --git a/scm/src/main/java/com/sandboni/core/scm/resolvers/RevisionResolver.java b/scm/src/main/java/com/sandboni/core/scm/resolvers/RevisionResolver.java
+index 38e2b57..f35feaa 100644
+--- a/scm/src/main/java/com/sandboni/core/scm/resolvers/RevisionResolver.java
++++ b/scm/src/main/java/com/sandboni/core/scm/resolvers/RevisionResolver.java
+@@ -126,8 +126,5 @@ public class RevisionResolver {
+         if (from == null || to == null || from.equals(ObjectId.zeroId())) {
+             throw new SourceControlException(ErrorMessages.UNABLE_TO_RESOLVE_REVISIONS);
+         }
+-        if (from.equals(to)) {
+-            throw new SourceControlException(ErrorMessages.REVISIONS_CANNOT_BE_SAME);
+-        }
+     }
+ }
+diff --git a/scm/src/main/java/com/sandboni/core/scm/resolvers/cli/GitDiffRunner.java b/scm/src/main/java/com/sandboni/core/scm/resolvers/cli/GitDiffRunner.java
+index 96eb8a2..f2cf4cd 100644
+--- a/scm/src/main/java/com/sandboni/core/scm/resolvers/cli/GitDiffRunner.java
++++ b/scm/src/main/java/com/sandboni/core/scm/resolvers/cli/GitDiffRunner.java
+@@ -69,7 +69,10 @@ public class GitDiffRunner {
+         command.add("git");
+         command.add("diff");
+         command.add("-U1");
+-        command.add(fromRevision.getName());
++
++        if (toRevision.equals(fromRevision)) {
++            command.add(fromRevision.getName() + '~');
++        }
+         if (!toRevision.equals(ObjectId.zeroId())) {
+             command.add(toRevision.getName());
+         }
+diff --git a/scm/src/main/java/com/sandboni/core/scm/revision/SCMRevisionScope.java b/scm/src/main/java/com/sandboni/core/scm/revision/SCMRevisionScope.java
+index 3bc11c9..ef44d35 100644
+--- a/scm/src/main/java/com/sandboni/core/scm/revision/SCMRevisionScope.java
++++ b/scm/src/main/java/com/sandboni/core/scm/revision/SCMRevisionScope.java
+@@ -46,9 +46,6 @@ public class SCMRevisionScope implements RevisionScope<ObjectId> {
+             if (to == null) {
+                 throw new SourceControlRuntimeException(ErrorMessages.TO_CANNOT_BE_NULL);
+             }
+-            if (from.equals(to)) {
+-                throw new SourceControlRuntimeException(ErrorMessages.REVISIONS_CANNOT_BE_SAME);
+-            }
+         }
+     }
+ }
+diff --git a/scm/src/test/java/com/sandboni/core/scm/resolvers/RevisionResolverTest.java b/scm/src/test/java/com/sandboni/core/scm/resolvers/RevisionResolverTest.java
+index 23b88e6..5136f18 100644
+--- a/scm/src/test/java/com/sandboni/core/scm/resolvers/RevisionResolverTest.java
++++ b/scm/src/test/java/com/sandboni/core/scm/resolvers/RevisionResolverTest.java
+@@ -29,11 +29,6 @@ public class RevisionResolverTest {
+         revisionResolver.resolve(DiffConstants.LATEST_COMMIT, null);
+     }
+ 
+-    @Test(expected = SourceControlException.class)
+-    public void testFromAndToAreSame() throws SourceControlException {
+-        revisionResolver.resolve(DiffConstants.LATEST_COMMIT, DiffConstants.LATEST_COMMIT);
+-    }
+-
+     @Test(expected = SourceControlException.class)
+     public void testInvalidCommit() throws SourceControlException {
+         revisionResolver.resolve("AAAAAA", DiffConstants.LOCAL_CHANGES_NOT_COMMITTED);
+diff --git a/scm/src/test/java/com/sandboni/core/scm/resolvers/cli/GitDiffRunnerTest.java b/scm/src/test/java/com/sandboni/core/scm/resolvers/cli/GitDiffRunnerTest.java
+index 0efee1d..ff91d3c 100644
+--- a/scm/src/test/java/com/sandboni/core/scm/resolvers/cli/GitDiffRunnerTest.java
++++ b/scm/src/test/java/com/sandboni/core/scm/resolvers/cli/GitDiffRunnerTest.java
+@@ -130,7 +130,4 @@ public class GitDiffRunnerTest {
+ 
+         assertTrue(true);
+     }
+-
+-
+-
+ }
