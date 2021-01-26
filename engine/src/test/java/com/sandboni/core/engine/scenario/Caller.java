@@ -67,12 +67,14 @@ public class Caller extends CallerBase {
         //list.stream().filter(c -> "empty".equals(c.toString())).count();
     }
 
+    @SuppressWarnings("ReturnValueIgnored")
     public void referenceInLambdaSimple() {
         Arrays.stream(new String[]{"empty"})
                 .filter(s -> s.equals(callee.toString()))
                 .count();
     }
 
+    @SuppressWarnings("ReturnValueIgnored")
     public void referenceInLambdaWithClass() {
         Predicate<String> test = new Predicate<String>() {
             @Override
@@ -85,6 +87,7 @@ public class Caller extends CallerBase {
                 .count();
     }
 
+    @SuppressWarnings("ReturnValueIgnored")
     public void referenceInLambdaWithMethodHandle() {
         Arrays.stream(new String[]{"empty"})
                 .filter(callee::filter)

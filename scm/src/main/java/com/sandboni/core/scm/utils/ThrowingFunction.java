@@ -5,7 +5,7 @@ import com.sandboni.core.scm.exception.SourceControlRuntimeException;
 import java.util.function.Function;
 
 @FunctionalInterface
-@SuppressWarnings("squid:S00112")
+@SuppressWarnings(value = {"squid:S00112","FunctionalInterfaceMethodChanged"})
 public interface ThrowingFunction<T, R> extends Function<T,R> {
 
     @Override

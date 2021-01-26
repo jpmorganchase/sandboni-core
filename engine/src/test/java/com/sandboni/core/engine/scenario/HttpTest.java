@@ -83,6 +83,7 @@ public class HttpTest {
         }
     }
 
+    @SuppressWarnings("JUnit4TestNotRun")
     @Path("/basic-quote-requests/annotation-only-method")
     public void testJavaxOnlyMethodAnnotated(){
         assertTrue(true);
