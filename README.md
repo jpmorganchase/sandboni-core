@@ -7,6 +7,8 @@
 [![Build Status](https://travis-ci.com/jpmorganchase/sandboni-core.svg?branch=master)](https://travis-ci.com/jpmorganchase/sandboni-core)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=com.github.jpmorganchase.sandboni%3Asandboni-core&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.github.jpmorganchase.sandboni%3Asandboni-core)
 
+## This project is archived as of 14-Dec-2022
+
 Sandboni is a `Java test optimization library` which reduces test execution time without 
 compromising quality, predicts defect probability and presents actionable test results 
 which allows developers to take preemptive measures.
